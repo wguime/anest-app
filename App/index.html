@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANEST - Sistema de Gestão e Treinamento</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Configuração Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyCxYdeuSTnqdDoGCaTqiUKgQxWTK17XPnY",
+          authDomain: "desafio-rops-app.firebaseapp.com",
+          projectId: "desafio-rops-app",
+          storageBucket: "desafio-rops-app.firebasestorage.app",
+          messagingSenderId: "550720910361",
+          appId: "1:550720910361:web:e9a40c6f348e729f432688"
+        };
+
+        // Helper para criar ícones do Lucide
+        const Icon = ({ name, className = "w-6 h-6" }) => {
+          const IconComponent = lucide[name];
+          if (!IconComponent) return null;
+          
+          useEffect(() => {
+            lucide.createIcons();
+          }, []);
+          
+          return <i data-lucide={name.toLowerCase().replace(/([A-Z])/g, '-$1').toLowerCase()} className={className}></i>;
+        };
+
+        // Dados das Macro Áreas ROPs
+        const ropsData = {
+          macroArea1: {
+            title: "Cultura de Segurança",
+            icon: "🛡️",
+            color: "bg-blue-500",
+            rops: [
+              { id: "1.1", title: "Responsabilização pela Qualidade" },
+              { id: "1.2", title: "Gestão de Incidentes sobre a Segurança dos Pacientes" },
+              { id: "1.3", title: "Relatórios Trimestrais sobre a Segurança dos Pacientes" },
+              { id: "1.4", title: "Divulgação de Incidentes (Disclosure)" }
+            ]
+          },
+          macroArea2: {
+            title: "Comunicação",
+            icon: "💬",
+            color: "bg-green-500",
+            rops: [
+              { id: "2.1", title: "Identificação do Cliente" },
+              { id: "2.2", title: "Lista de Abreviações Perigosas" },
+              { id: "2.3", title: "Conciliação Medicamentosa como Prioridade Estratégica" },
+              { id: "2.4", title: "Conciliação em Serviços de Assistência Aguda (Internação)" },
+              { id: "2.5", title: "Conciliação em Atendimento Ambulatorial" },
+              { id: "2.6", title: "Conciliação no Serviço de Emergência" },
+              { id: "2.7", title: "Lista de Verificação para Cirurgia Segura" },
+              { id: "2.8", title: "Transferência de Informações nas Transições (Handoff)" }
+            ]
+          },
+          macroArea3: {
+            title: "Uso de Medicamentos",
+            icon: "💊",
+            color: "bg-purple-500",
+            rops: [
+              { id: "3.1", title: "Uso Racional de Antimicrobianos" },
+              { id: "3.2", title: "Eletrólitos Concentrados" },
+              { id: "3.3", title: "Segurança no Uso da Heparina" },
+              { id: "3.4", title: "Medicamentos de Alta Vigilância (MAV)" },
+              { id: "3.5", title: "Segurança das Bombas de Infusão" },
+              { id: "3.6", title: "Segurança no Uso de Narcóticos (Opioides)" }
+            ]
+          },
+          macroArea4: {
+            title: "Vida Profissional / Força de Trabalho",
+            icon: "👥",
+            color: "bg-orange-500",
+            rops: [
+              { id: "4.1", title: "Programa de Manutenção Preventiva" },
+              { id: "4.2", title: "Segurança do Paciente: Capacitação e Treinamento" },
+              { id: "4.3", title: "Prevenção de Violência no Local de Trabalho" },
+              { id: "4.4", title: "Fluxo de Clientes" },
+              { id: "4.5", title: "Plano de Segurança do Paciente" }
+            ]
+          },
+          macroArea5: {
+            title: "Prevenção de Infecções",
+            icon: "🦠",
+            color: "bg-red-500",
+            rops: [
+              { id: "5.1", title: "Aderência às Práticas de Higiene das Mãos" },
+              { id: "5.2", title: "Higiene das Mãos: Capacitação e Treinamento" },
+              { id: "5.3", title: "Taxas de Infecção" },
+              { id: "5.4", title: "Reprocessamento" }
+            ]
+          },
+          macroArea6: {
+            title: "Avaliação de Riscos",
+            icon: "⚠️",
+            color: "bg-yellow-500",
+            rops: [
+              { id: "6.1", title: "Prevenção de Quedas e Redução de Lesões (Internação)" },
+              { id: "6.2", title: "Prevenção de Úlceras por Pressão" },
+              { id: "6.3", title: "Prevenção de Suicídio" },
+              { id: "6.4", title: "Profilaxia para Tromboembolia Venosa (TEV)" },
+              { id: "6.5", title: "Tratamento da Pele e Feridas" }
+            ]
+          }
+        };
+
+        // BANCO DE QUESTÕES (versão resumida - adicione mais conforme necessário)
+        const questionsBank = {
+          "1.1": [
+            {
+              question: "Qual é o principal papel da alta administração em relação à qualidade do atendimento?",
+              options: [
+                "Delegar toda responsabilidade para o setor de qualidade",
+                "Demonstrar responsabilização pela qualidade fornecida pela organização",
+                "Focar apenas nos resultados financeiros",
+                "Supervisionar apenas as questões administrativas"
+              ],
+              correct: 1,
+              explanation: "A alta administração deve demonstrar responsabilização pela qualidade do atendimento. Quando os órgãos administrativos se ocupam da supervisão da qualidade, suas organizações têm melhor desempenho."
+            }
+          ],
+          "1.2": [
+            {
+              question: "O que deve ser incentivado em uma cultura de segurança do paciente?",
+              options: [
+                "Relatar apenas eventos com dano grave",
+                "Relatar e aprender com todos os incidentes, inclusive quase erros",
+                "Punir quem comete erros",
+                "Esconder pequenos erros"
+              ],
+              correct: 1,
+              explanation: "Em uma cultura de segurança, todos são incentivados a relatar e aprender com os incidentes, inclusive eventos com dano, sem dano ou quase erro."
+            }
+          ]
+        };
+
+        // Gerar questões adicionais
+        Object.keys(questionsBank).forEach(key => {
+          const base = questionsBank[key];
+          while (questionsBank[key].length < 30) {
+            questionsBank[key].push({...base[0], question: `Questão ${questionsBank[key].length + 1}: ${base[0].question}`});
+          }
+        });
+
+        const AnestApp = () => {
+          const [currentUser, setCurrentUser] = useState(null);
+          const [currentView, setCurrentView] = useState('login');
+          const [selectedModule, setSelectedModule] = useState(null);
+          const [selectedMacroArea, setSelectedMacroArea] = useState(null);
+          const [selectedRop, setSelectedRop] = useState(null);
+          const [quizMode, setQuizMode] = useState(null);
+          const [currentQuestion, setCurrentQuestion] = useState(0);
+          const [userAnswers, setUserAnswers] = useState([]);
+          const [showExplanation, setShowExplanation] = useState(false);
+          const [quizComplete, setQuizComplete] = useState(false);
+          const [userStats, setUserStats] = useState({
+            totalPoints: 0,
+            quizzesTaken: 0,
+            averageScore: 0,
+            completedRops: []
+          });
+
+          useEffect(() => {
+            lucide.createIcons();
+          }, [currentView]);
+
+          // Login Screen
+          const LoginScreen = () => {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [isRegistering, setIsRegistering] = useState(false);
+
+            const handleLogin = () => {
+              if (email && password) {
+                setCurrentUser({ email, name: email.split('@')[0] });
+                setCurrentView('home');
+              }
+            };
+
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+                  <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">ANEST</h1>
+                    <p className="text-gray-600">Sistema de Gestão e Treinamento</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="seu@email.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="••••••••"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleLogin}
+                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                      {isRegistering ? 'Registrar' : 'Entrar'}
+                    </button>
+                  </div>
+
+                  <div className="mt-6">
+                    <button className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                      <span>🔐</span> Entrar com Google
+                    </button>
+                  </div>
+
+                  <div className="mt-4 text-center space-y-2">
+                    <button
+                      onClick={() => setIsRegistering(!isRegistering)}
+                      className="text-blue-600 hover:underline text-sm block w-full"
+                    >
+                      {isRegistering ? 'Já tem conta? Entrar' : 'Criar nova conta'}
+                    </button>
+                    <button className="text-gray-600 hover:underline text-sm">
+                      Esqueci minha senha
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          // Componente Header
+          const Header = ({ title }) => (
+            <div className="bg-white shadow-md">
+              <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-gray-800">{title || 'ANEST'}</h1>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <i data-lucide="trophy" className="w-5 h-5 text-yellow-500"></i>
+                    <span className="font-semibold">{userStats.totalPoints} pts</span>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView('profile')}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    <i data-lucide="user" className="w-5 h-5"></i>
+                    Perfil
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentUser(null);
+                      setCurrentView('login');
+                    }}
+                    className="p-2 text-gray-600 hover:text-gray-800"
+                  >
+                    <i data-lucide="log-out" className="w-5 h-5"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+
+          // Home Screen
+          const HomeScreen = () => {
+            return (
+              <div className="min-h-screen bg-gray-50">
+                <Header />
+                <div className="max-w-7xl mx-auto px-4 py-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                    Bem-vindo, {currentUser?.name}!
+                  </h2>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {/* Residência Médica */}
+                    <button
+                      onClick={() => {
+                        setSelectedModule('residencia');
+                        setCurrentView('module');
+                      }}
+                      className="bg-blue-500 text-white rounded-xl p-6 hover:shadow-lg hover:scale-105 transition transform"
+                    >
+                      <div className="flex flex-col items-center gap-3">
+                        <i data-lucide="book-open" className="w-8 h-8"></i>
+                        <span className="font-semibold text-center text-sm">Residência Médica</span>
+                      </div>
+                    </button>
+
+                    {/* Outros módulos */}
+                    {['Protocolos', 'Políticas', 'Formulários', 'Manuais', 'Relatório de Segurança', 
+                      'Mapeamento de Processos', 'Mapeamento de Riscos', 'Termos', 'Plano de Segurança do Paciente'].map((title, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setSelectedModule(title.toLowerCase().replace(/\s/g, '_'));
+                          setCurrentView('module');
+                        }}
+                        className={`${['bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-red-500', 
+                          'bg-yellow-500', 'bg-indigo-500', 'bg-pink-500', 'bg-teal-500', 'bg-cyan-500'][idx]} 
+                          text-white rounded-xl p-6 hover:shadow-lg hover:scale-105 transition transform`}
+                      >
+                        <div className="flex flex-col items-center gap-3">
+                          <i data-lucide="file-text" className="w-8 h-8"></i>
+                          <span className="font-semibold text-center text-sm">{title}</span>
+                        </div>
+                      </button>
+                    ))}
+
+                    {/* ROPs Destaque */}
+                    <button
+                      onClick={() => setCurrentView('rops')}
+                      className="col-span-2 md:col-span-3 lg:col-span-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl p-6 hover:shadow-lg hover:scale-105 transition transform"
+                    >
+                      <div className="flex items-center justify-center gap-4">
+                        <i data-lucide="trophy" className="w-10 h-10"></i>
+                        <div className="text-left">
+                          <h3 className="text-2xl font-bold">ROPs - Desafio Interativo</h3>
+                          <p className="opacity-90">Aprenda, compita e ganhe pontos!</p>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          // Module Screen
+          const ModuleScreen = () => {
+            if (selectedModule === 'residencia') {
+              const residenciaItems = [
+                { title: 'Aulas', id: 'aulas', color: 'bg-blue-400' },
+                { title: 'Artigos', id: 'artigos', color: 'bg-blue-500' },
+                { title: 'Escalas', id: 'escalas', color: 'bg-blue-600' },
+                { title: 'Estágios', id: 'estagios', color: 'bg-blue-700' },
+                { title: 'Férias', id: 'ferias', color: 'bg-blue-800' }
+              ];
+
+              return (
+                <div className="min-h-screen bg-gray-50">
+                  <Header title="Residência Médica" />
+                  <div className="max-w-7xl mx-auto px-4 py-8">
+                    <button
+                      onClick={() => setCurrentView('home')}
+                      className="mb-6 flex items-center gap-2 text-blue-600 hover:underline font-semibold"
+                    >
+                      ← Voltar para o menu principal
+                    </button>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Residência Médica</h2>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      {residenciaItems.map((item, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setSelectedModule(item.id);
+                            setCurrentView('submodule');
+                          }}
+                          className={`${item.color} text-white rounded-xl p-6 hover:shadow-lg hover:scale-105 transition transform`}
+                        >
+                          <div className="flex flex-col items-center gap-3">
+                            <i data-lucide="book-open" className="w-8 h-8"></i>
+                            <span className="font-semibold text-center">{item.title}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // Outros módulos
+            return (
+              <div className="min-h-screen bg-gray-50">
+                <Header title={selectedModule} />
+                <div className="max-w-4xl mx-auto px-4 py-8">
+                  <button
+                    onClick={() => setCurrentView('home')}
+                    className="mb-6 flex items-center gap-2 text-blue-600 hover:underline font-semibold"
+                  >
+                    ← Voltar para o menu principal
+                  </button>
+
+                  <div className="bg-white rounded-xl p-12 shadow-lg text-center">
+                    <i data-lucide="construction" className="w-24 h-24 mx-auto mb-6 text-gray-400"></i>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">{selectedModule}</h2>
+                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 mb-6">
+                      <p className="text-xl font-semibold text-yellow-800 mb-2">Em Desenvolvimento</p>
+                      <p className="text-gray-700">
+                        Esta seção está sendo preparada com conteúdo de alta qualidade.
+                        <br />
+                        Em breve estará disponível para você!
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setCurrentView('home')}
+                      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                      Voltar ao Menu Principal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          // Submodule Screen
+          const SubmoduleScreen = () => {
+            const names = {
+              aulas: 'Aulas',
+              artigos: 'Artigos',
+              escalas: 'Escalas',
+              estagios: 'Estágios',
+              ferias: 'Férias'
+            };
+
+            return (
+              <div className="min-h-screen bg-gray-50">
+                <Header title={names[selectedModule]} />
+                <div className="max-w-4xl mx-auto px-4 py-8">
+                  <button
+                    onClick={() => {
+                      setSelectedModule('residencia');
+                      setCurrentView('module');
+                    }}
+                    className="mb-6 flex items-center gap-2 text-blue-600 hover:underline font-semibold"
+                  >
+                    ← Voltar para Residência Médica
+                  </button>
+
+                  <div className="bg-white rounded-xl p-12 shadow-lg text-center">
+                    <i data-lucide="construction" className="w-24 h-24 mx-auto mb-6 text-gray-400"></i>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">{names[selectedModule]}</h2>
+                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 mb-6">
+                      <p className="text-xl font-semibold text-yellow-800 mb-2">Em Desenvolvimento</p>
+                      <p className="text-gray-700">
+                        Esta seção está sendo preparada com conteúdo de alta qualidade.
+                        <br />
+                        Em breve estará disponível para você!
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedModule('residencia');
+                        setCurrentView('module');
+                      }}
+                      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                      Voltar para Residência Médica
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          // Renderização condicional
+          return (
+            <div>
+              {!currentUser && <LoginScreen />}
+              {currentUser && currentView === 'home' && <HomeScreen />}
+              {currentUser && currentView === 'module' && <ModuleScreen />}
+              {currentUser && currentView === 'submodule' && <SubmoduleScreen />}
+            </div>
+          );
+        };
+
+        // Renderizar o app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AnestApp />);
+    </script>
+</body>
+</html>

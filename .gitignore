@@ -1,0 +1,104 @@
+# Sistema Operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.temp
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Ambiente
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+dist/
+build/
+
+# Arquivos grandes (PDF já commitados são exceção)
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# Backups
+*.backup
+*.old
+*.orig
+
+# Temporários
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Credenciais (NÃO COMITAR NUNCA)
+# firebase-config.js já está no repo, mas adicione se criar cópias com credenciais diferentes
+# firebase-config-prod.js
+# firebase-config-dev.js
+credentials.json
+serviceAccountKey.json
+
+# Arquivos de usuário específicos
+user-uploads/
+uploads/
+media/private/
+
+# Testes
+coverage/
+.nyc_output/
+test-results/
+
+# Dependências de Python (se adicionar scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
