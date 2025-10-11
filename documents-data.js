@@ -302,13 +302,54 @@ const podcastsData = {
         icon: "fas fa-comments",
         color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
         audios: [
-            // Preparado para futuros áudios
-            // {
-            //     title: "ROP 2.1 - Identificação do Cliente",
-            //     file: "../Podcasts/Comunicação/ROP 2.1...m4a",
-            //     duracao: null,
-            //     descricao: "Áudio aula sobre..."
-            // }
+            {
+                title: "ROP 2.1 - Identificação do Cliente",
+                file: "./Podcasts/Comunicação/2.1 Comunicação - Idenfica�ão cliente.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre identificação segura do paciente"
+            },
+            {
+                title: "ROP 2.2 - Abreviações Perigosas",
+                file: "./Podcasts/Comunicação/2.2 Comunicação - Abreviações perigosas.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre lista de abreviações que não devem ser utilizadas"
+            },
+            {
+                title: "ROP 2.3 - Conciliação Medicamentosa Estratégica",
+                file: "./Podcasts/Comunicação/2.3 Comunicação - Conciliação medicamentosa Estratégica.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre conciliação medicamentosa como prioridade estratégica"
+            },
+            {
+                title: "ROP 2.4 - Conciliação em Internação",
+                file: "./Podcasts/Comunicação/2.4 Comunicação - Conciliação medicamentosa Internado.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre conciliação medicamentosa em serviços de assistência aguda"
+            },
+            {
+                title: "ROP 2.5 - Conciliação Ambulatorial",
+                file: "./Podcasts/Comunicação/2.5 Comunicação - Conciliação medicamentosa ambulatorial.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre conciliação medicamentosa em atendimento ambulatorial"
+            },
+            {
+                title: "ROP 2.6 - Conciliação na Emergência",
+                file: "./Podcasts/Comunicação/2.6 Comunicação - Conciliação medicamentosa Emergencia.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre conciliação medicamentosa no serviço de emergência"
+            },
+            {
+                title: "ROP 2.7 - Cirurgia Segura",
+                file: "./Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre lista de verificação para cirurgia segura"
+            },
+            {
+                title: "ROP 2.8 - Transição de Cuidado",
+                file: "./Podcasts/Comunicação/2.8 Comunicação - Transição Cuidado.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre transferência de informações nas transições (Handoff)"
+            }
         ]
     },
     "uso-medicamentos": {
