@@ -41,9 +41,35 @@ body {
     z-index: 9999;
 }
 
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
 .loading-content {
     text-align: center;
     color: white;
+    animation: fadeInUp 0.6s ease;
+}
+
+.loading-content i {
+    font-size: 80px;
+    margin-bottom: 30px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-content h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.loading-content p {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-top: 20px;
 }
 
 .loader {
@@ -58,6 +84,22 @@ body {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ==================== LOGIN SCREEN ==================== */
