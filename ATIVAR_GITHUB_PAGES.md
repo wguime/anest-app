@@ -14,8 +14,9 @@ https://github.com/wguime/anest-app
 ### **3.** Clique em **Pages** (menu lateral)
 
 ### **4.** Configure:
+- Source: **Deploy from a branch**
 - Branch: **main**
-- Folder: **/App** ⚠️
+- Folder: **/ (root)** ✅
 - Clique **Save**
 
 ### **5.** Aguarde 2 minutos
