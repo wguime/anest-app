@@ -424,6 +424,11 @@ body {
     gap: 25px;
 }
 
+.menu-card-highlight {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(26, 77, 46, 0.2) !important;
+}
+
 .menu-card {
     background: white;
     border-radius: 20px;
