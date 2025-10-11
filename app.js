@@ -1335,20 +1335,8 @@ function openDocument(filePath, title, isPDF = true) {
         // Abre PDF inline em modal
         openPDFViewer(filePath, title);
     } else {
-        // Outros formatos (DOCX, ODT) abre em nova aba para download
-        const link = document.createElement('a');
-        link.href = filePath;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.download = title;
-        
-        try {
-            link.click();
-            showToast(`Abrindo: ${title}`, 'info');
-        } catch (error) {
-            showToast('Erro ao abrir documento. Verifique se o arquivo existe.', 'error');
-            console.error('Erro ao abrir documento:', error);
-        }
+        // Outros formatos (DOCX, ODT) também abrem inline usando Google Docs Viewer
+        openDocumentViewer(filePath, title);
     }
 }
 
@@ -1370,9 +1358,89 @@ function openPDFViewer(filePath, title) {
     `;
     
     modal.innerHTML = `
-        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-shrink: 0;">
             <div style="display: flex; align-items: center; gap: 15px; color: white;">
                 <i class="fas fa-file-pdf" style="font-size: 24px;"></i>
+                <h3 style="margin: 0; font-size: 18px;">${title}</h3>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="zoomDocument('in')" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+                    title="Ampliar"
+                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button onclick="zoomDocument('out')" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+                    title="Reduzir"
+                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <button onclick="zoomDocument('fit')" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+                    title="Ajustar à tela"
+                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button onclick="downloadPDF('${filePath}', '${title}')" 
+                    style="background: white; color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
+                    onmouseover="this.style.background='#f0f0f0'" 
+                    onmouseout="this.style.background='white'">
+                    <i class="fas fa-download"></i> Baixar
+                </button>
+                <button onclick="closePDFViewer()" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+        <div style="flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px;">
+            <iframe 
+                id="documentFrame"
+                src="${filePath}#toolbar=1&navpanes=0&scrollbar=1&view=FitH" 
+                style="width: 100%; max-width: 1200px; height: 100%; min-height: 100%; border: none; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);"
+                title="${title}">
+            </iframe>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+}
+
+function openDocumentViewer(filePath, title) {
+    // Cria modal para visualização de documentos Word/ODT usando Google Docs Viewer
+    const modal = document.createElement('div');
+    modal.id = 'pdfModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    const fileExtension = filePath.split('.').pop().toUpperCase();
+    const iconClass = fileExtension === 'DOCX' ? 'fa-file-word' : 'fa-file-alt';
+    
+    // URL completa do arquivo para o Google Docs Viewer
+    const fullUrl = window.location.origin + window.location.pathname.replace('/index.html', '') + '/' + filePath;
+    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fullUrl)}&embedded=true`;
+    
+    modal.innerHTML = `
+        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 15px; color: white;">
+                <i class="fas ${iconClass}" style="font-size: 24px;"></i>
                 <h3 style="margin: 0; font-size: 18px;">${title}</h3>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -1390,15 +1458,36 @@ function openPDFViewer(filePath, title) {
                 </button>
             </div>
         </div>
-        <iframe 
-            src="${filePath}" 
-            style="flex: 1; border: none; width: 100%; background: white;"
-            title="${title}">
-        </iframe>
+        <div style="flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px;">
+            <iframe 
+                id="documentFrame"
+                src="${viewerUrl}" 
+                style="width: 100%; max-width: 1200px; height: 100%; min-height: 100%; border: none; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);"
+                title="${title}">
+            </iframe>
+        </div>
     `;
     
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
+}
+
+let currentZoom = 100;
+
+function zoomDocument(action) {
+    const frame = document.getElementById('documentFrame');
+    if (!frame) return;
+    
+    if (action === 'in') {
+        currentZoom += 25;
+    } else if (action === 'out') {
+        currentZoom = Math.max(50, currentZoom - 25);
+    } else if (action === 'fit') {
+        currentZoom = 100;
+    }
+    
+    frame.style.transform = `scale(${currentZoom / 100})`;
+    frame.style.transformOrigin = 'top center';
 }
 
 function closePDFViewer() {

@@ -175,6 +175,30 @@ body {
     margin-bottom: 30px;
 }
 
+.login-logo {
+    max-width: 350px;
+    height: auto;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.login-logo-fallback {
+    text-align: center;
+}
+
+.login-logo-fallback i {
+    font-size: 60px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.login-logo-fallback h1 {
+    font-size: 32px;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
 .login-header i {
     font-size: 60px;
     color: var(--primary-color);
@@ -468,8 +492,12 @@ body {
 }
 
 .menu-card:hover {
-    transform: translateY(-10px);
     box-shadow: var(--shadow-hover);
+}
+
+.menu-card:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
 }
 
 [data-theme="dark"] .menu-card:hover {
