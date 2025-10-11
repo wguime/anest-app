@@ -367,11 +367,51 @@ function showMacroArea(macroKey) {
     const macroArea = ropsData[macroKey];
     const screen = document.getElementById('ropsScreen');
     
+    // Conta áudios disponíveis
+    const podcastMacroArea = podcastsData[macroKey];
+    const audioCount = podcastMacroArea ? podcastMacroArea.audios.length : 0;
+    
     screen.innerHTML = `
         <button class="back-btn" onclick="showROPs()">
             <i class="fas fa-arrow-left"></i> Voltar
         </button>
         <h2 class="screen-title">${macroArea.title}</h2>
+        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
+            Escolha como deseja estudar esta macroárea
+        </p>
+        
+        <div class="menu-grid" style="max-width: 800px; margin: 0 auto;">
+            <!-- Ícone Questões -->
+            <div class="menu-card menu-card-highlight" onclick="showMacroAreaQuestions('${macroKey}')">
+                <div class="card-icon" style="background: ${macroArea.color}">
+                    <i class="fas fa-clipboard-question"></i>
+                </div>
+                <h3>Questões</h3>
+                <p>${Object.keys(macroArea.subdivisoes).length} subdivisões disponíveis</p>
+                ${getUserMacroProgress(macroKey)}
+            </div>
+            
+            <!-- Ícone Podcasts -->
+            <div class="menu-card menu-card-highlight" onclick="showMacroAreaPodcasts('${macroKey}')">
+                <div class="card-icon" style="background: ${macroArea.color}">
+                    <i class="fas fa-podcast"></i>
+                </div>
+                <h3>Podcasts</h3>
+                <p>${audioCount} áudio${audioCount !== 1 ? 's' : ''} disponível${audioCount !== 1 ? 'is' : ''}</p>
+            </div>
+        </div>
+    `;
+}
+
+function showMacroAreaQuestions(macroKey) {
+    const macroArea = ropsData[macroKey];
+    const screen = document.getElementById('ropsScreen');
+    
+    screen.innerHTML = `
+        <button class="back-btn" onclick="showMacroArea('${macroKey}')">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <h2 class="screen-title">${macroArea.title} - Questões</h2>
         
         <div class="menu-grid">
             ${Object.entries(macroArea.subdivisoes).map(([key, subdivisao]) => `
@@ -392,18 +432,58 @@ function showMacroArea(macroKey) {
                 <h3>Todas Embaralhadas</h3>
                 <p>Quiz completo da macroárea</p>
             </div>
-            
-            ${macroArea.subdivisoes[Object.keys(macroArea.subdivisoes)[0]].audioFile ? `
-                <div class="menu-card" onclick="showAudioAulas('${macroKey}')">
-                    <div class="card-icon" style="background: ${macroArea.color}">
-                        <i class="fas fa-headphones"></i>
-                    </div>
-                    <h3>Áudio Aulas</h3>
-                    <p>Material em áudio</p>
-                </div>
-            ` : ''}
         </div>
     `;
+}
+
+function showMacroAreaPodcasts(macroKey) {
+    const macroArea = podcastsData[macroKey];
+    const ropsData_macro = ropsData[macroKey];
+    const screen = document.getElementById('ropsScreen');
+    
+    if (!macroArea || !macroArea.audios || macroArea.audios.length === 0) {
+        screen.innerHTML = `
+            <button class="back-btn" onclick="showMacroArea('${macroKey}')">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <h2 class="screen-title">${ropsData_macro.title} - Podcasts</h2>
+            
+            <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center;">
+                <i class="fas fa-microphone-slash" style="font-size: 64px; color: var(--text-light); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--text-dark); margin-bottom: 10px;">Nenhuma áudio aula disponível ainda</h3>
+                <p style="color: var(--text-light);">
+                    As áudio aulas desta macroárea serão adicionadas em breve.
+                </p>
+            </div>
+        `;
+    } else {
+        screen.innerHTML = `
+            <button class="back-btn" onclick="showMacroArea('${macroKey}')">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <h2 class="screen-title">${macroArea.title} - Podcasts</h2>
+            
+            <div class="documents-container">
+                ${macroArea.audios.map((audio, index) => `
+                    <div class="document-card audio-card">
+                        <div class="document-icon">
+                            <i class="fas fa-microphone-alt"></i>
+                        </div>
+                        <div class="document-info">
+                            <h3>${audio.title}</h3>
+                            ${audio.descricao ? `<p style="color: var(--text-light); margin-top: 5px;">${audio.descricao}</p>` : ''}
+                            ${audio.duracao ? `<small style="color: var(--text-light);"><i class="fas fa-clock"></i> ${audio.duracao}</small>` : ''}
+                            
+                            <audio controls style="width: 100%; margin-top: 15px;">
+                                <source src="${audio.file}" type="audio/mpeg">
+                                Seu navegador não suporta o elemento de áudio.
+                            </audio>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
 }
 
 function getSubdivisaoProgress(subdivKey) {
