@@ -357,7 +357,12 @@ const podcastsData = {
         icon: "fas fa-pills",
         color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
         audios: [
-            // Preparado para futuros áudios
+            {
+                title: "ROP 3.1 - Uso de Medicamentos",
+                file: "./Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre uso racional e seguro de medicamentos"
+            }
         ]
     },
     "vida-profissional": {
@@ -365,7 +370,12 @@ const podcastsData = {
         icon: "fas fa-user-friends",
         color: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
         audios: [
-            // Preparado para futuros áudios
+            {
+                title: "ROP 4.1 - Vida Profissional",
+                file: "./Podcasts/Vida Profissional/4.1 Vida Profissional.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre vida profissional e força de trabalho"
+            }
         ]
     },
     "prevencao-infeccoes": {
@@ -373,7 +383,12 @@ const podcastsData = {
         icon: "fas fa-hand-sparkles",
         color: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
         audios: [
-            // Preparado para futuros áudios
+            {
+                title: "ROP 5.1 - Prevenção de Infecções",
+                file: "./Podcasts/Prevenção de infecções/5.1 Prevenção de infecções.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre prevenção e controle de infecções"
+            }
         ]
     },
     "avaliacao-riscos": {
@@ -381,7 +396,12 @@ const podcastsData = {
         icon: "fas fa-exclamation-circle",
         color: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
         audios: [
-            // Preparado para futuros áudios
+            {
+                title: "ROP 6.1 - Avaliação de Riscos",
+                file: "./Podcasts/Avaliação de Riscos/6.1 Avaliação de Riscos.m4a",
+                duracao: null,
+                descricao: "Áudio aula sobre avaliação e gerenciamento de riscos"
+            }
         ]
     }
 };

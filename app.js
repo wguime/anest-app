@@ -1043,63 +1043,15 @@ function showDocumentosGroup() {
 
 // ==================== NOTIFICAÇÕES ====================
 function abrirNotificacoes() {
-    // Abre em nova aba tentando auto-login
+    // Sistema externo - abre diretamente sem auto-login
+    // O auto-login não é possível devido às restrições de segurança cross-origin
     const loginUrl = 'https://luizeuzebio.com.br/anest/index.php';
-    const email = 'anest@anest.com.br';
-    const senha = '123456';
     
-    // Método 1: Tenta com URL parameters (GET)
-    const urlWithParams = `${loginUrl}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(senha)}&username=${encodeURIComponent(email)}&login=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}&autologin=1`;
+    // Abre em nova aba
+    window.open(loginUrl, '_blank');
     
-    // Abre a janela
-    const win = window.open(urlWithParams, '_blank');
-    
-    // Método 2: Se a janela abriu, tenta enviar POST também
-    if (win) {
-        // Cria formulário para POST
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = loginUrl;
-        form.target = win.name || '_blank';
-        form.style.display = 'none';
-        
-        // Lista completa de possíveis nomes de campos
-        const fields = {
-            'email': email,
-            'username': email,
-            'user': email,
-            'login': email,
-            'usuario': email,
-            'mail': email,
-            'password': senha,
-            'senha': senha,
-            'pass': senha,
-            'pwd': senha,
-            'password_field': senha,
-            'senha_field': senha,
-            'remember': '1',
-            'autologin': '1',
-            'auto_login': '1'
-        };
-        
-        Object.keys(fields).forEach(name => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = fields[name];
-            form.appendChild(input);
-        });
-        
-        document.body.appendChild(form);
-        
-        // Espera um pouco e envia o POST
-        setTimeout(() => {
-            form.submit();
-            document.body.removeChild(form);
-        }, 500);
-    }
-    
-    showToast('Sistema de Notificações aberto - Fazendo login automático...', 'success');
+    // Mostra instruções de login
+    showToast('Sistema de Notificações aberto. Use: anest@anest.com.br / 123456', 'info');
 }
 
 function showResidencia() {
@@ -1421,11 +1373,11 @@ function openPDFViewer(filePath, title) {
                 </button>
             </div>
         </div>
-        <div style="flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px;">
+        <div style="flex: 1; overflow: hidden; background: #525659; display: flex; justify-content: center; align-items: center; padding: 0;">
             <iframe 
                 id="documentFrame"
-                src="${filePath}#toolbar=1&navpanes=0&scrollbar=1&view=FitH" 
-                style="width: 100%; max-width: 1200px; height: 100%; min-height: 100%; border: none; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);"
+                src="${filePath}#toolbar=0&navpanes=0&scrollbar=1&view=Fit" 
+                style="width: 100%; height: 100%; border: none; background: white;"
                 title="${title}">
             </iframe>
         </div>
@@ -1480,11 +1432,11 @@ function openDocumentViewer(filePath, title) {
                 </button>
             </div>
         </div>
-        <div style="flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px;">
+        <div style="flex: 1; overflow: hidden; background: #525659; display: flex; justify-content: center; align-items: center; padding: 0;">
             <iframe 
                 id="documentFrame"
                 src="${viewerUrl}" 
-                style="width: 100%; max-width: 1200px; height: 100%; min-height: 100%; border: none; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);"
+                style="width: 100%; height: 100%; border: none; background: white;"
                 title="${title}">
             </iframe>
         </div>
