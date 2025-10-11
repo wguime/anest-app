@@ -439,6 +439,8 @@ function showMacroAreaQuestions(macroKey) {
             </div>
         </div>
     `;
+    
+    showScreen('rops');
 }
 
 function showMacroAreaPodcasts(macroKey) {

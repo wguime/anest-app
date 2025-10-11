@@ -205,11 +205,11 @@ body {
 }
 
 .login-logo {
-    max-width: 400px;
-    max-height: 250px;
-    width: auto;
+    max-width: 500px;
+    max-height: 300px;
+    width: 90%;
     height: auto;
-    margin: 0 auto 30px;
+    margin: 0 auto 40px;
     display: block;
     object-fit: contain;
 }
@@ -411,7 +411,7 @@ body {
 .header-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 15px 30px;
+    padding: 10px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -427,10 +427,10 @@ body {
 }
 
 .logo-img {
-    height: 90px;
+    height: 110px;
     width: auto;
     object-fit: contain;
-    max-width: 350px;
+    max-width: 450px;
 }
 
 .logo-fallback {
