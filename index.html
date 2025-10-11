@@ -12,7 +12,11 @@
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
-            <img src="./LogoANEST.png" alt="ANEST" class="loading-logo">
+            <img src="./LogoANEST.png" alt="ANEST" class="loading-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="loading-fallback" style="display: none;">
+                <i class="fas fa-heartbeat"></i>
+                <h2>ANEST</h2>
+            </div>
             <div class="loader"></div>
             <p>Carregando Sistema...</p>
         </div>

@@ -93,10 +93,32 @@ body {
 }
 
 .loading-logo {
-    max-width: 350px;
+    max-width: 300px;
+    max-height: 150px;
+    width: auto;
     height: auto;
-    margin-bottom: 30px;
+    margin: 0 auto 30px;
+    display: block;
+    object-fit: contain;
     animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-fallback {
+    text-align: center;
+}
+
+.loading-fallback i {
+    font-size: 80px;
+    margin-bottom: 20px;
+    display: block;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-fallback h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
 }
 
 .loading-content i {
