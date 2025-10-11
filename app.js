@@ -1229,17 +1229,17 @@ function showDocumentsSection(sectionKey, title, icon, documents) {
     
     if (!documents || documents.length === 0) {
         screen.innerHTML = `
-            <button class="back-btn" onclick="goHome()">
+            <button class="back-btn" onclick="showDocumentosGroup()">
                 <i class="fas fa-arrow-left"></i> Voltar
             </button>
             <h2 class="screen-title">${title}</h2>
             
-            <div class="documents-container">
-                <div class="empty-state">
-                    <i class="fas fa-${icon}"></i>
-                    <h3>Nenhum documento disponível</h3>
-                    <p>Os arquivos serão adicionados em breve.</p>
-                </div>
+            <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center;">
+                <i class="fas fa-${icon}" style="font-size: 64px; color: var(--text-light); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--text-dark); margin-bottom: 10px;">Nenhum documento disponível</h3>
+                <p style="color: var(--text-light);">
+                    Os arquivos serão adicionados em breve.
+                </p>
             </div>
         `;
     } else {
@@ -1247,58 +1247,56 @@ function showDocumentsSection(sectionKey, title, icon, documents) {
         const categories = [...new Set(documents.map(d => d.categoria || d.tipo).filter(Boolean))];
         
         screen.innerHTML = `
-            <button class="back-btn" onclick="goHome()">
+            <button class="back-btn" onclick="showDocumentosGroup()">
                 <i class="fas fa-arrow-left"></i> Voltar
             </button>
-            <h2 class="screen-title">${title}</h2>
+            <h2 class="screen-title">
+                <i class="fas fa-${icon}"></i> ${title}
+            </h2>
+            <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
+                ${documents.length} documento${documents.length > 1 ? 's' : ''} disponível${documents.length > 1 ? 'eis' : ''}
+            </p>
             
-            <div class="documents-container">
-                <div style="margin-bottom: 20px;">
-                    <p style="color: var(--text-light); margin-bottom: 10px;">
-                        <i class="fas fa-info-circle"></i> Total: ${documents.length} documento${documents.length > 1 ? 's' : ''}
-                    </p>
-                </div>
-                
-                ${categories.length > 1 ? `
-                    <div class="category-filter">
-                        <button class="filter-btn active" onclick="filterDocuments('${sectionKey}', 'all')">
-                            Todos (${documents.length})
+            ${categories.length > 1 ? `
+                <div class="category-filter">
+                    <button class="filter-btn active" onclick="filterDocuments('${sectionKey}', 'all')">
+                        Todos (${documents.length})
+                    </button>
+                    ${categories.map(cat => `
+                        <button class="filter-btn" onclick="filterDocuments('${sectionKey}', '${cat}')">
+                            ${cat} (${documents.filter(d => (d.categoria || d.tipo) === cat).length})
                         </button>
-                        ${categories.map(cat => `
-                            <button class="filter-btn" onclick="filterDocuments('${sectionKey}', '${cat}')">
-                                ${cat} (${documents.filter(d => (d.categoria || d.tipo) === cat).length})
-                            </button>
-                        `).join('')}
-                    </div>
-                ` : ''}
-                
-                <div class="documents-grid" id="${sectionKey}DocumentsGrid">
-                    ${documents.map(doc => {
-                        const fileExtension = doc.file.split('.').pop().toUpperCase();
-                        const iconClass = fileExtension === 'PDF' ? 'fa-file-pdf' : 
-                                        fileExtension === 'DOCX' ? 'fa-file-word' : 
-                                        fileExtension === 'ODT' ? 'fa-file-alt' : 'fa-file';
-                        
-                        return `
-                            <div class="document-item" onclick="openDocument('${doc.file.replace(/'/g, "\\'")}', '${doc.title.replace(/'/g, "\\'")}')">
-                                <div class="document-icon">
-                                    <i class="fas ${iconClass}"></i>
-                                </div>
-                                <div class="document-info">
-                                    <div class="document-title">${doc.title}</div>
-                                    <div class="document-meta">
-                                        ${doc.codigo ? `<span class="document-badge">${doc.codigo}</span>` : ''}
-                                        ${doc.categoria ? `<span class="document-badge">${doc.categoria}</span>` : ''}
-                                        ${doc.tipo ? `<span class="document-badge">${doc.tipo}</span>` : ''}
-                                        ${doc.periodo ? `<span class="document-badge">${doc.periodo}</span>` : ''}
-                                        ${doc.ano ? `<span class="document-badge">${doc.ano}</span>` : ''}
-                                    </div>
-                                </div>
-                                <i class="fas fa-external-link-alt" style="color: var(--primary-color);"></i>
-                            </div>
-                        `;
-                    }).join('')}
+                    `).join('')}
                 </div>
+            ` : ''}
+            
+            <div class="menu-grid" id="${sectionKey}DocumentsGrid">
+                ${documents.map(doc => {
+                    const fileExtension = doc.file.split('.').pop().toUpperCase();
+                    const isPDF = fileExtension === 'PDF';
+                    const iconClass = isPDF ? 'fa-file-pdf' : 
+                                    fileExtension === 'DOCX' ? 'fa-file-word' : 
+                                    fileExtension === 'ODT' ? 'fa-file-alt' : 'fa-file';
+                    const colorGradient = isPDF ? 'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)' :
+                                         fileExtension === 'DOCX' ? 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)' :
+                                         'linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%)';
+                    
+                    return `
+                        <div class="menu-card" onclick="openDocument('${doc.file.replace(/'/g, "\\'")}', '${doc.title.replace(/'/g, "\\'")}', ${isPDF})">
+                            <div class="card-icon" style="background: ${colorGradient}">
+                                <i class="fas ${iconClass}"></i>
+                            </div>
+                            <h3>${doc.title}</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; justify-content: center;">
+                                ${doc.codigo ? `<span class="document-badge">${doc.codigo}</span>` : ''}
+                                ${doc.categoria ? `<span class="document-badge">${doc.categoria}</span>` : ''}
+                                ${doc.tipo ? `<span class="document-badge">${doc.tipo}</span>` : ''}
+                                ${doc.periodo ? `<span class="document-badge">${doc.periodo}</span>` : ''}
+                                ${doc.ano ? `<span class="document-badge">${doc.ano}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
             </div>
         `;
     }
@@ -1344,21 +1342,94 @@ function filterDocuments(sectionKey, category) {
     }).join('');
 }
 
-function openDocument(filePath, title) {
-    // Try to open in new tab
+function openDocument(filePath, title, isPDF = true) {
+    if (isPDF) {
+        // Abre PDF inline em modal
+        openPDFViewer(filePath, title);
+    } else {
+        // Outros formatos (DOCX, ODT) abre em nova aba para download
+        const link = document.createElement('a');
+        link.href = filePath;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.download = title;
+        
+        try {
+            link.click();
+            showToast(`Abrindo: ${title}`, 'info');
+        } catch (error) {
+            showToast('Erro ao abrir documento. Verifique se o arquivo existe.', 'error');
+            console.error('Erro ao abrir documento:', error);
+        }
+    }
+}
+
+function openPDFViewer(filePath, title) {
+    // Cria modal para visualização de PDF
+    const modal = document.createElement('div');
+    modal.id = 'pdfModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; gap: 15px; color: white;">
+                <i class="fas fa-file-pdf" style="font-size: 24px;"></i>
+                <h3 style="margin: 0; font-size: 18px;">${title}</h3>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="downloadPDF('${filePath}', '${title}')" 
+                    style="background: white; color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
+                    onmouseover="this.style.background='#f0f0f0'" 
+                    onmouseout="this.style.background='white'">
+                    <i class="fas fa-download"></i> Baixar
+                </button>
+                <button onclick="closePDFViewer()" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+        <iframe 
+            src="${filePath}" 
+            style="flex: 1; border: none; width: 100%; background: white;"
+            title="${title}">
+        </iframe>
+    `;
+    
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+}
+
+function closePDFViewer() {
+    const modal = document.getElementById('pdfModal');
+    if (modal) {
+        modal.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            modal.remove();
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+}
+
+function downloadPDF(filePath, title) {
     const link = document.createElement('a');
     link.href = filePath;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
     link.download = title;
-    
-    try {
-        link.click();
-        showToast(`Abrindo: ${title}`, 'info');
-    } catch (error) {
-        showToast('Erro ao abrir documento. Verifique se o arquivo existe.', 'error');
-        console.error('Erro ao abrir documento:', error);
-    }
+    link.click();
+    showToast(`Baixando: ${title}`, 'success');
 }
 
 // ==================== PODCASTS ROPS ====================
