@@ -327,7 +327,6 @@ function showROPs() {
                         <i class="${macroArea.icon}"></i>
                     </div>
                     <h3>${macroArea.title}</h3>
-                    <p>${Object.keys(macroArea.subdivisoes).length} subdivisões</p>
                     ${getUserMacroProgress(key)}
                 </div>
             `).join('')}
@@ -337,7 +336,6 @@ function showROPs() {
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <h3>Simulado Geral</h3>
-                <p>50+ questões de todas as ROPs</p>
             </div>
             
             <div class="menu-card" onclick="showRanking()">
@@ -345,7 +343,6 @@ function showROPs() {
                     <i class="fas fa-trophy"></i>
                 </div>
                 <h3>Ranking</h3>
-                <p>Veja sua posição</p>
             </div>
         </div>
     `;
@@ -359,11 +356,14 @@ function getUserMacroProgress(macroKey) {
         userProgress.completedTopics.includes(sub)
     ).length;
     
-    const percentage = Math.round((completed / subdivisoes.length) * 100);
+    const percentage = subdivisoes.length > 0 ? Math.round((completed / subdivisoes.length) * 100) : 0;
     
     return `
-        <div style="margin-top: 10px; padding: 5px 10px; background: rgba(102, 126, 234, 0.1); border-radius: 5px;">
-            <small style="color: var(--primary-color); font-weight: 600;">
+        <div class="progress-container" style="margin-top: 10px;">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+            </div>
+            <small style="color: var(--text-secondary); font-weight: 600; margin-top: 4px; display: block;">
                 ${percentage}% completo
             </small>
         </div>
@@ -1225,9 +1225,6 @@ function showDocumentsSection(sectionKey, title, icon, documents) {
             <h2 class="screen-title">
                 <i class="fas fa-${icon}"></i> ${title}
             </h2>
-            <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
-                ${documents.length} documento${documents.length > 1 ? 's' : ''} disponível${documents.length > 1 ? 'eis' : ''}
-            </p>
             
             ${categories.length > 1 ? `
                 <div class="category-filter">
@@ -1259,13 +1256,6 @@ function showDocumentsSection(sectionKey, title, icon, documents) {
                                 <i class="fas ${iconClass}"></i>
                             </div>
                             <h3>${doc.title}</h3>
-                            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; justify-content: center;">
-                                ${doc.codigo ? `<span class="document-badge">${doc.codigo}</span>` : ''}
-                                ${doc.categoria ? `<span class="document-badge">${doc.categoria}</span>` : ''}
-                                ${doc.tipo ? `<span class="document-badge">${doc.tipo}</span>` : ''}
-                                ${doc.periodo ? `<span class="document-badge">${doc.periodo}</span>` : ''}
-                                ${doc.ano ? `<span class="document-badge">${doc.ano}</span>` : ''}
-                            </div>
                         </div>
                     `;
                 }).join('')}
