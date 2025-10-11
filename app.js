@@ -832,6 +832,186 @@ function showSimulado() {
 }
 
 // ==================== OTHER SECTIONS ====================
+// ==================== DARK MODE ====================
+function toggleDarkMode() {
+    const body = document.body;
+    const icon = document.getElementById('darkModeIcon');
+    
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// Check saved theme on load
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+    const icon = document.getElementById('darkModeIcon');
+    if (icon) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+    }
+}
+
+// ==================== DOCUMENTOS GROUP ====================
+function showDocumentosGroup() {
+    const screen = document.getElementById('documentosScreen');
+    screen.innerHTML = `
+        <button class="back-btn" onclick="goHome()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <h2 class="screen-title">
+            <i class="fas fa-folder-open"></i> Documentos
+        </h2>
+        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
+            Acesse todos os documentos técnicos e institucionais
+        </p>
+        
+        <div class="menu-grid">
+            <div class="menu-card" onclick="showProtocolos()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>Protocolos</h3>
+                <p>Protocolos assistenciais</p>
+            </div>
+
+            <div class="menu-card" onclick="showPoliticas()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4f7942 0%, #a8d5a5 100%)">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Políticas</h3>
+                <p>Políticas institucionais</p>
+            </div>
+
+            <div class="menu-card" onclick="showFormularios()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #2d6a3f 0%, #87c68d 100%)">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Formulários</h3>
+                <p>Documentos e formulários</p>
+            </div>
+
+            <div class="menu-card" onclick="showManuais()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #5a8f66 100%)">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>Manuais</h3>
+                <p>Manuais técnicos</p>
+            </div>
+
+            <div class="menu-card" onclick="showRelatorios()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #3b7a54 0%, #9bcaa8 100%)">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Relatórios</h3>
+                <p>Segurança do paciente</p>
+            </div>
+
+            <div class="menu-card" onclick="showProcessos()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1f6638 0%, #76b583 100%)">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <h3>Processos</h3>
+                <p>Mapeamento de processos</p>
+            </div>
+
+            <div class="menu-card" onclick="showRiscos()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #2a5c3f 0%, #82c491 100%)">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Riscos</h3>
+                <p>Mapeamento de riscos</p>
+            </div>
+
+            <div class="menu-card" onclick="showTermos()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #6fa378 100%)">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>Termos</h3>
+                <p>Termos e documentos</p>
+            </div>
+
+            <div class="menu-card" onclick="showClima()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #357054 0%, #91cc9c 100%)">
+                    <i class="fas fa-cloud-sun"></i>
+                </div>
+                <h3>Clima de Segurança</h3>
+                <p>Relatórios de clima</p>
+            </div>
+
+            <div class="menu-card" onclick="showPlanoSeguranca()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3>Plano de Segurança</h3>
+                <p>Segurança do paciente</p>
+            </div>
+        </div>
+    `;
+    showScreen('documentos');
+}
+
+// ==================== NOTIFICAÇÕES ====================
+function abrirNotificacoes() {
+    const screen = document.getElementById('notificacoesScreen');
+    screen.innerHTML = `
+        <button class="back-btn" onclick="goHome()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <h2 class="screen-title">
+            <i class="fas fa-bell"></i> Notificações
+        </h2>
+        
+        <div style="background: white; border-radius: 20px; padding: 30px; margin-top: 30px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary-color);"></i>
+                <h3 style="color: var(--text-dark); margin-top: 20px;">Acessando Sistema de Notificações...</h3>
+                <p style="color: var(--text-light); margin-top: 10px;">
+                    Você será redirecionado automaticamente
+                </p>
+            </div>
+        </div>
+    `;
+    showScreen('notificacoes');
+    
+    // Auto-login via POST form
+    setTimeout(() => {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://luizeuzebio.com.br/anest/index.php';
+        form.target = '_blank';
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = 'anest@anest.com.br';
+        
+        const passwordInput = document.createElement('input');
+        passwordInput.type = 'hidden';
+        passwordInput.name = 'password';
+        passwordInput.value = '123456';
+        
+        form.appendChild(emailInput);
+        form.appendChild(passwordInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+        
+        // Volta para home após 2 segundos
+        setTimeout(() => {
+            goHome();
+        }, 2000);
+    }, 1000);
+}
+
 function showResidencia() {
     const screen = document.getElementById('residenciaScreen');
     screen.innerHTML = `
