@@ -15,16 +15,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeApp() {
+    // Hide loading screen after a maximum of 2 seconds
+    setTimeout(() => {
+        hideLoading();
+    }, 2000);
+    
+    // Check if Firebase is loaded
+    if (typeof firebase === 'undefined' || typeof auth === 'undefined') {
+        console.warn('Firebase not loaded, showing login screen');
+        hideLoading();
+        showLoginScreen();
+        return;
+    }
+    
     // Check authentication state
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            currentUser = user;
-            loadUserProgress();
-            showMainApp();
-        } else {
-            showLoginScreen();
-        }
-    });
+    try {
+        auth.onAuthStateChanged((user) => {
+            hideLoading();
+            if (user) {
+                currentUser = user;
+                loadUserProgress();
+                showMainApp();
+            } else {
+                showLoginScreen();
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing auth:', error);
+        hideLoading();
+        showLoginScreen();
+    }
 }
 
 // ==================== AUTHENTICATION ====================
