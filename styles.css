@@ -73,7 +73,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,6 +90,13 @@ body {
     text-align: center;
     color: white;
     animation: fadeInUp 0.6s ease;
+}
+
+.loading-logo {
+    max-width: 350px;
+    height: auto;
+    margin-bottom: 30px;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 .loading-content i {
@@ -176,9 +183,9 @@ body {
 }
 
 .login-logo {
-    max-width: 350px;
+    max-width: 450px;
     height: auto;
-    margin: 0 auto 20px;
+    margin: 0 auto 30px;
     display: block;
 }
 
@@ -395,9 +402,10 @@ body {
 }
 
 .logo-img {
-    height: 50px;
+    height: 70px;
     width: auto;
     object-fit: contain;
+    max-width: 250px;
 }
 
 .logo-fallback {

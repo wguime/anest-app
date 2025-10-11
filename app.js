@@ -196,7 +196,14 @@ function showLoginScreen() {
 function showMainApp() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('userName').textContent = currentUser.displayName || currentUser.email;
+    
+    // Update welcome message with first name
+    if (currentUser) {
+        const fullName = currentUser.displayName || currentUser.email;
+        const firstName = fullName.split(' ')[0].split('@')[0];
+        document.getElementById('welcomeMessage').textContent = `Olá, ${firstName}`;
+    }
+    
     showScreen('home');
     hideLoading();
 }
@@ -420,7 +427,6 @@ function showMacroAreaQuestions(macroKey) {
                         <i class="fas fa-clipboard-question"></i>
                     </div>
                     <h3>${subdivisao.title}</h3>
-                    <p>${subdivisao.questions.length} questões</p>
                     ${getSubdivisaoProgress(key)}
                 </div>
             `).join('')}
@@ -430,7 +436,6 @@ function showMacroAreaQuestions(macroKey) {
                     <i class="fas fa-random"></i>
                 </div>
                 <h3>Todas Embaralhadas</h3>
-                <p>Quiz completo da macroárea</p>
             </div>
         </div>
     `;
@@ -1182,7 +1187,12 @@ function showGenericSection(sectionKey, title, icon, description) {
 }
 
 function showProfile() {
-    alert('Perfil do usuário - Em desenvolvimento');
+    if (currentUser) {
+        const fullName = currentUser.displayName || currentUser.email;
+        const email = currentUser.email;
+        
+        alert(`Perfil do Usuário\n\nNome: ${fullName}\nEmail: ${email}\n\nFuncionalidade completa em desenvolvimento.`);
+    }
 }
 
 // ==================== DOCUMENTS SECTION ====================
@@ -1332,55 +1342,21 @@ function openPDFViewer(filePath, title) {
     `;
     
     modal.innerHTML = `
-        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-shrink: 0;">
-            <div style="display: flex; align-items: center; gap: 15px; color: white;">
-                <i class="fas fa-file-pdf" style="font-size: 24px;"></i>
-                <h3 style="margin: 0; font-size: 18px;">${title}</h3>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="zoomDocument('in')" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
-                    title="Ampliar"
-                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
-                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    <i class="fas fa-search-plus"></i>
-                </button>
-                <button onclick="zoomDocument('out')" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
-                    title="Reduzir"
-                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
-                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    <i class="fas fa-search-minus"></i>
-                </button>
-                <button onclick="zoomDocument('fit')" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
-                    title="Ajustar à tela"
-                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
-                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    <i class="fas fa-expand"></i>
-                </button>
-                <button onclick="downloadPDF('${filePath}', '${title}')" 
-                    style="background: white; color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
-                    onmouseover="this.style.background='#f0f0f0'" 
-                    onmouseout="this.style.background='white'">
-                    <i class="fas fa-download"></i> Baixar
-                </button>
-                <button onclick="closePDFViewer()" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
-                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    <i class="fas fa-times"></i> Fechar
-                </button>
-            </div>
+        <div style="position: absolute; top: 10px; right: 10px; z-index: 10001;">
+            <button onclick="closePDFViewer()" 
+                style="background: rgba(0,0,0,0.7); color: white; border: none; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"
+                title="Fechar"
+                onmouseover="this.style.background='rgba(0,0,0,0.9)'" 
+                onmouseout="this.style.background='rgba(0,0,0,0.7)'">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div style="flex: 1; overflow: hidden; background: #525659; display: flex; justify-content: center; align-items: center; padding: 0;">
-            <iframe 
-                id="documentFrame"
-                src="${filePath}#toolbar=0&navpanes=0&scrollbar=1&view=Fit" 
-                style="width: 100%; height: 100%; border: none; background: white;"
-                title="${title}">
-            </iframe>
-        </div>
+        <iframe 
+            id="documentFrame"
+            src="${filePath}#toolbar=0&navpanes=0&scrollbar=1&view=Fit" 
+            style="width: 100%; height: 100%; border: none; background: white;"
+            title="${title}">
+        </iframe>
     `;
     
     document.body.appendChild(modal);
@@ -1412,34 +1388,21 @@ function openDocumentViewer(filePath, title) {
     const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fullUrl)}&embedded=true`;
     
     modal.innerHTML = `
-        <div style="background: var(--primary-color); padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-shrink: 0;">
-            <div style="display: flex; align-items: center; gap: 15px; color: white;">
-                <i class="fas ${iconClass}" style="font-size: 24px;"></i>
-                <h3 style="margin: 0; font-size: 18px;">${title}</h3>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="downloadPDF('${filePath}', '${title}')" 
-                    style="background: white; color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
-                    onmouseover="this.style.background='#f0f0f0'" 
-                    onmouseout="this.style.background='white'">
-                    <i class="fas fa-download"></i> Baixar
-                </button>
-                <button onclick="closePDFViewer()" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
-                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    <i class="fas fa-times"></i> Fechar
-                </button>
-            </div>
+        <div style="position: absolute; top: 10px; right: 10px; z-index: 10001;">
+            <button onclick="closePDFViewer()" 
+                style="background: rgba(0,0,0,0.7); color: white; border: none; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"
+                title="Fechar"
+                onmouseover="this.style.background='rgba(0,0,0,0.9)'" 
+                onmouseout="this.style.background='rgba(0,0,0,0.7)'">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div style="flex: 1; overflow: hidden; background: #525659; display: flex; justify-content: center; align-items: center; padding: 0;">
-            <iframe 
-                id="documentFrame"
-                src="${viewerUrl}" 
-                style="width: 100%; height: 100%; border: none; background: white;"
-                title="${title}">
-            </iframe>
-        </div>
+        <iframe 
+            id="documentFrame"
+            src="${viewerUrl}" 
+            style="width: 100%; height: 100%; border: none; background: white;"
+            title="${title}">
+        </iframe>
     `;
     
     document.body.appendChild(modal);
