@@ -547,9 +547,11 @@ function showQuestion() {
     const screen = document.getElementById('quizScreen');
     const question = currentQuiz.questions[currentQuiz.currentIndex];
     
+    const macroKey = currentQuiz.macroKey;
+    
     screen.innerHTML = `
-        <button class="back-btn" onclick="confirmQuitQuiz()">
-            <i class="fas fa-times"></i> Sair do Quiz
+        <button class="back-btn" onclick="showMacroAreaQuestions('${macroKey}')">
+            <i class="fas fa-arrow-left"></i> Voltar
         </button>
         
         <div class="quiz-container">
@@ -1041,43 +1043,63 @@ function showDocumentosGroup() {
 
 // ==================== NOTIFICAÇÕES ====================
 function abrirNotificacoes() {
-    // Abre em nova aba com parâmetros de auto-login
+    // Abre em nova aba tentando auto-login
     const loginUrl = 'https://luizeuzebio.com.br/anest/index.php';
     const email = 'anest@anest.com.br';
     const senha = '123456';
     
-    // Cria um formulário temporário para POST
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = loginUrl;
-    form.target = '_blank';
-    form.style.display = 'none';
+    // Método 1: Tenta com URL parameters (GET)
+    const urlWithParams = `${loginUrl}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(senha)}&username=${encodeURIComponent(email)}&login=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}&autologin=1`;
     
-    // Adiciona campos de login
-    const fields = {
-        'email': email,
-        'username': email,
-        'user': email,
-        'login': email,
-        'password': senha,
-        'senha': senha,
-        'pass': senha,
-        'pwd': senha
-    };
+    // Abre a janela
+    const win = window.open(urlWithParams, '_blank');
     
-    Object.keys(fields).forEach(name => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = fields[name];
-        form.appendChild(input);
-    });
+    // Método 2: Se a janela abriu, tenta enviar POST também
+    if (win) {
+        // Cria formulário para POST
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = loginUrl;
+        form.target = win.name || '_blank';
+        form.style.display = 'none';
+        
+        // Lista completa de possíveis nomes de campos
+        const fields = {
+            'email': email,
+            'username': email,
+            'user': email,
+            'login': email,
+            'usuario': email,
+            'mail': email,
+            'password': senha,
+            'senha': senha,
+            'pass': senha,
+            'pwd': senha,
+            'password_field': senha,
+            'senha_field': senha,
+            'remember': '1',
+            'autologin': '1',
+            'auto_login': '1'
+        };
+        
+        Object.keys(fields).forEach(name => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = fields[name];
+            form.appendChild(input);
+        });
+        
+        document.body.appendChild(form);
+        
+        // Espera um pouco e envia o POST
+        setTimeout(() => {
+            form.submit();
+            document.body.removeChild(form);
+        }, 500);
+    }
     
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-    
-    showToast('Sistema de Notificações aberto em nova aba', 'success');
+    showToast('Sistema de Notificações aberto - Fazendo login automático...', 'success');
 }
 
 function showResidencia() {
