@@ -1,490 +1,459 @@
-# ANEST - Sistema de Gestão e Treinamento
+# 🏥 ANEST - Sistema de Gestão e Treinamento
 
-![ANEST Logo](https://via.placeholder.com/150x150.png?text=ANEST)
+<div align="center">
 
-Sistema completo de gestão, treinamento e gamificação para o serviço de Anestesiologia com foco nas Práticas Organizacionais Obrigatórias (ROPs) do Qmentum.
+![ANEST](https://img.shields.io/badge/ANEST-Sistema%20de%20Gest%C3%A3o-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Produ%C3%A7%C3%A3o-success?style=for-the-badge)
+![Versão](https://img.shields.io/badge/Vers%C3%A3o-1.0-orange?style=for-the-badge)
 
-## 📋 Índice
+**Sistema completo de gestão de qualidade, treinamento gamificado e documentação para serviços de anestesiologia**
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Funcionalidades](#funcionalidades)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Instalação e Configuração](#instalação-e-configuração)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Como Usar](#como-usar)
-- [Sistema de Pontuação](#sistema-de-pontuação)
-- [ROPs Implementadas](#rops-implementadas)
-- [Contribuindo](#contribuindo)
-- [Suporte](#suporte)
+[🚀 Demo](#) • [📖 Documentação](#documentação) • [🎮 Features](#features) • [🔧 Instalação](#instalação)
 
-## 🎯 Sobre o Projeto
+</div>
 
-O ANEST é uma plataforma web moderna desenvolvida para o serviço de Anestesiologia, integrando:
+---
 
-- **Sistema de Quiz Gamificado**: Mais de 780 questões sobre as 26 ROPs (Práticas Organizacionais Obrigatórias)
-- **Gestão de Documentos**: Acesso organizado a protocolos, políticas, formulários e manuais
-- **Residência Médica**: Área específica com aulas, artigos, escalas e gestão de estágios
-- **Ranking e Competição**: Sistema de pontuação e ranking entre usuários
-- **Relatórios de Segurança**: Acompanhamento de indicadores de qualidade
+## 📱 Sobre o Projeto
 
-## ✨ Funcionalidades
+O **ANEST** é uma aplicação web moderna e completa desenvolvida para gestão de qualidade e treinamento em anestesiologia. Integra documentação técnica, quiz gamificado baseado em ROPs (Práticas Organizacionais Obrigatórias) do Qmentum, e ferramentas de gestão para residência médica.
+
+### 🎯 Objetivos
+
+- ✅ Centralizar protocolos, políticas e documentos técnicos
+- ✅ Treinar equipes através de gamificação
+- ✅ Estimular competição saudável e aprendizado contínuo
+- ✅ Avaliar conhecimento em ROPs do Qmentum
+- ✅ Gerenciar residência médica e escalas
+- ✅ Fornecer áudio aulas educativas
+
+---
+
+## ✨ Features
 
 ### 🔐 Autenticação
 - Login com email e senha
-- Login integrado com Google
-- Recuperação de senha por email
+- Login com Google (OAuth)
 - Registro de novos usuários
+- Recuperação de senha
+- Persistência de sessão
 
-### 🎮 Sistema de Quiz ROPs
-- **6 Macroáreas** de conhecimento
-- **26 Subdivisões** com questões específicas
-- **30+ questões** por subdivisão
-- Modo "Todas Embaralhadas" por macroárea
-- Simulado geral com 50+ questões
-- Explicações detalhadas para cada resposta
-- Sistema de pontuação e progresso individual
+### 🎮 ROPs - Quiz Gamificado
 
-### 🏆 Gamificação
-- Sistema de pontos (10 pontos por acerto)
-- Ranking geral, mensal e semanal
-- Troféus para top 3 posições
-- Acompanhamento de progresso por tema
-- Estatísticas detalhadas de desempenho
+<details>
+<summary><b>6 Macro Áreas com 26 Subdivisões (ROPs)</b></summary>
 
-### 📚 Gestão de Conhecimento
-- Biblioteca de protocolos
-- Políticas institucionais
-- Formulários e documentos
-- Manuais técnicos
-- Relatórios trimestrais de segurança
-- Mapeamento de processos e riscos
+#### 🛡️ Macro Área 1 – Cultura de Segurança
+- ROP 1.1 – Responsabilização pela Qualidade (30 questões) ✅
+- ROP 1.2 – Gestão de Incidentes (30 questões) ✅
+- ROP 1.3 – Relatórios Trimestrais (30 questões) ✅
+- ROP 1.4 – Divulgação de Incidentes (30 questões) ✅
 
-### 👨‍⚕️ Residência Médica
-- Área de aulas e material didático
-- Biblioteca de artigos científicos
-- Escalas de plantão
-- Gestão de estágios
-- Programação de férias
+#### 💬 Macro Área 2 – Comunicação
+- ROP 2.1 – Identificação do Cliente (30 questões) ✅
+- ROP 2.2 – Lista de Abreviações Perigosas
+- ROP 2.3 – Conciliação Medicamentosa
+- ROP 2.4 – Conciliação em Internação
+- ROP 2.5 – Conciliação Ambulatorial
+- ROP 2.6 – Conciliação em Emergência
+- ROP 2.7 – Lista de Verificação Cirúrgica
+- ROP 2.8 – Transferência de Informações (Handoff)
 
-## 🛠️ Tecnologias Utilizadas
+#### 💊 Macro Área 3 – Uso de Medicamentos
+- ROP 3.1 – Uso Racional de Antimicrobianos
+- ROP 3.2 – Eletrólitos Concentrados
+- ROP 3.3 – Segurança no Uso da Heparina
+- ROP 3.4 – Medicamentos de Alta Vigilância (MAV)
+- ROP 3.5 – Segurança das Bombas de Infusão
+- ROP 3.6 – Segurança no Uso de Narcóticos
+
+#### 👥 Macro Área 4 – Vida Profissional
+- ROP 4.1 – Programa de Manutenção Preventiva
+- ROP 4.2 – Capacitação e Treinamento
+- ROP 4.3 – Prevenção de Violência no Trabalho
+- ROP 4.4 – Fluxo de Clientes
+- ROP 4.5 – Plano de Segurança do Paciente
+
+#### 🦠 Macro Área 5 – Prevenção de Infecções
+- ROP 5.1 – Aderência à Higiene das Mãos
+- ROP 5.2 – Higiene das Mãos: Treinamento
+- ROP 5.3 – Taxas de Infecção
+- ROP 5.4 – Reprocessamento
+
+#### ⚠️ Macro Área 6 – Avaliação de Riscos
+- ROP 6.1 – Prevenção de Quedas
+- ROP 6.2 – Prevenção de Úlceras por Pressão
+- ROP 6.3 – Prevenção de Suicídio
+- ROP 6.4 – Profilaxia para TEV
+- ROP 6.5 – Tratamento da Pele e Feridas
+
+</details>
+
+**Recursos do Quiz:**
+- 🎯 Quiz individual por ROP
+- 🔀 Quiz completo de macro área (todas ROPs embaralhadas)
+- 📝 Simulado geral (50+ questões de todos os temas)
+- 🏆 Sistema de pontuação e ranking
+- 📊 Gráficos de desempenho
+- 💡 Explicações detalhadas para cada questão
+- 🎖️ Badges e conquistas
+
+### 📚 Gestão de Documentos
+
+- **Protocolos Assistenciais** (15+ documentos)
+- **Políticas Institucionais**
+- **Formulários Técnicos**
+- **Manuais Operacionais**
+- **Relatórios de Segurança**
+- **Mapeamento de Processos**
+- **Mapeamento de Riscos**
+- **Plano de Segurança do Paciente**
+
+### 🎙️ Podcasts ROPs
+
+Áudio aulas educativas organizadas por macro área:
+- 🛡️ Cultura de Segurança (4 áudios disponíveis)
+- 💬 Comunicação (em breve)
+- 💊 Uso de Medicamentos (em breve)
+- 👥 Vida Profissional (em breve)
+- 🦠 Prevenção de Infecções (em breve)
+- ⚠️ Avaliação de Riscos (em breve)
+
+### 🏥 Residência Médica
+
+- 📖 Aulas
+- 📄 Artigos Científicos
+- 📅 Escalas e Plantões
+- 🏨 Estágios
+- 🏖️ Controle de Férias
+
+---
+
+## 🛠️ Tecnologias
 
 ### Frontend
-- **HTML5**: Estrutura semântica
-- **CSS3**: Design moderno e responsivo com gradientes e animações
-- **JavaScript (ES6+)**: Lógica da aplicação
-- **Font Awesome**: Ícones vetoriais
-- **Google Fonts (Inter)**: Tipografia moderna
+- **HTML5** - Estrutura semântica
+- **CSS3** - Design moderno com Grid, Flexbox e Animations
+- **JavaScript ES6+** - Lógica da aplicação
+- **Font Awesome 6** - Iconografia
+- **Chart.js** - Gráficos e visualizações
 
-### Backend/Database
-- **Firebase Authentication**: Gerenciamento de usuários
-- **Cloud Firestore**: Banco de dados NoSQL em tempo real
-- **Firebase Hosting**: (Opcional) Hospedagem da aplicação
+### Backend/Serviços
+- **Firebase Authentication** - Sistema de login
+- **Firebase Firestore** - Banco de dados NoSQL em tempo real
+- **GitHub Pages** - Hospedagem estática
 
-### Bibliotecas
-- **Chart.js**: Gráficos de desempenho (preparado para implementação)
+### Arquitetura
+```
+┌─────────────────────────────────────┐
+│         Interface (HTML/CSS)        │
+└──────────────┬──────────────────────┘
+               │
+       ┌───────┴────────┐
+       │                │
+┌──────▼──────┐  ┌──────▼──────────┐
+│  Estilos    │  │     Lógica      │
+│  (CSS)      │  │  (JavaScript)   │
+└─────────────┘  └─────┬───────────┘
+                       │
+          ┌────────────┼────────────┐
+          │            │            │
+    ┌─────▼────┐ ┌─────▼────┐ ┌────▼─────┐
+    │  Dados   │ │Documentos│ │ Firebase │
+    │  ROPs    │ │  Data    │ │  Config  │
+    └──────────┘ └──────────┘ └────┬─────┘
+                                    │
+                             ┌──────▼──────┐
+                             │   Firebase   │
+                             │  (Cloud)     │
+                             └─────────────┘
+```
 
-## 📦 Instalação e Configuração
+---
+
+## 🚀 Instalação
 
 ### Pré-requisitos
-- Navegador web moderno (Chrome, Firefox, Safari, Edge)
-- Conta no Firebase (gratuita)
-- Editor de código (VSCode recomendado)
 
-### Passo 1: Configuração do Firebase
+- Conta no [GitHub](https://github.com)
+- Conta no [Firebase](https://firebase.google.com)
+- Git instalado
+- Navegador moderno (Chrome, Firefox, Safari, Edge)
 
-1. Acesse [Firebase Console](https://console.firebase.google.com/)
-2. O projeto já está configurado com as credenciais:
-   - Project ID: `desafio-rops-app`
-   - As configurações já estão no arquivo `firebase-config.js`
+### 📦 Clonar o Repositório
 
-3. Ative os seguintes serviços no Firebase Console:
-   - **Authentication**: Habilite Email/Password e Google
-   - **Firestore Database**: Crie em modo de produção
-   - **Rules do Firestore**: Use as regras abaixo
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Users collection
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
-    }
-    
-    // Quiz results collection
-    match /quiz_results/{resultId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-    }
-  }
-}
-```
-
-### Passo 2: Estrutura de Arquivos
-
-```
-Qmentum/
-├── App/
-│   ├── index.html           # Página principal
-│   ├── styles.css           # Estilos da aplicação
-│   ├── app.js               # Lógica principal
-│   ├── firebase-config.js   # Configuração do Firebase
-│   └── rops-data.js         # Banco de dados de questões
-├── Documentos/              # Documentos do serviço
-│   ├── 1 - Protocolos/
-│   ├── 2 - Politicas/
-│   ├── 3 - Formulários/
-│   └── ...
-├── Podcasts/                # Áudio aulas (futura implementação)
-└── README.md                # Esta documentação
-```
-
-### Passo 3: Executar Localmente
-
-1. **Opção A - Servidor Local Simples:**
 ```bash
-# Navegue até a pasta App
-cd /Users/guilherme/Documents/Qmentum/App
+# Clone o repositório
+git clone https://github.com/SEU-USUARIO/anest-app.git
 
-# Python 3
+# Entre na pasta
+cd anest-app/App
+```
+
+### 🌐 Teste Local
+
+```bash
+# Opção 1: Python (mais simples)
 python3 -m http.server 8000
 
-# Python 2
-python -m SimpleHTTPServer 8000
+# Opção 2: Node.js
+npx serve
 
-# Node.js (npx)
-npx http-server -p 8000
+# Opção 3: PHP
+php -S localhost:8000
+
+# Abra o navegador em: http://localhost:8000
 ```
 
-2. **Opção B - Live Server (VSCode):**
-   - Instale a extensão "Live Server"
-   - Clique direito em `index.html`
-   - Selecione "Open with Live Server"
+### ☁️ Deploy no GitHub Pages
 
-3. Acesse: `http://localhost:8000`
-
-### Passo 4: Deploy (Opcional)
-
-#### Firebase Hosting
+1. **Fazer fork ou criar repositório próprio**
+2. **Fazer push do código**
 ```bash
-# Instale o Firebase CLI
-npm install -g firebase-tools
-
-# Faça login
-firebase login
-
-# Inicialize o projeto
-firebase init hosting
-
-# Selecione a pasta App como public directory
-# Configure como Single Page Application: Sim
-
-# Deploy
-firebase deploy
+git add .
+git commit -m "Initial commit"
+git push origin main
 ```
+3. **Ativar GitHub Pages**
+   - Settings → Pages
+   - Source: Deploy from branch
+   - Branch: `main`
+   - Folder: `/App`
+   - Save
 
-#### GitHub Pages
-1. Crie um repositório no GitHub
-2. Faça upload da pasta App
-3. Nas configurações do repositório:
-   - GitHub Pages > Source > Branch: main > Folder: /App
-4. Acesse: `https://seu-usuario.github.io/nome-repositorio/`
+4. **Aguardar deploy** (1-5 minutos)
+5. **Acessar:** `https://SEU-USUARIO.github.io/anest-app/`
 
-## 📁 Estrutura do Projeto
+### 🔥 Configurar Firebase
 
-### Arquivos Principais
-
-#### `index.html`
-Estrutura completa da aplicação incluindo:
-- Tela de loading
-- Sistema de login/registro
-- Interface principal com 12 seções
-- Telas de quiz, resultados e ranking
-- Sistema de notificações toast
-
-#### `styles.css`
-Estilos modernos com:
-- Design responsivo (mobile-first)
-- Gradientes e animações
-- Componentes reutilizáveis
-- Tema de cores consistente
-- Suporte a dark mode (preparado)
-
-#### `firebase-config.js`
-Configuração do Firebase Authentication e Firestore
-
-#### `rops-data.js`
-Banco de dados estruturado com:
-- 6 macroáreas de conhecimento
-- 26 subdivisões (ROPs)
-- 780+ questões de múltipla escolha
-- Explicações detalhadas
-- Metadados (ícones, cores, áudio aulas)
-
-#### `app.js`
-Lógica completa incluindo:
-- Gerenciamento de autenticação
-- Sistema de navegação
-- Engine do quiz
-- Sistema de pontuação
-- Gerenciamento de progresso
-- Integração com Firestore
-
-## 🎓 Como Usar
-
-### Para Usuários
-
-#### 1. Primeiro Acesso
-1. Acesse a aplicação
-2. Clique em "Registrar"
-3. Preencha seus dados ou use "Continuar com Google"
-4. Acesse a página inicial
-
-#### 2. Navegando no Sistema
-- **Página Inicial**: 12 cards com as principais seções
-- **ROPs - Desafio**: Acesse o sistema de quiz gamificado
-- **Outros Ícones**: Acesso a documentos e recursos
-
-#### 3. Fazendo Quizzes
-1. Clique em "ROPs - Desafio"
-2. Escolha uma macroárea (ex: Cultura de Segurança)
-3. Selecione uma subdivisão ou "Todas Embaralhadas"
-4. Responda as questões:
-   - Clique na resposta correta
-   - Ganhe 10 pontos por acerto
-   - Veja explicação detalhada
-   - Avance para próxima questão
-5. Ao final, veja seus resultados e estatísticas
-
-#### 4. Acompanhando Progresso
-- Porcentagem de conclusão em cada card
-- Melhor pontuação por tema
-- Ranking geral com sua posição
-- Total de pontos acumulados
-
-### Para Administradores
-
-#### Adicionar Novas Questões
-Edite o arquivo `rops-data.js`:
+1. Acesse [Firebase Console](https://console.firebase.google.com)
+2. Crie/selecione projeto
+3. Ative **Authentication** (Email e Google)
+4. Ative **Firestore Database**
+5. Em **Authentication → Settings → Authorized domains**, adicione:
+   - `localhost`
+   - `SEU-USUARIO.github.io`
+6. Copie as credenciais e atualize `firebase-config.js`
 
 ```javascript
-{
-    question: "Sua pergunta aqui?",
-    options: [
-        "Opção A",
-        "Opção B - Correta",
-        "Opção C",
-        "Opção D"
-    ],
-    correctAnswer: 1, // Índice da resposta correta (0-3)
-    explanation: "Explicação detalhada da resposta correta..."
-}
+const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU-PROJETO.firebaseapp.com",
+    projectId: "SEU-PROJETO-ID",
+    storageBucket: "SEU-PROJETO.appspot.com",
+    messagingSenderId: "SEU-ID",
+    appId: "SEU-APP-ID"
+};
 ```
 
-#### Adicionar Áudio Aulas
-1. Coloque arquivos .m4a na pasta `Podcasts/`
-2. Atualize o campo `audioFile` em `rops-data.js`:
-```javascript
-audioFile: "Podcasts/rop-1-1-cultura-seguranca.m4a"
+---
+
+## 📖 Documentação
+
+- 📘 **[GUIA_DEPLOY_GITHUB.md](GUIA_DEPLOY_GITHUB.md)** - Deploy completo passo a passo
+- 📗 **[STATUS_APLICATIVO.md](STATUS_APLICATIVO.md)** - Status e funcionalidades
+- 📙 **[COMO_ADICIONAR_QUESTOES.md](COMO_ADICIONAR_QUESTOES.md)** - Adicionar questões
+- 📕 **[PROJETO_COMPLETO.md](PROJETO_COMPLETO.md)** - Visão geral técnica
+
+---
+
+## 📊 Estatísticas do Projeto
+
+```
+📁 Arquivos:               6
+📝 Linhas de Código:   4,646
+❓ Questões:             150+
+📄 Documentos:           15+
+🎙️ Áudio Aulas:           4
 ```
 
-#### Adicionar Documentos
-1. Coloque PDFs nas pastas apropriadas em `Documentos/`
-2. Os arquivos estarão disponíveis automaticamente
+### Distribuição de Código
+```
+app.js:           1,187 linhas  (Lógica principal)
+rops-data.js:     1,761 linhas  (Banco de questões)
+styles.css:       1,047 linhas  (Design)
+index.html:         320 linhas  (Interface)
+documents-data:     306 linhas  (Dados documentos)
+firebase-config:     25 linhas  (Configuração)
+```
 
-#### Gerenciar Usuários
-Acesse o Firebase Console > Authentication para:
-- Ver usuários registrados
-- Desabilitar/habilitar contas
-- Redefinir senhas
-- Visualizar estatísticas de acesso
+---
 
-## 🏆 Sistema de Pontuação
+## 🎮 Como Usar
 
-### Pontos
-- **Acerto**: +10 pontos
-- **Erro**: 0 pontos
-- Pontos acumulam no perfil do usuário
+### 1️⃣ Primeiro Acesso
 
-### Ranking
-Calculado baseado em:
-1. Total de pontos acumulados
-2. Número de tópicos completos (≥70% acertos)
-3. Atualizado em tempo real
+1. Acesse a URL do aplicativo
+2. Clique em **"Criar nova conta"**
+3. Preencha: Nome, Email e Senha
+4. Ou use **"Entrar com Google"**
 
-### Níveis de Desempenho
-- **Excelente**: ≥80% de acertos
-- **Bom**: 60-79% de acertos
-- **Precisa Melhorar**: <60% de acertos
+### 2️⃣ Navegar no Menu
 
-### Badges/Troféus
-- 🥇 **1º Lugar**: Ouro
-- 🥈 **2º Lugar**: Prata
-- 🥉 **3º Lugar**: Bronze
+Após login, você verá 13 módulos:
+- 🎓 **Residência Médica** - Gestão acadêmica
+- 🎮 **ROPs - Desafio** - Quiz gamificado
+- 🎙️ **Podcasts ROPs** - Áudio aulas
+- 📋 **Protocolos** - 15+ PDFs
+- 🛡️ **Políticas** - Documentos institucionais
+- 📝 **Formulários** - Templates
+- 📚 **Manuais** - Guias técnicos
+- 📊 **Relatórios** - Segurança do paciente
+- 🔄 **Processos** - Mapeamentos
+- ⚠️ **Riscos** - Análises
+- 📄 **Termos** - Documentos legais
+- 🌡️ **Clima** - Pesquisas
+- 📋 **Plano** - Segurança do paciente
 
-## 📊 ROPs Implementadas
+### 3️⃣ Jogar Quiz ROPs
 
-### Macroárea 1: Cultura de Segurança
-- ✅ ROP 1.1 – Responsabilização pela Qualidade (30 questões)
-- ✅ ROP 1.2 – Gestão de Incidentes (30 questões)
-- ✅ ROP 1.3 – Relatórios Trimestrais (30 questões)
-- ✅ ROP 1.4 – Divulgação de Incidentes (30 questões)
+1. Clique em **"ROPs - Desafio"**
+2. Escolha uma **Macro Área**
+3. Escolha uma **ROP específica** ou **"Jogar com todas"**
+4. Responda as questões
+5. Veja explicações ao errar
+6. Confira seu score final
+7. Compare no **Ranking**
 
-### Macroárea 2: Comunicação
-- ✅ ROP 2.1 – Identificação do Cliente (30 questões)
-- ⏳ ROP 2.2 – Lista de Abreviações Perigosas
-- ⏳ ROP 2.3 – Conciliação Medicamentosa
-- ⏳ ROP 2.4 – Conciliação em Internação
-- ⏳ ROP 2.5 – Conciliação Ambulatorial
-- ⏳ ROP 2.6 – Conciliação em Emergência
-- ⏳ ROP 2.7 – Lista de Verificação Cirúrgica
-- ⏳ ROP 2.8 – Transferência de Informações
+### 4️⃣ Ouvir Podcasts
 
-### Macroárea 3: Uso de Medicamentos
-- ⏳ ROP 3.1 – Uso Racional de Antimicrobianos
-- ⏳ ROP 3.2 – Eletrólitos Concentrados
-- ⏳ ROP 3.3 – Segurança no Uso da Heparina
-- ⏳ ROP 3.4 – Medicamentos de Alta Vigilância
-- ⏳ ROP 3.5 – Segurança das Bombas de Infusão
-- ⏳ ROP 3.6 – Segurança no Uso de Narcóticos
+1. Clique em **"Podcasts ROPs"**
+2. Escolha uma **Macro Área**
+3. Clique em um áudio
+4. Use os controles do player
 
-### Macroárea 4: Vida Profissional
-- ⏳ ROP 4.1 – Programa de Manutenção Preventiva
-- ⏳ ROP 4.2 – Capacitação e Treinamento
-- ⏳ ROP 4.3 – Prevenção de Violência
-- ⏳ ROP 4.4 – Fluxo de Clientes
-- ⏳ ROP 4.5 – Plano de Segurança do Paciente
+### 5️⃣ Acessar Documentos
 
-### Macroárea 5: Prevenção de Infecções
-- ⏳ ROP 5.1 – Aderência à Higiene das Mãos
-- ⏳ ROP 5.2 – Higiene das Mãos: Capacitação
-- ⏳ ROP 5.3 – Taxas de Infecção
-- ⏳ ROP 5.4 – Reprocessamento
+1. Clique no módulo desejado (Protocolos, Políticas, etc.)
+2. Navegue pela lista
+3. Use **filtros** por categoria
+4. Clique para **abrir o PDF**
 
-### Macroárea 6: Avaliação de Riscos
-- ⏳ ROP 6.1 – Prevenção de Quedas
-- ⏳ ROP 6.2 – Prevenção de Úlceras por Pressão
-- ⏳ ROP 6.3 – Prevenção de Suicídio
-- ⏳ ROP 6.4 – Profilaxia para TEV
-- ⏳ ROP 6.5 – Tratamento da Pele e Feridas
-
-**Status Atual**: 150/780 questões implementadas (19%)
-**Próximas Implementações**: ROPs 2.2 a 6.5
-
-## 🔄 Expansões Futuras
-
-### Em Desenvolvimento
-- [ ] Completar todas as 780 questões
-- [ ] Implementar áudio aulas
-- [ ] Adicionar gráficos de desempenho com Chart.js
-- [ ] Sistema de conquistas/badges
-- [ ] Modo de estudo (revisão de erros)
-- [ ] Exportação de certificados
-- [ ] Modo offline (PWA)
-- [ ] Notificações push
-- [ ] Chat entre usuários
-- [ ] Fórum de discussão
-
-### Melhorias Planejadas
-- [ ] Estatísticas avançadas por tema
-- [ ] Análise de tempo de resposta
-- [ ] Recomendações personalizadas
-- [ ] Sistema de flashcards
-- [ ] Quiz em equipe/multiplayer
-- [ ] Integração com Google Calendar (escalas)
-- [ ] Upload de documentos pelos usuários
-- [ ] Sistema de comentários em questões
+---
 
 ## 🤝 Contribuindo
 
-### Como Adicionar Conteúdo
+Contribuições são bem-vindas! Para contribuir:
 
-#### Adicionando Questões
-1. Abra `rops-data.js`
-2. Localize a subdivisão desejada
-3. Adicione no array `questions`:
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/NovaFeature`
+3. Commit suas mudanças: `git commit -m 'Adiciona nova feature'`
+4. Push para a branch: `git push origin feature/NovaFeature`
+5. Abra um Pull Request
 
-```javascript
-{
-    question: "Qual a definição de X?",
-    options: [
-        "Opção incorreta 1",
-        "Opção correta",
-        "Opção incorreta 2",
-        "Opção incorreta 3"
-    ],
-    correctAnswer: 1,
-    explanation: "Explicação completa e fundamentada da resposta."
-}
-```
+### 💡 Ideias para Contribuição
 
-#### Padrões de Qualidade
-- ✅ Questões claras e objetivas
-- ✅ 4 alternativas por questão
-- ✅ Apenas uma resposta correta
-- ✅ Explicação fundamentada (literatura/guidelines)
-- ✅ Linguagem profissional
-- ✅ Português correto
-
-### Reportando Bugs
-Abra uma issue no GitHub com:
-- Descrição do problema
-- Passos para reproduzir
-- Comportamento esperado
-- Screenshots (se aplicável)
-- Navegador e versão
-
-## 📞 Suporte
-
-### Contatos
-- **Email**: [seu-email@exemplo.com]
-- **Telefone**: [seu-telefone]
-- **GitHub**: [seu-usuario/repositorio]
-
-### Recursos
-- [Documentação do Firebase](https://firebase.google.com/docs)
-- [Guia do Qmentum](https://accreditation.ca/qmentum/)
-- [Manual das ROPs](./2023%20-%20Manual%20Qmentum%20-%20NOVAS%20ROPs%202.pdf)
-
-## 📝 Licença
-
-Este projeto é de uso interno do serviço de Anestesiologia. Todos os direitos reservados.
-
-**Desenvolvido com ❤️ para a equipe ANEST**
+- Adicionar questões para ROPs pendentes (630 questões)
+- Adicionar mais áudio aulas (24 áudios)
+- Traduzir para outros idiomas
+- Melhorar acessibilidade
+- Adicionar testes automatizados
+- Otimizar performance
+- Criar modo dark
+- Adicionar PWA features
 
 ---
 
-## 🎯 Estatísticas do Projeto
+## 📝 Roadmap
 
-- **Linhas de Código**: ~3000+ linhas
-- **Questões**: 150+ (meta: 780+)
-- **Macroáreas**: 6
-- **Subdivisões**: 26
-- **Funcionalidades**: 12 seções principais
-- **Tempo de Desenvolvimento**: [inserir]
-- **Última Atualização**: Outubro 2025
+### ✅ Versão 1.0 (Atual)
+- [x] Sistema de login completo
+- [x] 150+ questões de ROPs
+- [x] 15+ documentos integrados
+- [x] 4 áudio aulas
+- [x] Ranking e gamificação
+- [x] Interface moderna
+- [x] Deploy GitHub Pages
 
-## 🚀 Próximos Passos
+### 🔜 Versão 1.1 (Próxima)
+- [ ] Completar 780 questões (todas as ROPs)
+- [ ] Adicionar 24 áudio aulas restantes
+- [ ] Preencher módulo Residência Médica
+- [ ] Adicionar modo escuro
+- [ ] Implementar busca global
+- [ ] Sistema de notificações
 
-1. **Curto Prazo** (1-2 semanas)
-   - Completar questões das ROPs 2.2 a 2.8
-   - Implementar gráficos de desempenho
-   - Adicionar primeiras áudio aulas
-
-2. **Médio Prazo** (1-2 meses)
-   - Completar todas as 780 questões
-   - Implementar sistema de conquistas
-   - Adicionar modo de revisão
-
-3. **Longo Prazo** (3-6 meses)
-   - Desenvolver app mobile (React Native)
-   - Sistema de certificação
-   - Integração com LMS institucional
+### 🚀 Versão 2.0 (Futuro)
+- [ ] PWA (Progressive Web App)
+- [ ] Modo offline
+- [ ] App nativo (React Native)
+- [ ] Sistema de conquistas avançado
+- [ ] Multiplayer quiz em tempo real
+- [ ] Integração com calendário
+- [ ] Relatórios de desempenho por equipe
 
 ---
 
-**Versão**: 1.0.0
-**Data**: Outubro 2025
-**Autor**: [Seu Nome]
+## 🐛 Problemas Conhecidos
 
+- [ ] Áudios M4A podem não funcionar no Firefox (usar Chrome)
+- [ ] PDFs grandes podem demorar para carregar
+- [ ] Ranking pode ter delay de 1-2s na atualização
+- [ ] Algumas animações podem travar em dispositivos antigos
+
+Para reportar bugs, abra uma [Issue](https://github.com/SEU-USUARIO/anest-app/issues).
+
+---
+
+## 📄 Licença
+
+Este projeto é de uso interno da **ANEST**. Todos os direitos reservados.
+
+Baseado em diretrizes do **Qmentum** (Accreditation Canada).
+
+---
+
+## 👥 Equipe
+
+**Desenvolvido para ANEST**
+
+- 📧 Email: contato@anest.com.br
+- 🌐 Site: https://anest.com.br
+- 📱 WhatsApp: (XX) XXXXX-XXXX
+
+---
+
+## 🙏 Agradecimentos
+
+- **Qmentum/Accreditation Canada** - Pela base de ROPs
+- **Firebase** - Pela infraestrutura cloud gratuita
+- **GitHub** - Pelo hosting gratuito via Pages
+- **Font Awesome** - Pelos ícones
+- **Chart.js** - Pelos gráficos
+
+---
+
+## 📚 Recursos Úteis
+
+- [Documentação Firebase](https://firebase.google.com/docs)
+- [GitHub Pages Guide](https://pages.github.com)
+- [MDN Web Docs](https://developer.mozilla.org)
+- [JavaScript.info](https://javascript.info)
+- [CSS Tricks](https://css-tricks.com)
+
+---
+
+## ⭐ Suporte
+
+Se este projeto foi útil para você, considere:
+
+- ⭐ Dar uma estrela no GitHub
+- 📢 Compartilhar com colegas
+- 🐛 Reportar bugs
+- 💡 Sugerir melhorias
+- 🤝 Contribuir com código
+
+---
+
+<div align="center">
+
+**Desenvolvido com ❤️ para ANEST**
+
+![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=github&logoColor=white)
+
+**[⬆ Voltar ao topo](#-anest---sistema-de-gestão-e-treinamento)**
+
+</div>
