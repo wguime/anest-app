@@ -47,29 +47,23 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Toggle Dark Mode Button */
-.dark-mode-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9998;
-    background: white;
-    border: none;
-    padding: 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Toggle Dark Mode Button in Header */
+.dark-mode-toggle-header {
+    background: rgba(255, 255, 255, 0.1) !important;
     transition: all 0.3s ease;
 }
 
-.dark-mode-toggle:hover {
+.dark-mode-toggle-header:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
     transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode-toggle i {
-    font-size: 20px;
-    color: var(--primary-color);
+[data-theme="dark"] .dark-mode-toggle-header {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .dark-mode-toggle-header:hover {
+    background: rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ==================== LOADING SCREEN ==================== */
@@ -350,6 +344,12 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .app-header {
+    background: var(--bg-dark);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .header-content {
@@ -368,6 +368,18 @@ body {
     font-size: 24px;
     font-weight: 700;
     color: var(--primary-color);
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-fallback {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .logo i {
@@ -449,9 +461,21 @@ body {
     box-shadow: var(--shadow);
 }
 
+[data-theme="dark"] .menu-card {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .menu-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-hover);
+}
+
+[data-theme="dark"] .menu-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
 }
 
 .card-icon {
@@ -472,9 +496,18 @@ body {
     margin-bottom: 10px;
 }
 
+[data-theme="dark"] .menu-card h3 {
+    color: var(--text-dark);
+}
+
 .menu-card p {
     color: var(--text-light);
     font-size: 14px;
+}
+
+[data-theme="dark"] .menu-card p {
+    color: var(--text-light);
+    opacity: 0.8;
 }
 
 /* ==================== BACK BUTTON ==================== */

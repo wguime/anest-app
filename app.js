@@ -1041,55 +1041,43 @@ function showDocumentosGroup() {
 
 // ==================== NOTIFICAÇÕES ====================
 function abrirNotificacoes() {
-    const screen = document.getElementById('notificacoesScreen');
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">
-            <i class="fas fa-bell"></i> Notificações
-        </h2>
-        
-        <div style="background: white; border-radius: 20px; padding: 30px; margin-top: 30px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary-color);"></i>
-                <h3 style="color: var(--text-dark); margin-top: 20px;">Acessando Sistema de Notificações...</h3>
-                <p style="color: var(--text-light); margin-top: 10px;">
-                    Você será redirecionado automaticamente
-                </p>
-            </div>
-        </div>
-    `;
-    showScreen('notificacoes');
+    // Abre em nova aba com parâmetros de auto-login
+    const loginUrl = 'https://luizeuzebio.com.br/anest/index.php';
+    const email = 'anest@anest.com.br';
+    const senha = '123456';
     
-    // Auto-login via POST form
-    setTimeout(() => {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://luizeuzebio.com.br/anest/index.php';
-        form.target = '_blank';
-        
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        emailInput.value = 'anest@anest.com.br';
-        
-        const passwordInput = document.createElement('input');
-        passwordInput.type = 'hidden';
-        passwordInput.name = 'password';
-        passwordInput.value = '123456';
-        
-        form.appendChild(emailInput);
-        form.appendChild(passwordInput);
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-        
-        // Volta para home após 2 segundos
-        setTimeout(() => {
-            goHome();
-        }, 2000);
-    }, 1000);
+    // Cria um formulário temporário para POST
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = loginUrl;
+    form.target = '_blank';
+    form.style.display = 'none';
+    
+    // Adiciona campos de login
+    const fields = {
+        'email': email,
+        'username': email,
+        'user': email,
+        'login': email,
+        'password': senha,
+        'senha': senha,
+        'pass': senha,
+        'pwd': senha
+    };
+    
+    Object.keys(fields).forEach(name => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = fields[name];
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    showToast('Sistema de Notificações aberto em nova aba', 'success');
 }
 
 function showResidencia() {

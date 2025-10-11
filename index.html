@@ -88,10 +88,16 @@
         <header class="app-header">
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-heartbeat"></i>
-                    <span>ANEST</span>
+                    <img src="./logo-anest.png" alt="ANEST" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="logo-fallback" style="display: none;">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>ANEST</span>
+                    </div>
                 </div>
                 <div class="user-menu">
+                    <button class="btn-icon dark-mode-toggle-header" onclick="toggleDarkMode()" title="Alternar modo escuro">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                    </button>
                     <span id="userName" class="user-name"></span>
                     <button class="btn-icon" onclick="showProfile()">
                         <i class="fas fa-user-circle"></i>
@@ -107,11 +113,6 @@
         <main class="main-content">
             <!-- Home Screen -->
             <div id="homeScreen" class="screen active">
-                <!-- Dark Mode Toggle -->
-                <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo escuro">
-                    <i class="fas fa-moon" id="darkModeIcon"></i>
-                </button>
-
                 <h2 class="screen-title">Bem-vindo ao Sistema ANEST</h2>
                 
                 <div class="menu-grid">
