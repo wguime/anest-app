@@ -1708,7 +1708,380 @@ const ropsData = {
                     // 30 questions about dangerous abbreviations...
                 ]
             },
-            // ... more ROPs in Comunicação
+            
+            "rop-2-7": {
+                title: "ROP 2.7 – Lista de Verificação para Cirurgia Segura",
+                audioFile: null,
+                questions: [
+                    {
+                        question: "Qual é o objetivo principal do checklist de cirurgia segura da OMS?",
+                        options: ["Aumentar tempo cirúrgico", "Reduzir complicações e mortalidade cirúrgica", "Gerar documentação legal", "Substituir protocolos institucionais"],
+                        correctAnswer: 1,
+                        explanation: "O checklist visa reduzir complicações evitáveis e mortalidade através de verificações sistematizadas nos momentos críticos da cirurgia."
+                    },
+                    {
+                        question: "Quantas fases tem o checklist de cirurgia segura?",
+                        options: ["2 fases", "3 fases: antes da indução, antes da incisão, antes de sair da sala", "4 fases", "5 fases"],
+                        correctAnswer: 1,
+                        explanation: "O checklist tem 3 fases críticas: Sign In (antes da indução anestésica), Time Out (antes da incisão cirúrgica) e Sign Out (antes do paciente sair da sala)."
+                    },
+                    {
+                        question: "Quem deve liderar a fase Time Out?",
+                        options: ["Apenas o cirurgião", "Qualquer membro da equipe designado", "Sempre o anestesista", "Apenas a enfermagem"],
+                        correctAnswer: 1,
+                        explanation: "Qualquer membro da equipe pode liderar, mas deve haver designação clara. Frequentemente é o cirurgião ou enfermeiro circulante."
+                    },
+                    {
+                        question: "O que deve ser confirmado na fase Sign In?",
+                        options: ["Apenas identidade do paciente", "Identidade, sítio, procedimento, consentimento, marcação", "Somente consentimento", "Apenas tipo sanguíneo"],
+                        correctAnswer: 1,
+                        explanation: "Sign In confirma: identidade do paciente, sítio cirúrgico, procedimento, consentimento informado, marcação do sítio e segurança anestésica."
+                    },
+                    {
+                        question: "Quando deve ser feita a marcação do sítio cirúrgico?",
+                        options: ["Na sala cirúrgica", "Antes do paciente chegar ao centro cirúrgico, com ele acordado", "Após anestesia", "Não é necessária"],
+                        correctAnswer: 1,
+                        explanation: "Marcação deve ser feita ANTES da ida ao centro cirúrgico, com paciente acordado e participando, pelo cirurgião que realizará o procedimento."
+                    },
+                    {
+                        question: "Em que tipo de cirurgia a marcação é obrigatória?",
+                        options: ["Todas cirurgias", "Cirurgias com lateralidade, múltiplos níveis ou múltiplos dedos", "Apenas ortopedia", "Nenhuma, é opcional"],
+                        correctAnswer: 1,
+                        explanation: "Obrigatória em: cirurgias com lateralidade (direito/esquerdo), múltiplos níveis (coluna), múltiplos dedos/artelhos, múltiplos órgãos."
+                    },
+                    {
+                        question: "Qual o momento ideal para antibioticoprofilaxia?",
+                        options: ["Qualquer hora antes da cirurgia", "60 minutos antes da incisão (30 min para vancomicina)", "Após a incisão", "Não é necessária"],
+                        correctAnswer: 1,
+                        explanation: "Antibiótico deve ser administrado 60 minutos antes da incisão (30 minutos para vancomicina e fluoroquinolonas) para concentração tecidual adequada."
+                    },
+                    {
+                        question: "O que caracteriza uma 'pausa cirúrgica' efetiva (Time Out)?",
+                        options: ["Apenas o médico fala", "Toda equipe para, ouve e confirma informações críticas", "Conversa informal", "Pode ser feita durante outros procedimentos"],
+                        correctAnswer: 1,
+                        explanation: "Time Out efetivo: TODA equipe para atividades, ouve ativamente, confirma verbalmente informações críticas. Ambiente silencioso e focado."
+                    },
+                    {
+                        question: "Quais informações devem ser compartilhadas no Time Out?",
+                        options: ["Apenas nome do paciente", "Nome, procedimento, sítio, lateralidade, riscos específicos, preocupações da equipe", "Somente o procedimento", "Não há padronização"],
+                        correctAnswer: 1,
+                        explanation: "Deve incluir: identidade completa, procedimento exato, sítio e lateralidade, passos críticos antecipados, duração prevista, preocupações de qualquer membro."
+                    },
+                    {
+                        question: "Quando realizar contagem de instrumentos e compressas?",
+                        options: ["Apenas no final", "Antes da incisão, antes de fechar cavidade e ao final", "Não é necessário", "Apenas se suspeitar de problema"],
+                        correctAnswer: 1,
+                        explanation: "Contagem deve ser feita: antes do início (baseline), antes de fechar cada camada/cavidade e ao final. Registrar e conferir com circulante e instrumentador."
+                    },
+                    {
+                        question: "O que fazer se a contagem de instrumentos estiver incorreta?",
+                        options: ["Ignorar, provavelmente erro de contagem", "Não fechar, realizar radiografia intraoperatória, procurar ativamente", "Fechar e fazer raio-X depois", "Avisar no pós-operatório"],
+                        correctAnswer: 1,
+                        explanation: "NÃO fechar até resolver: revisar contagem, procurar ativamente material, realizar radiografia intraoperatória se necessário, documentar detalhadamente."
+                    },
+                    {
+                        question: "Como deve ser a identificação verbal do paciente?",
+                        options: ["Nome completo e data de nascimento", "Nome completo, data de nascimento e pelo menos mais um identificador", "Apenas nome", "Número do leito"],
+                        correctAnswer: 1,
+                        explanation: "Usar no mínimo 2 identificadores: nome completo + data de nascimento OU nome completo + número de prontuário. Nunca usar apenas número de leito."
+                    },
+                    {
+                        question: "Qual a importância da confirmação verbal de alergias?",
+                        options: ["Não é importante", "Crítica: previne reações anafiláticas e permite preparo de medicamentos alternativos", "Apenas para documentação", "Só importante para antibióticos"],
+                        correctAnswer: 1,
+                        explanation: "Essencial confirmar alergias verbalmente para prevenir administração de alérgenos, ter medicamentos alternativos preparados e equipe pronta para reação."
+                    },
+                    {
+                        question: "O que deve ser verificado sobre disponibilidade de sangue?",
+                        options: ["Apenas se cirurgia grande", "Confirmar tipo sanguíneo, reserva conforme protocolo, disponibilidade e validade", "Não precisa verificar", "Só se paciente Testemunha de Jeová"],
+                        correctAnswer: 1,
+                        explanation: "Verificar: tipo sanguíneo confirmado, reserva adequada ao procedimento, sangue disponível e válido, acionamento de protocolo transfusão maciça se necessário."
+                    },
+                    {
+                        question: "Como proceder com equipamentos especiais necessários?",
+                        options: ["Buscar se precisar", "Confirmar disponibilidade, funcionamento e esterilização ANTES de iniciar", "Improvisar", "Não há necessidade de verificar"],
+                        correctAnswer: 1,
+                        explanation: "ANTES do início: confirmar disponibilidade de todos equipamentos especiais, testar funcionamento, verificar esterilização adequada, ter backup se aplicável."
+                    },
+                    {
+                        question: "O que fazer se houver implantes na cirurgia?",
+                        options: ["Apenas documentar depois", "Verificar disponibilidade, validade, rastreabilidade e registrar todos os dados", "Usar qualquer implante disponível", "Não precisa documentar"],
+                        correctAnswer: 1,
+                        explanation: "Para implantes: verificar corretos e disponíveis, confirmar validade e esterilização, garantir rastreabilidade, registrar fabricante/lote/validade em prontuário."
+                    },
+                    {
+                        question: "Qual a importância da revisão de exames de imagem?",
+                        options: ["Não é necessária", "Fundamental: confirma lateralidade, níveis, anatomia e planejamento", "Apenas para cirurgias complexas", "Só para neurocirurgia"],
+                        correctAnswer: 1,
+                        explanation: "Exames devem estar na sala e serem revisados no Time Out: confirmam lateralidade, níveis vertebrais, anatomia específica, planejamento cirúrgico."
+                    },
+                    {
+                        question: "Como deve ser a comunicação de riscos específicos?",
+                        options: ["Apenas cirurgião conhece", "Todos membros compartilham preocupações: cirurgia, anestesia, enfermagem", "Não é necessário discutir", "Apenas se complicar"],
+                        correctAnswer: 1,
+                        explanation: "Cada membro (cirurgião, anestesista, enfermeiro) deve verbalizar preocupações específicas: riscos antecipados, passos críticos, necessidades especiais."
+                    },
+                    {
+                        question: "O que verificar sobre posicionamento do paciente?",
+                        options: ["Qualquer posição serve", "Correto para procedimento, proteção de proeminências, dispositivos de segurança", "Apenas conforto", "Não é importante"],
+                        correctAnswer: 1,
+                        explanation: "Verificar: posição apropriada para procedimento, proteção de proeminências ósseas, coxins adequados, dispositivos de segurança, prevenção de lesões."
+                    },
+                    {
+                        question: "Como proceder com próteses e objetos do paciente?",
+                        options: ["Deixar no paciente", "Remover e guardar com segurança, documentar remoção e devolução", "Descartar", "Não é responsabilidade da equipe"],
+                        correctAnswer: 1,
+                        explanation: "Remover próteses dentárias, aparelhos auditivos, óculos, joias. Guardar com segurança identificada, documentar remoção e devolução ao paciente."
+                    },
+                    {
+                        question: "Qual importância da profilaxia de tromboembolismo venoso?",
+                        options: ["Não é urgente", "Deve ser verificada e implementada conforme protocolo antes da cirurgia", "Apenas no pós-operatório", "Não é necessária"],
+                        correctAnswer: 1,
+                        explanation: "Profilaxia deve ser avaliada pré-operatoriamente e implementada conforme protocolo institucional baseado em riscos do paciente e procedimento."
+                    },
+                    {
+                        question: "Como deve ser o registro do checklist?",
+                        options: ["Apenas verbal", "Documentado no prontuário, completo, assinado pelos responsáveis", "Opcional", "Apenas se houver problema"],
+                        correctAnswer: 1,
+                        explanation: "Checklist deve ser documentado: preenchido completamente, assinado pelos profissionais responsáveis, arquivado em prontuário, auditável."
+                    },
+                    {
+                        question: "O que fazer se houver resistência da equipe ao checklist?",
+                        options: ["Desistir", "Educação, engajamento da liderança, demonstrar benefícios, cultura de segurança", "Impor autoritariamente", "Fazer apenas no papel"],
+                        correctAnswer: 1,
+                        explanation: "Requer: educação contínua sobre benefícios, engajamento da liderança, feedback de resultados, integrar à cultura, reconhecer equipes exemplares."
+                    },
+                    {
+                        question: "Qual o papel do coordenador do checklist?",
+                        options: ["Apenas preencher papel", "Garantir execução completa, ambiente adequado, participação de todos", "Criticar quem erra", "Não há papel específico"],
+                        correctAnswer: 1,
+                        explanation: "Coordenador: garante ambiente apropriado (silêncio, atenção), cada item verificado, toda equipe participa, documenta adequadamente."
+                    },
+                    {
+                        question: "Como adaptar checklist para emergências?",
+                        options: ["Não usar em emergências", "Versão abreviada focando itens críticos de segurança", "Ignorar completamente", "Fazer tudo mesmo que atrase"],
+                        correctAnswer: 1,
+                        explanation: "Em emergências: versão abreviada focando itens críticos (identidade, sítio, alergias, sangue), completa outros itens quando possível, sem atrasar tratamento."
+                    },
+                    {
+                        question: "Importância da confirmação de esterilização de materiais?",
+                        options: ["Assumir que está estéril", "Verificar indicadores químicos/físicos, validade, integridade de embalagens", "Não precisa verificar", "Apenas visual"],
+                        correctAnswer: 1,
+                        explanation: "Verificar: indicadores de esterilização (químicos/biológicos), data de validade, integridade de embalagens, armazenamento adequado."
+                    },
+                    {
+                        question: "O que fazer se paciente não puder confirmar identidade?",
+                        options: ["Presumir identidade", "Usar pulseira, confrontar com múltiplas fontes, envolver acompanhante", "Prosseguir sem confirmar", "Adiar cirurgia"],
+                        correctAnswer: 1,
+                        explanation: "Se paciente inconsciente/confuso: verificar pulseira, confrontar com múltiplas fontes documentais, envolver familiar/acompanhante se disponível."
+                    },
+                    {
+                        question: "Como proceder com cirurgias de múltiplos procedimentos?",
+                        options: ["Um checklist para todos", "Checklist completo para CADA procedimento/sítio", "Apenas para o principal", "Não é necessário"],
+                        correctAnswer: 1,
+                        explanation: "CADA procedimento/sítio cirúrgico diferente requer checklist completo separado, não importa se mesmo tempo cirúrgico."
+                    },
+                    {
+                        question: "Qual a importância do briefing pré-operatório?",
+                        options: ["Não é necessário", "Antecipa problemas, alinha equipe, prepara recursos necessários", "Perde tempo", "Apenas para cirurgias complexas"],
+                        correctAnswer: 1,
+                        explanation: "Briefing (antes de casos do dia) antecipa problemas, alinha expectativas, prepara recursos, identifica riscos, promove trabalho em equipe."
+                    },
+                    {
+                        question: "Como garantir adesão sustentada ao checklist?",
+                        options: ["Apenas treinar uma vez", "Educação contínua, feedback, indicadores, cultura de segurança, liderança engajada", "Punir quem não fizer", "Não é possível"],
+                        correctAnswer: 1,
+                        explanation: "Requer: educação permanente, feedback regular de adesão e resultados, indicadores monitorados, cultura organizacional de segurança, liderança exemplar."
+                    }
+                ]
+            },
+            
+            "rop-2-8": {
+                title: "ROP 2.8 – Transferência de Informações nas Transições (Handoff)",
+                audioFile: null,
+                questions: [
+                    {
+                        question: "O que é handoff em serviços de saúde?",
+                        options: ["Apenas trocar de plantão", "Transferência estruturada de informações e responsabilidade sobre paciente", "Conversa informal", "Relatório escrito"],
+                        correctAnswer: 1,
+                        explanation: "Handoff é processo estruturado de comunicação verbal e/ou escrita transferindo informação e responsabilidade sobre paciente entre profissionais/equipes/serviços."
+                    },
+                    {
+                        question: "Qual ferramenta estruturada mais usada para handoff?",
+                        options: ["Conversa livre", "SBAR ou ISBAR (Situação, Background, Avaliação, Recomendação)", "Apenas prontuário", "Email"],
+                        correctAnswer: 1,
+                        explanation: "SBAR/ISBAR é ferramenta mnemônica: Situação atual, Background/histórico, Avaliação/achados, Recomendação/plano. Estrutura comunicação crítica."
+                    },
+                    {
+                        question: "O que significa 'S' em SBAR?",
+                        options: ["Sintomas", "Situação: identificação do paciente e problema atual", "Suspeita diagnóstica", "Síntese"],
+                        correctAnswer: 1,
+                        explanation: "'S' = Situação: identifica paciente, razão do contato, problema atual em termos concisos e objetivos."
+                    },
+                    {
+                        question: "O que significa 'B' em SBAR?",
+                        options: ["Bolus de medicamento", "Background: contexto relevante, história médica pertinente", "Bradicardia", "Balanço hídrico"],
+                        correctAnswer: 1,
+                        explanation: "'B' = Background: fornece contexto clínico relevante, história médica pertinente ao problema atual, diagnósticos, tratamentos."
+                    },
+                    {
+                        question: "O que significa 'A' em SBAR?",
+                        options: ["Antibiótico", "Assessment/Avaliação: achados atuais, sinais vitais, interpretação clínica", "Alarme", "Admissão"],
+                        correctAnswer: 1,
+                        explanation: "'A' = Assessment/Avaliação: apresenta achados objetivos atuais (sinais vitais, exames), avaliação/interpretação clínica da situação."
+                    },
+                    {
+                        question: "O que significa 'R' em SBAR?",
+                        options: ["Resposta", "Recommendation/Recomendação: o que precisa ser feito, urgência", "Resultado", "Receita"],
+                        correctAnswer: 1,
+                        explanation: "'R' = Recommendation/Recomendação: o que está sendo solicitado/recomendado, nível de urgência, próximos passos esperados."
+                    },
+                    {
+                        question: "O que adiciona o 'I' no ISBAR?",
+                        options: ["Intervenção", "Identification: identificação de quem passa e quem recebe informação", "Indicação cirúrgica", "Internação"],
+                        correctAnswer: 1,
+                        explanation: "'I' = Identification: identifica claramente quem está passando informação (nome, função) e para quem (nome, função), estabelece responsabilidade."
+                    },
+                    {
+                        question: "Por que usar comunicação estruturada no handoff?",
+                        options: ["Tradição hospitalar", "Reduz omissões, mal-entendidos e erros de comunicação", "Apenas para documentação", "Não há benefício comprovado"],
+                        correctAnswer: 1,
+                        explanation: "Comunicação estruturada comprovadamente reduz: omissões de informação crítica, mal-entendidos, erros de comunicação, eventos adversos."
+                    },
+                    {
+                        question: "Quando ocorrem handoffs críticos em hospitais?",
+                        options: ["Apenas troca de plantão", "Troca plantão, transferências entre setores, alta, consultas", "Somente em UTI", "Não há momentos específicos"],
+                        correctAnswer: 1,
+                        explanation: "Handoffs críticos: troca de plantão, transferência entre unidades/serviços, alta hospitalar, encaminhamentos, consultorias, procedimentos."
+                    },
+                    {
+                        question: "O que deve ser evitado durante handoff?",
+                        options: ["Perguntas", "Interrupções, distrações, multitarefas, ambiente ruidoso", "Anotações", "Uso de ferramentas"],
+                        correctAnswer: 1,
+                        explanation: "Evitar: interrupções desnecessárias, distrações (celular, conversas paralelas), multitarefas, ambiente ruidoso, pressa excessiva."
+                    },
+                    {
+                        question: "Qual a importância do 'read-back' no handoff?",
+                        options: ["Não é importante", "Confirma entendimento correto de informações críticas", "Perde tempo", "Apenas para ordens verbais"],
+                        correctAnswer: 1,
+                        explanation: "Read-back (leitura de volta) confirma que receptor entendeu corretamente informações críticas, especialmente ordens/recomendações urgentes."
+                    },
+                    {
+                        question: "Como deve ser o ambiente ideal para handoff?",
+                        options: ["Qualquer lugar", "Silencioso, privado, sem interrupções, com recursos disponíveis", "Sempre em pé no corredor", "Não importa o ambiente"],
+                        correctAnswer: 1,
+                        explanation: "Ambiente ideal: relativamente silencioso, privativo (confidencialidade), protegido de interrupções, acesso a prontuário/sistemas, confortável."
+                    },
+                    {
+                        question: "Quais informações são SEMPRE essenciais no handoff?",
+                        options: ["Apenas nome do paciente", "Identidade, diagnóstico, tratamento atual, pendências, riscos", "Somente medicamentos", "Não há informações essenciais"],
+                        correctAnswer: 1,
+                        explanation: "Sempre incluir: identificação completa paciente, diagnóstico/problema principal, tratamento atual, pendências importantes, riscos/alertas especiais."
+                    },
+                    {
+                        question: "Como proceder com pendências no handoff?",
+                        options: ["Não mencionar", "Listar claramente, priorizar, atribuir responsabilidade", "Resolver tudo antes", "Deixar descobrir"],
+                        correctAnswer: 1,
+                        explanation: "Pendências devem ser: listadas explicitamente, priorizadas por urgência, com responsabilidade clara de quem assume, horários/prazos definidos."
+                    },
+                    {
+                        question: "Importância de mencionar código de ressuscitação?",
+                        options: ["Não precisa mencionar", "Crítico: define conduta em emergência, deve ser claro para todos", "Apenas se paciente grave", "Só em UTI"],
+                        correctAnswer: 1,
+                        explanation: "Status de código (RCP completo, DNR, etc.) deve ser explicitamente comunicado: crítico para tomada de decisão em emergências."
+                    },
+                    {
+                        question: "Como comunicar alergias no handoff?",
+                        options: ["Apenas anotar", "Verbalizar claramente, especificar alérgeno e tipo de reação", "Assumir que está em pulseira", "Não precisa mencionar"],
+                        correctAnswer: 1,
+                        explanation: "Alergias devem ser verbalizadas: especificar alérgeno, tipo de reação, gravidade, além de confirmar pulseira e registro em prontuário."
+                    },
+                    {
+                        question: "O que fazer com dispositivos invasivos no handoff?",
+                        options: ["Não mencionar", "Listar todos, datas de inserção, complicações, planos de remoção", "Apenas os centrais", "Receptor verifica depois"],
+                        correctAnswer: 1,
+                        explanation: "Dispositivos (cateteres, drenos, sondas): listar todos, datas inserção, funcionamento, complicações, plano para manutenção/remoção."
+                    },
+                    {
+                        question: "Como proceder com exames pendentes?",
+                        options: ["Não avisar", "Informar quais estão aguardando, urgência, conduta esperada conforme resultado", "Receptor verifica sistema", "Não é importante"],
+                        correctAnswer: 1,
+                        explanation: "Exames pendentes: informar quais aguardando, urgência, quando esperar resultado, conduta planejada conforme resultado."
+                    },
+                    {
+                        question: "Importância da padronização do handoff institucional?",
+                        options: ["Não precisa padronizar", "Essencial: garante completude, facilita treinamento, permite auditoria", "Cada um faz como quer", "Impossível padronizar"],
+                        correctAnswer: 1,
+                        explanation: "Padronização institucional: garante informações essenciais incluídas, facilita treinamento, permite auditoria de qualidade, melhora segurança."
+                    },
+                    {
+                        question: "Como envolver paciente/família no handoff?",
+                        options: ["Não envolver, é confidencial", "Quando apropriado, fazer à beira-leito com participação ativa", "Apenas avisar que está trocando", "Nunca envolver"],
+                        correctAnswer: 1,
+                        explanation: "Handoff à beira-leito quando apropriado: aumenta precisão (paciente corrige), engaja paciente, transparência, família esclarece dúvidas."
+                    },
+                    {
+                        question: "O que fazer se houver dúvidas durante handoff?",
+                        options: ["Fingir que entendeu", "Questionar imediatamente, esclarecer antes de assumir responsabilidade", "Perguntar depois", "Assumir e descobrir depois"],
+                        correctAnswer: 1,
+                        explanation: "Receptor DEVE questionar imediatamente qualquer dúvida, esclarecer informações ambíguas, confirmar entendimento ANTES de assumir responsabilidade."
+                    },
+                    {
+                        question: "Como documentar handoff realizado?",
+                        options: ["Não precisa documentar", "Registrar no prontuário: horário, profissionais envolvidos, informações-chave", "Apenas assinatura", "Documentação verbal suficiente"],
+                        correctAnswer: 1,
+                        explanation: "Documentar: horário, profissionais passando/recebendo, resumo informações principais, pendências transferidas, aceite de responsabilidade."
+                    },
+                    {
+                        question: "Tempo adequado para handoff de paciente complexo?",
+                        options: ["30 segundos", "5-15 minutos permitindo detalhamento adequado e perguntas", "1 hora", "Quanto menos tempo melhor"],
+                        correctAnswer: 1,
+                        explanation: "Handoff adequado leva tempo: 5-15 minutos típico, mais para casos complexos, menos para estáveis. Priorizar qualidade sobre velocidade."
+                    },
+                    {
+                        question: "Como proceder em handoff de emergência?",
+                        options: ["Pular handoff", "Versão abreviada focando informações críticas para ação imediata", "Fazer completo mesmo atrasando", "Apenas verbal depois"],
+                        correctAnswer: 1,
+                        explanation: "Em emergências: handoff abreviado focando informações CRÍTICAS para ação imediata, completar detalhes quando situação estabilizar."
+                    },
+                    {
+                        question: "Importância de mencionar contexto social?",
+                        options: ["Irrelevante clinicamente", "Importante: afeta alta, adesão, planejamento de cuidados", "Apenas para serviço social", "Não é parte do handoff"],
+                        correctAnswer: 1,
+                        explanation: "Contexto social relevante deve ser comunicado: suporte domiciliar, barreiras para alta, questões de adesão, necessidades especiais."
+                    },
+                    {
+                        question: "Como tratar informações conflitantes no handoff?",
+                        options: ["Ignorar conflito", "Reconhecer, buscar esclarecimento, documentar áreas de incerteza", "Escolher uma versão aleatoriamente", "Não mencionar"],
+                        correctAnswer: 1,
+                        explanation: "Informações conflitantes: reconhecer explicitamente, buscar esclarecimento nas fontes, documentar incertezas, planejar verificação."
+                    },
+                    {
+                        question: "Papel da tecnologia no handoff?",
+                        options: ["Substitui completamente comunicação verbal", "Complementa comunicação: acesso a dados, padronização, checklist", "Não há papel útil", "Apenas dificulta"],
+                        correctAnswer: 1,
+                        explanation: "Tecnologia complementa (não substitui) handoff: fornece acesso rápido a dados, padroniza estrutura, checklist eletrônico, mas comunicação verbal essencial."
+                    },
+                    {
+                        question: "Como garantir continuidade em múltiplos handoffs?",
+                        options: ["Impossível garantir", "Documentação clara, comunicação estruturada, confirmação de entendimento", "Cada profissional se vira", "Não é possível"],
+                        correctAnswer: 1,
+                        explanation: "Múltiplos handoffs requerem: documentação clara disponível, comunicação estruturada consistente, confirmação entendimento em cada etapa."
+                    },
+                    {
+                        question: "Importância do feedback sobre qualidade do handoff?",
+                        options: ["Não é necessário", "Essencial para melhoria contínua e identificação de falhas", "Apenas punição", "Não há como avaliar"],
+                        correctAnswer: 1,
+                        explanation: "Feedback regular essencial: identifica falhas de comunicação, oportunidades de melhoria, reconhece boas práticas, promove cultura de segurança."
+                    },
+                    {
+                        question: "Como educar equipes sobre handoff efetivo?",
+                        options: ["Apenas ler protocolo", "Treinamento prático, simulações, observação, feedback, educação permanente", "Aprender fazendo sem preparo", "Não precisa treinar"],
+                        correctAnswer: 1,
+                        explanation: "Educação efetiva: treinamento formal, prática com simulações, observação de handoffs reais, feedback estruturado, educação continuada."
+                    }
+                ]
+            }
         }
     },
 
