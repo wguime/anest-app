@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANEST - Sistema de Gestão e Treinamento</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="permissions-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -104,6 +105,7 @@
                     <button class="btn-icon dark-mode-toggle-header" onclick="toggleDarkMode()" title="Alternar modo escuro">
                         <i class="fas fa-moon" id="darkModeIcon"></i>
                     </button>
+                    <span id="userRoleBadge" class="user-role-badge" style="display: none;"></span>
                     <button class="btn-icon" onclick="showProfile()" title="Perfil">
                         <i class="fas fa-user-circle"></i>
                     </button>
@@ -156,6 +158,15 @@
                         <h3>Residência Médica</h3>
                         <p>Aulas, artigos e escalas</p>
                     </div>
+
+                    <!-- Admin Panel (só aparece para admins) -->
+                    <div id="adminMenuCard" class="menu-card" onclick="showAdminPermissionsPanel()" style="display: none;">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>Admin</h3>
+                        <p>Gerenciar permissões</p>
+                    </div>
                 </div>
             </div>
 
@@ -189,6 +200,9 @@
         </main>
     </div>
 
+    <!-- Admin Screen -->
+    <div id="adminScreen" class="screen"></div>
+
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
 
@@ -205,6 +219,7 @@
     
     <!-- App Scripts -->
     <script src="firebase-config.js"></script>
+    <script src="permissions-system.js"></script>
     <script src="rops-data.js"></script>
     <script src="documents-data.js"></script>
     <script src="residencia-config.js"></script>

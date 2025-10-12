@@ -1,5 +1,28 @@
 /* ==================== ESTILOS DO SISTEMA DE PERMISSÕES ==================== */
 
+/* ==================== USER ROLE BADGE (HEADER) ==================== */
+.user-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    margin: 0 10px;
+    white-space: nowrap;
+}
+
+.user-role-badge i {
+    font-size: 14px;
+}
+
+/* ==================== DARK MODE - USER ROLE BADGE ==================== */
+[data-theme="dark"] .user-role-badge {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
 /* ==================== ADMIN TABS ==================== */
 .admin-tabs {
     display: flex;

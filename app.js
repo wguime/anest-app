@@ -30,10 +30,11 @@ function initializeApp() {
     
     // Check authentication state
     try {
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             hideLoading();
             if (user) {
-                currentUser = user;
+                // Carregar dados completos do usuário (com permissões)
+                await loadCurrentUserData();
                 loadUserProgress();
                 showMainApp();
             } else {
@@ -202,10 +203,33 @@ function showMainApp() {
         const fullName = currentUser.displayName || currentUser.email;
         const firstName = fullName.split(' ')[0].split('@')[0];
         document.getElementById('welcomeMessage').textContent = `Olá, ${firstName}`;
+        
+        // Mostrar badge de perfil no header
+        updateUserRoleBadge();
+        
+        // Mostrar ícone Admin se tiver permissão
+        if (typeof hasPermission === 'function' && hasPermission(currentUser, 'admin-panel')) {
+            document.getElementById('adminMenuCard').style.display = 'block';
+        }
     }
     
     showScreen('home');
     hideLoading();
+}
+
+// Atualizar badge de perfil do usuário no header
+function updateUserRoleBadge() {
+    if (!currentUser || typeof ROLES_TEMPLATES === 'undefined') return;
+    
+    const badge = document.getElementById('userRoleBadge');
+    const roleConfig = ROLES_TEMPLATES[currentUser.role] || ROLES_TEMPLATES['visitante'];
+    
+    badge.innerHTML = `
+        <i class="${roleConfig.icon}"></i>
+        ${roleConfig.name}
+    `;
+    badge.style.background = roleConfig.color;
+    badge.style.display = 'inline-flex';
 }
 
 function showScreen(screenName) {
@@ -314,6 +338,31 @@ async function saveUserProgress() {
 // ==================== ROPS SECTION ====================
 function showROPs() {
     const screen = document.getElementById('ropsScreen');
+    
+    // Filtrar ROPs baseado em permissões
+    const availableROPs = Object.entries(ropsData).filter(([key, macroArea]) => {
+        if (typeof canAccessModule === 'function') {
+            return canAccessModule(currentUser, key);
+        }
+        return true; // Se função não existe, mostrar tudo
+    });
+    
+    if (availableROPs.length === 0) {
+        screen.innerHTML = `
+            <button class="back-btn" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <div class="access-denied">
+                <i class="fas fa-ban"></i>
+                <h2>Sem Acesso</h2>
+                <p>Você não tem permissão para acessar nenhuma ROPs.</p>
+                <p>Entre em contato com o administrador.</p>
+            </div>
+        `;
+        showScreen('rops');
+        return;
+    }
+    
     screen.innerHTML = `
         <button class="back-btn" onclick="goHome()">
             <i class="fas fa-arrow-left"></i> Voltar
@@ -321,7 +370,7 @@ function showROPs() {
         <h2 class="screen-title">ROPs - Desafio de Conhecimento</h2>
         
         <div class="menu-grid">
-            ${Object.entries(ropsData).map(([key, macroArea]) => `
+            ${availableROPs.map(([key, macroArea]) => `
                 <div class="menu-card" onclick="showMacroArea('${key}')">
                     <div class="card-icon" style="background: ${macroArea.color}">
                         <i class="${macroArea.icon}"></i>
@@ -980,6 +1029,71 @@ if (localStorage.getItem('theme') === 'dark') {
 // ==================== DOCUMENTOS GROUP ====================
 function showDocumentosGroup() {
     const screen = document.getElementById('documentosScreen');
+    
+    // Helper function para renderizar card se tiver permissão
+    const renderCardIfAllowed = (sectionKey, title, desc, icon, gradient, onClick) => {
+        if (typeof canAccessModule === 'function' && !canAccessModule(currentUser, sectionKey)) {
+            return ''; // Não renderiza se não tiver permissão
+        }
+        return `
+            <div class="menu-card" onclick="${onClick}()">
+                <div class="card-icon" style="background: ${gradient}">
+                    <i class="fas fa-${icon}"></i>
+                </div>
+                <h3>${title}</h3>
+                <p>${desc}</p>
+            </div>
+        `;
+    };
+    
+    const cardsHTML = renderCardIfAllowed('protocolos', 'Protocolos', 'Protocolos assistenciais', 'file-medical', 'linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)', 'showProtocolos') +
+                      renderCardIfAllowed('politicas', 'Políticas', 'Políticas institucionais', 'shield-alt', 'linear-gradient(135deg, #4f7942 0%, #a8d5a5 100%)', 'showPoliticas') +
+                      renderCardIfAllowed('formularios', 'Formulários', 'Documentos e formulários', 'clipboard-list', 'linear-gradient(135deg, #2d6a3f 0%, #87c68d 100%)', 'showFormularios') +
+                      renderCardIfAllowed('manuais', 'Manuais', 'Manuais técnicos', 'book', 'linear-gradient(135deg, #1a4d2e 0%, #5a8f66 100%)', 'showManuais') +
+                      renderCardIfAllowed('relatorios', 'Relatórios', 'Segurança do paciente', 'chart-line', 'linear-gradient(135deg, #3b7a54 0%, #9bcaa8 100%)', 'showRelatorios') +
+                      renderCardIfAllowed('processos', 'Processos', 'Mapeamento de processos', 'project-diagram', 'linear-gradient(135deg, #1f6638 0%, #76b583 100%)', 'showProcessos') +
+                      renderCardIfAllowed('riscos', 'Riscos', 'Mapeamento de riscos', 'exclamation-triangle', 'linear-gradient(135deg, #2a5c3f 0%, #82c491 100%)', 'showRiscos') +
+                      renderCardIfAllowed('termos', 'Termos', 'Termos e documentos', 'file-contract', 'linear-gradient(135deg, #1a4d2e 0%, #6fa378 100%)', 'showTermos') +
+                      renderCardIfAllowed('clima', 'Clima de Segurança', 'Relatórios de clima', 'cloud-sun', 'linear-gradient(135deg, #357054 0%, #91cc9c 100%)', 'showClima') +
+                      renderCardIfAllowed('plano', 'Plano de Segurança', 'Segurança do paciente', 'clipboard-check', 'linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)', 'showPlanoSeguranca');
+    
+    if (!cardsHTML.trim()) {
+        screen.innerHTML = `
+            <button class="back-btn" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <div class="access-denied">
+                <i class="fas fa-ban"></i>
+                <h2>Sem Acesso</h2>
+                <p>Você não tem permissão para acessar nenhuma seção de documentos.</p>
+                <p>Entre em contato com o administrador.</p>
+            </div>
+        `;
+        showScreen('documentos');
+        return;
+    }
+    
+    screen.innerHTML = `
+        <button class="back-btn" onclick="goHome()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <h2 class="screen-title">
+            <i class="fas fa-folder-open"></i> Documentos
+        </h2>
+        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
+            Acesse todos os documentos técnicos e institucionais
+        </p>
+        
+        <div class="menu-grid">
+            ${cardsHTML}
+        </div>
+    `;
+    showScreen('documentos');
+}
+
+// Mantém a estrutura antiga dos cards por compatibilidade
+function __oldDocumentosGroup__BACKUP() {
+    const screen = document.getElementById('documentosScreen');
     screen.innerHTML = `
         <button class="back-btn" onclick="goHome()">
             <i class="fas fa-arrow-left"></i> Voltar
@@ -1228,6 +1342,23 @@ function showProfile() {
 // ==================== DOCUMENTS SECTION ====================
 function showDocumentsSection(sectionKey, title, icon, documents) {
     const screen = document.getElementById(sectionKey + 'Screen');
+    
+    // Verificar permissão de acesso
+    if (typeof canAccessModule === 'function' && !canAccessModule(currentUser, sectionKey)) {
+        screen.innerHTML = `
+            <button class="back-btn" onclick="showDocumentosGroup()">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <div class="access-denied">
+                <i class="fas fa-ban"></i>
+                <h2>Acesso Restrito</h2>
+                <p>Você não tem permissão para acessar esta seção de documentos.</p>
+                <p>Entre em contato com o administrador se precisar de acesso.</p>
+            </div>
+        `;
+        showScreen(sectionKey);
+        return;
+    }
     
     if (!documents || documents.length === 0) {
         screen.innerHTML = `
