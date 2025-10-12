@@ -2091,7 +2091,367 @@ const ropsData = {
         icon: "fas fa-pills",
         color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
         subdivisoes: {
-            // ROPs 3.1 to 3.6...
+            "rop-3-1": {
+                title: "ROP 3.1 – Uso Racional de Antimicrobianos",
+                audioFile: null,
+                questions: [
+                    {
+                        question: "O que define uso racional de antimicrobianos?",
+                        options: [
+                            "Usar sempre o ATB mais potente disponível",
+                            "Prescrever ATB correto, dose certa, duração adequada, momento apropriado",
+                            "Prescrever ATB para toda febre",
+                            "Usar sempre ATB de amplo espectro"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Uso racional significa prescrever o antimicrobiano correto, na dose certa, pelo tempo adequado e no momento apropriado, baseado em evidências clínicas."
+                    },
+                    {
+                        question: "Por que antimicrobianos requerem gestão especial?",
+                        options: [
+                            "São medicamentos caros",
+                            "Uso inadequado leva à resistência bacteriana e afeta eficácia futura",
+                            "Apenas por questões regulatórias",
+                            "Não requerem gestão especial"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Antimicrobianos requerem gestão especial porque o uso inadequado acelera resistência bacteriana, comprometendo eficácia para todos os pacientes futuros."
+                    },
+                    {
+                        question: "O que é stewardship antimicrobiano?",
+                        options: [
+                            "Programa de desconto para compra de ATB",
+                            "Conjunto de estratégias para otimizar uso de antimicrobianos e reduzir resistência",
+                            "Lista de ATB proibidos",
+                            "Sistema de controle de estoque"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Stewardship é programa coordenado que promove uso apropriado de antimicrobianos, melhora desfechos clínicos, reduz resistência e minimiza efeitos adversos."
+                    },
+                    {
+                        question: "Qual a importância de colher cultura antes de iniciar ATB?",
+                        options: [
+                            "Não é necessário em emergências",
+                            "Permite identificar agente e direcionar terapia, além de monitorar resistência",
+                            "Apenas para documentação",
+                            "Só importante em infecções leves"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Cultura antes do ATB permite identificar microorganismo causador, seu perfil de sensibilidade, direcionar terapia definitiva e monitorar padrões de resistência local."
+                    },
+                    {
+                        question: "Quando é apropriado usar ATB empírico?",
+                        options: [
+                            "Sempre que houver febre",
+                            "Em infecções graves antes de resultados de cultura, baseado em dados locais",
+                            "Apenas em pacientes internados",
+                            "Nunca é apropriado"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "ATB empírico é apropriado em infecções graves/urgentes antes de cultura, baseado em epidemiologia local, sinais/sintomas e fatores de risco do paciente."
+                    },
+                    {
+                        question: "Como escolher ATB empírico adequado?",
+                        options: [
+                            "Sempre o mais potente",
+                            "Baseado em foco infeccioso, perfil de resistência local, gravidade e fatores paciente",
+                            "O mais barato disponível",
+                            "Qualquer ATB de amplo espectro"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Escolha baseada em: foco infeccioso presumido, epidemiologia/resistência local, gravidade clínica, fatores de risco do paciente e comorbidades."
+                    },
+                    {
+                        question: "O que é desescalonamento antimicrobiano?",
+                        options: [
+                            "Suspender ATB por efeitos adversos",
+                            "Trocar ATB de amplo para espectro mais estreito baseado em cultura",
+                            "Reduzir dose do ATB",
+                            "Aumentar tempo de tratamento"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Desescalonamento é trocar ATB de amplo espectro para espectro mais estreito quando cultura/evolução clínica permitem, mantendo eficácia mas reduzindo pressão seletiva."
+                    },
+                    {
+                        question: "Quando fazer desescalonamento?",
+                        options: [
+                            "Apenas se paciente piorar",
+                            "Quando houver resultado de cultura e paciente estável/melhorando",
+                            "Nunca em pacientes graves",
+                            "Somente após 7 dias"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Desescalar quando houver resultado de antibiograma, paciente clinicamente estável ou melhorando, permitindo ajuste para ATB dirigido de menor espectro."
+                    },
+                    {
+                        question: "Por que a duração apropriada de ATB é importante?",
+                        options: [
+                            "Apenas para economia",
+                            "Tempo insuficiente falha, excessivo aumenta resistência e efeitos adversos",
+                            "Não há diferença na duração",
+                            "Sempre usar 10-14 dias"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Duração insuficiente leva à falha terapêutica. Duração excessiva aumenta resistência, efeitos adversos, custos e infecções secundárias sem benefício adicional."
+                    },
+                    {
+                        question: "Como evitar uso desnecessário de ATB?",
+                        options: [
+                            "Não usar ATB preventivamente nunca",
+                            "Distinguir infecção bacteriana de viral/não infecciosa, usar biomarcadores",
+                            "Sempre aguardar cultura",
+                            "Prescrever apenas oral"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Evitar uso desnecessário: distinguir infecção bacteriana de viral/colonização, usar biomarcadores (PCR, procalcitonina), reavaliar necessidade diariamente."
+                    },
+                    {
+                        question: "Qual cuidado especial com ATB de amplo espectro?",
+                        options: [
+                            "Usar livremente",
+                            "Reservar para situações específicas, desescalar quando possível, monitorar resistência",
+                            "Sempre preferir ao invés de espectro estreito",
+                            "Usar apenas em UTI"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "ATB amplo espectro devem ser reservados para situações específicas, desescalonados assim que possível e seu uso monitorado para prevenir resistência."
+                    },
+                    {
+                        question: "Qual o papel do farmacêutico na gestão de ATB?",
+                        options: [
+                            "Apenas dispensar medicamentos",
+                            "Revisar prescrições, sugerir ajustes, monitorar efeitos, educar equipe",
+                            "Não tem papel clínico",
+                            "Somente controle de estoque"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Farmacêutico revisa prescrições, sugere dose/via/duração apropriadas, monitora toxicidade e interações, participa de rounds e educação sobre uso racional."
+                    },
+                    {
+                        question: "Como lidar com resistência antimicrobiana?",
+                        options: [
+                            "Sempre usar ATB mais novo",
+                            "Uso racional, desescalonamento, adesão a protocolos, higiene rigorosa",
+                            "Não é possível prevenir",
+                            "Apenas isolar pacientes"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Combater resistência: uso racional de ATB, desescalonamento, protocolos baseados em evidências, higiene de mãos, precauções de contato, stewardship ativo."
+                    },
+                    {
+                        question: "Por que monitorar espectro de resistência local?",
+                        options: [
+                            "Não é necessário",
+                            "Orienta escolha empírica e detecta surtos de resistência precocemente",
+                            "Apenas para pesquisa",
+                            "Só importante em UTI"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Monitoramento local orienta terapia empírica adequada, detecta padrões emergentes de resistência, permite ajuste de protocolos e identificação precoce de surtos."
+                    },
+                    {
+                        question: "O que é antibioticoterapia dirigida?",
+                        options: [
+                            "ATB prescrito por infectologista",
+                            "Terapia baseada em resultado de cultura e antibiograma",
+                            "ATB de alto custo",
+                            "ATB intravenoso"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Terapia dirigida é baseada em identificação microbiológica e antibiograma, permitindo escolha de ATB com espectro adequado e menor pressão seletiva."
+                    },
+                    {
+                        question: "Quando usar profilaxia antimicrobiana?",
+                        options: [
+                            "Para toda cirurgia",
+                            "Em cirurgias com risco significativo de infecção conforme evidências",
+                            "Apenas em imunossuprimidos",
+                            "Nunca é recomendada"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Profilaxia indicada em: cirurgias limpas-contaminadas e contaminadas, procedimentos com implantes, pacientes de alto risco, conforme protocolos baseados em evidências."
+                    },
+                    {
+                        question: "Como otimizar tempo de profilaxia cirúrgica?",
+                        options: [
+                            "Iniciar após cirurgia",
+                            "Administrar 60 minutos antes incisão, redosar se necessário, suspender 24h",
+                            "Manter por 7 dias",
+                            "Apenas dose única sempre"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Profilaxia ideal: 60 minutos pré-incisão (30 para vancomicina), redose se cirurgia prolongada ou sangramento, suspender em 24h (máximo 48h em cardiac)."
+                    },
+                    {
+                        question: "Como gerenciar ATB de reserva?",
+                        options: [
+                            "Usar livremente",
+                            "Restringir para infecções resistentes, aprovação especializada, monitoramento",
+                            "Nunca usar",
+                            "Usar apenas em UTI"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "ATB de reserva devem ser restritos, exigir aprovação de infectologia/stewardship, monitorados rigorosamente para preservar eficácia contra resistência multirresistente."
+                    },
+                    {
+                        question: "Importância de protocolos institucionais de ATB?",
+                        options: [
+                            "Limitam autonomia médica desnecessariamente",
+                            "Padronizam conduta, baseiam-se em dados locais, melhoram desfechos",
+                            "São apenas burocráticos",
+                            "Não afetam resultados clínicos"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Protocolos baseados em epidemiologia local padronizam conduta, melhoram adequação empírica, reduzem variabilidade, otimizam desfechos e combatem resistência."
+                    },
+                    {
+                        question: "Como educar prescritores sobre uso racional?",
+                        options: [
+                            "Apenas punir uso inadequado",
+                            "Educação contínua, feedback individualizado, casos clínicos, dados locais",
+                            "Não é necessário",
+                            "Apenas treinamento inicial"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Educação efetiva: treinamento contínuo, feedback individualizado baseado em dados, discussão de casos, apresentação de resistência local, cultura não punitiva."
+                    },
+                    {
+                        question: "O que são ATB restritos?",
+                        options: [
+                            "ATB proibidos",
+                            "ATB que requerem aprovação prévia de especialista para prescrição",
+                            "ATB apenas para UTI",
+                            "ATB experimentais"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "ATB restritos exigem aprovação de infectologia ou comitê de stewardship antes da prescrição, geralmente reservados para infecções específicas ou resistentes."
+                    },
+                    {
+                        question: "Quando consultar infectologia?",
+                        options: [
+                            "Nunca é necessário",
+                            "Infecções complexas, falha terapêutica, multirresistência, imunossupressão",
+                            "Apenas para HIV",
+                            "Somente se houver surto"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Consultar em: infecções complexas/incomuns, falha de terapia inicial, multirresistência, paciente imunossuprimido grave, infecções prolongadas, dúvidas diagnósticas."
+                    },
+                    {
+                        question: "Importância de sinais vitais na decisão de ATB?",
+                        options: [
+                            "Não são relevantes",
+                            "Indicam gravidade, orientam via/urgência, monitoram resposta terapêutica",
+                            "Apenas temperatura importa",
+                            "Só relevantes em UTI"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Sinais vitais indicam gravidade (sepse/choque), orientam urgência e via de ATB, monitoram resposta e permitem desescalonamento quando estáveis."
+                    },
+                    {
+                        question: "Como diferenciar infecção viral de bacteriana?",
+                        options: [
+                            "Impossível diferenciar",
+                            "Quadro clínico, biomarcadores, exames laboratoriais, evolução temporal",
+                            "Apenas por cultura",
+                            "Toda febre é bacteriana"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Diferenciação: quadro clínico característico, biomarcadores (PCR, procalcitonina), leucograma com diferencial, evolução temporal, testes virais quando disponíveis."
+                    },
+                    {
+                        question: "Como proceder com uso prolongado de ATB?",
+                        options: [
+                            "Sempre continuar até melhora total",
+                            "Reavaliar necessidade, considerar switch oral, monitorar toxicidade",
+                            "Nunca prolongar além de 7 dias",
+                            "Manter via venosa até o fim"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Em uso prolongado: reavaliar necessidade diariamente, considerar switch para via oral quando apropriado, monitorar toxicidade, documentar indicação claramente."
+                    },
+                    {
+                        question: "Por que monitorar toxicidade de ATB?",
+                        options: [
+                            "Não é necessário monitorar",
+                            "Prevenir dano renal/hepático, ajustar dose, detectar reações precocemente",
+                            "Apenas para ATB orais",
+                            "Só monitorar se paciente queixar"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Monitoramento detecta nefro/hepatotoxicidade, permite ajuste de dose, identifica reações adversas precocemente, previne dano permanente, especialmente em idosos/renais."
+                    },
+                    {
+                        question: "Como reavaliar necessidade de ATB?",
+                        options: [
+                            "Apenas no fim do tratamento",
+                            "Avaliação diária: evolução clínica, biomarcadores, culturas, possibilidade parar/desescalar",
+                            "Não precisa reavaliar",
+                            "Somente se houver piora"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Reavaliação diária: melhora clínica, normalização de biomarcadores, resultado de culturas, possibilidade de suspensão ou desescalonamento, duração apropriada."
+                    },
+                    {
+                        question: "O que são indicadores de uso de ATB?",
+                        options: [
+                            "Não existem indicadores",
+                            "Métricas para monitorar adequação: DOT, DDD, adesão a protocolos, desescalonamento",
+                            "Apenas custo total",
+                            "Somente taxa de infecção"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Indicadores incluem: dias de terapia (DOT), dose diária definida (DDD), adesão a protocolos, taxa de desescalonamento, tempo de terapia, adequação empírica."
+                    },
+                    {
+                        question: "Como auditar prescrições de ATB?",
+                        options: [
+                            "Não é necessário auditar",
+                            "Revisão prospectiva/retrospectiva com feedback ao prescritor",
+                            "Apenas punir erros",
+                            "Somente controle administrativo"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Auditoria prospectiva (durante tratamento) ou retrospectiva com feedback construtivo, identificação de padrões, educação direcionada, melhoria contínua de processos."
+                    },
+                    {
+                        question: "Importância de feedback aos prescritores?",
+                        options: [
+                            "Gera conflitos desnecessários",
+                            "Melhora práticas futuras, educação contínua, cultura de qualidade",
+                            "Apenas punir erros",
+                            "Não muda comportamento"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "Feedback individualizado e construtivo melhora prescrições futuras, promove educação contínua, identifica gaps de conhecimento, fortalece cultura de uso racional e qualidade."
+                    }
+                ]
+            },
+            "rop-3-2": {
+                title: "ROP 3.2 – Eletrólitos Concentrados",
+                audioFile: null,
+                questions: []
+            },
+            "rop-3-3": {
+                title: "ROP 3.3 – Segurança no Uso da Heparina",
+                audioFile: null,
+                questions: []
+            },
+            "rop-3-4": {
+                title: "ROP 3.4 – Medicamentos de Alta Vigilância",
+                audioFile: null,
+                questions: []
+            },
+            "rop-3-5": {
+                title: "ROP 3.5 – Segurança das Bombas de Infusão",
+                audioFile: null,
+                questions: []
+            },
+            "rop-3-6": {
+                title: "ROP 3.6 – Segurança no Uso de Narcóticos/Opioides",
+                audioFile: null,
+                questions: []
+            }
         }
     },
 
