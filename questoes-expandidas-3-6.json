@@ -1,0 +1,338 @@
+{
+  "3.1": {
+    "title": "ROP 3.1 – Uso Racional de Antimicrobianos",
+    "audioFile": null,
+    "questions": [
+      {
+        "question": "O que define uso racional de antimicrobianos?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que define uso racional de antimicrobianos?"
+      },
+      {
+        "question": "Por que antimicrobianos requerem gestão especial?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre por que antimicrobianos requerem gestão especial?"
+      },
+      {
+        "question": "O que é stewardship antimicrobiano?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que é stewardship antimicrobiano?"
+      },
+      {
+        "question": "Importância de cultura antes de prescrever ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de cultura antes de prescrever atb?"
+      },
+      {
+        "question": "Quando é apropriado usar ATB empírico?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre quando é apropriado usar atb empírico?"
+      },
+      {
+        "question": "Como escolher ATB empírico adequado?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como escolher atb empírico adequado?"
+      },
+      {
+        "question": "O que é desescalonamento antimicrobiano?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que é desescalonamento antimicrobiano?"
+      },
+      {
+        "question": "Quando fazer desescalonamento?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre quando fazer desescalonamento?"
+      },
+      {
+        "question": "Importância da duração apropriada de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância da duração apropriada de atb?"
+      },
+      {
+        "question": "Como evitar uso desnecessário de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como evitar uso desnecessário de atb?"
+      },
+      {
+        "question": "O que fazer com ATB de amplo espectro?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que fazer com atb de amplo espectro?"
+      },
+      {
+        "question": "Papel do farmacêutico na gestão de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre papel do farmacêutico na gestão de atb?"
+      },
+      {
+        "question": "Como lidar com resistência antimicrobiana?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como lidar com resistência antimicrobiana?"
+      },
+      {
+        "question": "Importância de monitorar espectro local?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de monitorar espectro local?"
+      },
+      {
+        "question": "O que é antibioticoterapia dirigida?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que é antibioticoterapia dirigida?"
+      },
+      {
+        "question": "Quando usar profilaxia antimicrobiana?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre quando usar profilaxia antimicrobiana?"
+      },
+      {
+        "question": "Como otimizar tempo de profilaxia cirúrgica?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como otimizar tempo de profilaxia cirúrgica?"
+      },
+      {
+        "question": "O que fazer com ATB de reserva?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que fazer com atb de reserva?"
+      },
+      {
+        "question": "Importância de protocolos institucionais?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de protocolos institucionais?"
+      },
+      {
+        "question": "Como educar prescritores sobre uso racional?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como educar prescritores sobre uso racional?"
+      },
+      {
+        "question": "O que são ATB restritos?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que são atb restritos?"
+      },
+      {
+        "question": "Quando consultar infectologia?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre quando consultar infectologia?"
+      },
+      {
+        "question": "Importância de sinais vitais na decisão?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de sinais vitais na decisão?"
+      },
+      {
+        "question": "Como lidar com infecção viral vs bacteriana?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como lidar com infecção viral vs bacteriana?"
+      },
+      {
+        "question": "O que fazer com uso prolongado de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que fazer com uso prolongado de atb?"
+      },
+      {
+        "question": "Importância de monitorar toxicidade?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de monitorar toxicidade?"
+      },
+      {
+        "question": "Como reavaliar necessidade de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como reavaliar necessidade de atb?"
+      },
+      {
+        "question": "O que são indicadores de uso de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre o que são indicadores de uso de atb?"
+      },
+      {
+        "question": "Como auditar prescrições de ATB?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre como auditar prescrições de atb?"
+      },
+      {
+        "question": "Importância de feedback aos prescritores?",
+        "options": [
+          "Opção incorreta A",
+          "Resposta correta sobre o tema",
+          "Opção incorreta B",
+          "Opção incorreta C"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Explicação profissional sobre importância de feedback aos prescritores?"
+      }
+    ]
+  }
+}
