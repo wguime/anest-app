@@ -529,6 +529,9 @@ function startQuiz(macroKey, subdivKey) {
     // Shuffle questions
     questions = shuffleArray([...questions]);
     
+    // RANDOMIZE answer options for each question
+    questions = questions.map(q => randomizeQuestionOptions(q));
+    
     currentQuiz = {
         macroKey,
         subdivKey,
@@ -540,6 +543,31 @@ function startQuiz(macroKey, subdivKey) {
     };
     
     showQuestion();
+}
+
+// Function to randomize answer options while tracking correct answer
+function randomizeQuestionOptions(question) {
+    const originalCorrect = question.correctAnswer;
+    const options = [...question.options];
+    
+    // Create array of indices
+    const indices = options.map((_, i) => i);
+    
+    // Shuffle indices
+    const shuffledIndices = shuffleArray(indices);
+    
+    // Create new shuffled options
+    const shuffledOptions = shuffledIndices.map(i => options[i]);
+    
+    // Find new position of correct answer
+    const newCorrectIndex = shuffledIndices.indexOf(originalCorrect);
+    
+    return {
+        ...question,
+        options: shuffledOptions,
+        correctAnswer: newCorrectIndex,
+        originalOrder: shuffledIndices // For debugging if needed
+    };
 }
 
 function shuffleArray(array) {
