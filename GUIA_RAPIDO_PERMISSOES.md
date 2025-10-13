@@ -5,7 +5,7 @@
 **Status:** Sistema de permissões totalmente funcional!  
 **URL:** https://wguime.github.io/anest-app/  
 **Commit:** `e9efb92`
-
+ 
 ---
 
 ## 🎯 O QUE FOI FEITO
@@ -21,7 +21,7 @@
 ---
 
 ## ⚙️ CONFIGURAÇÃO INICIAL (3 PASSOS)
-
+ 
 ### **PASSO 1: Configurar Firestore**
 
 1. **Acesse Firebase Console:**
