@@ -35,6 +35,15 @@ function showResidencia() {
                 <p>Biblioteca científica</p>
             </div>
             
+            <!-- Plantões -->
+            <div class="menu-card" onclick="showPlantoes()">
+                <div class="card-icon" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h3>Plantões</h3>
+                <p>Escala de plantões</p>
+            </div>
+            
             <!-- Escalas -->
             <div class="menu-card" onclick="showEscalas()">
                 <div class="card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
