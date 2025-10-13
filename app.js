@@ -204,11 +204,9 @@ function showMainApp() {
         const firstName = fullName.split(' ')[0].split('@')[0];
         document.getElementById('welcomeMessage').textContent = `Olá, ${firstName}`;
         
-        // Mostrar badge de perfil no header
-        updateUserRoleBadge();
-        
-        // Mostrar ícone Admin se tiver permissão
+        // Mostrar ícone Admin no header e no menu principal se tiver permissão
         if (typeof hasPermission === 'function' && hasPermission(currentUser, 'admin-panel')) {
+            document.getElementById('adminHeaderBtn').style.display = 'block';
             document.getElementById('adminMenuCard').style.display = 'block';
         }
     }

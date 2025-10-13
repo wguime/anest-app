@@ -66,6 +66,35 @@ const ROLES_TEMPLATES = {
         }
     },
     
+    'residente': {
+        name: 'Residente',
+        color: '#17a2b8',
+        icon: 'fa-graduation-cap',
+        permissions: {
+            'rop-cultura': true,
+            'rop-comunicacao': true,
+            'rop-medicamentos': true,
+            'rop-vida-profissional': true,
+            'rop-infeccoes': true,
+            'rop-riscos': true,
+            'doc-protocolos': true,
+            'doc-politicas': true,
+            'doc-formularios': true,
+            'doc-manuais': true,
+            'doc-relatorios': true,
+            'doc-processos': true,
+            'doc-riscos': true,
+            'doc-termos': true,
+            'doc-clima': true,
+            'doc-plano': true,
+            'residencia': true,
+            'podcasts': true,
+            'notificacoes': true,
+            'ranking': true,
+            'admin-panel': false
+        }
+    },
+    
     'enfermeiro': {
         name: 'Enfermeiro',
         color: '#28a745',
@@ -77,6 +106,35 @@ const ROLES_TEMPLATES = {
             'rop-vida-profissional': false,
             'rop-infeccoes': true,
             'rop-riscos': false,
+            'doc-protocolos': true,
+            'doc-politicas': false,
+            'doc-formularios': true,
+            'doc-manuais': true,
+            'doc-relatorios': false,
+            'doc-processos': false,
+            'doc-riscos': false,
+            'doc-termos': false,
+            'doc-clima': false,
+            'doc-plano': false,
+            'residencia': false,
+            'podcasts': true,
+            'notificacoes': false,
+            'ranking': true,
+            'admin-panel': false
+        }
+    },
+    
+    'tecnico-enfermagem': {
+        name: 'Técnico de Enfermagem',
+        color: '#20c997',
+        icon: 'fa-hand-holding-medical',
+        permissions: {
+            'rop-cultura': true,
+            'rop-comunicacao': true,
+            'rop-medicamentos': false,
+            'rop-vida-profissional': false,
+            'rop-infeccoes': true,
+            'rop-riscos': true,
             'doc-protocolos': true,
             'doc-politicas': false,
             'doc-formularios': true,

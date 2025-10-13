@@ -1,6 +1,6 @@
 // ==================== SERVICE WORKER - ANEST PWA ====================
 // Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v2.0.1';
+const CACHE_VERSION = 'v2.1.0';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache (funcionamento offline)
