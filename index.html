@@ -4,10 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANEST - Sistema de Gestão e Treinamento</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="permissions-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PWA Theme Color -->
+    <meta name="theme-color" content="#1a4d2e">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#1a4d2e">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a202c">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ANEST">
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512x512.png">
+    
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-startup-image" href="icons/icon-512x512.png">
+    
+    <!-- Standard Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+    
+    <!-- Android/Chrome -->
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#1a4d2e">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
 </head>
 <body>
     <!-- Loading Screen -->
@@ -225,5 +263,83 @@
     <script src="residencia-config.js"></script>
     <script src="residencia-app.js"></script>
     <script src="app.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Registrar Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registrado com sucesso:', registration.scope);
+                        
+                        // Checar atualizações a cada 1 hora
+                        setInterval(() => {
+                            registration.update();
+                        }, 3600000);
+                        
+                        // Detectar quando há uma nova versão disponível
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nova versão disponível!
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('❌ Erro ao registrar Service Worker:', error);
+                    });
+                
+                // Escutar mensagens do Service Worker
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+                        showUpdateNotification();
+                    }
+                });
+            });
+        }
+        
+        // Mostrar notificação de atualização disponível
+        function showUpdateNotification() {
+            if (typeof showToast === 'function') {
+                const toast = document.createElement('div');
+                toast.className = 'toast info';
+                toast.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <span class="toast-message">
+                        Nova versão disponível!
+                        <button onclick="window.location.reload()" style="margin-left: 10px; padding: 5px 10px; background: white; color: #007bff; border: none; border-radius: 4px; cursor: pointer;">
+                            Atualizar Agora
+                        </button>
+                    </span>
+                `;
+                document.getElementById('toastContainer').appendChild(toast);
+                
+                // Remover após 10 segundos (mais tempo para dar chance de clicar)
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 10000);
+            }
+        }
+        
+        // Detectar quando está instalado como PWA
+        window.addEventListener('appinstalled', (event) => {
+            console.log('🎉 App instalado com sucesso!');
+            if (typeof showToast === 'function') {
+                showToast('App ANEST instalado com sucesso!', 'success');
+            }
+        });
+        
+        // Detectar modo standalone (app instalado)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('📱 App rodando em modo instalado (PWA)');
+            document.body.classList.add('pwa-mode');
+        }
+    </script>
 </body>
 </html>
