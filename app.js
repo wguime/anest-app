@@ -333,65 +333,82 @@ async function saveUserProgress() {
 
 // ==================== ROPS SECTION ====================
 function showROPs() {
-    const screen = document.getElementById('ropsScreen');
+    console.log('🔍 showROPs() chamada!');
     
-    // Filtrar ROPs baseado em permissões
-    const availableROPs = Object.entries(ropsData).filter(([key, macroArea]) => {
-        if (typeof canAccessModule === 'function') {
-            return canAccessModule(currentUser, key);
+    try {
+        const screen = document.getElementById('ropsScreen');
+        console.log('🔍 Screen encontrado:', screen);
+        
+        if (!screen) {
+            console.error('❌ ropsScreen não encontrado!');
+            return;
         }
-        return true; // Se função não existe, mostrar tudo
-    });
-    
-    if (availableROPs.length === 0) {
+        
+        // Verificar se ropsData existe
+        if (typeof ropsData === 'undefined') {
+            console.error('❌ ropsData não carregado!');
+            screen.innerHTML = `
+                <button class="back-btn" onclick="goHome()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <div class="error-message">
+                    <h2>Erro de Carregamento</h2>
+                    <p>Dados das ROPs não foram carregados. Recarregue a página.</p>
+                </div>
+            `;
+            showScreen('rops');
+            return;
+        }
+        
+        console.log('🔍 ropsData carregado:', Object.keys(ropsData));
+        
+        // Simplificar - mostrar todas as ROPs sem filtro de permissão
+        const availableROPs = Object.entries(ropsData);
+        console.log('🔍 ROPs disponíveis:', availableROPs.length);
+        
         screen.innerHTML = `
             <button class="back-btn" onclick="goHome()">
                 <i class="fas fa-arrow-left"></i> Voltar
             </button>
-            <div class="access-denied">
-                <i class="fas fa-ban"></i>
-                <h2>Sem Acesso</h2>
-                <p>Você não tem permissão para acessar nenhuma ROPs.</p>
-                <p>Entre em contato com o administrador.</p>
+            <h2 class="screen-title">ROPs - Desafio de Conhecimento</h2>
+            
+            <div class="menu-grid">
+                ${availableROPs.map(([key, macroArea]) => `
+                    <div class="menu-card" onclick="showMacroArea('${key}')">
+                        <div class="card-icon" style="background: ${macroArea.color}">
+                            <i class="${macroArea.icon}"></i>
+                        </div>
+                        <h3>${macroArea.title}</h3>
+                        <p>${Object.keys(macroArea.subdivisoes).length} subdivisões</p>
+                    </div>
+                `).join('')}
+                
+                <div class="menu-card" onclick="showSimulado()">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Simulado Geral</h3>
+                    <p>Quiz com todas as questões</p>
+                </div>
+                
+                <div class="menu-card" onclick="showRanking()">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%)">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Ranking</h3>
+                    <p>Classificação dos usuários</p>
+                </div>
             </div>
         `;
-        showScreen('rops');
-        return;
-    }
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">ROPs - Desafio de Conhecimento</h2>
         
-        <div class="menu-grid">
-            ${availableROPs.map(([key, macroArea]) => `
-                <div class="menu-card" onclick="showMacroArea('${key}')">
-                    <div class="card-icon" style="background: ${macroArea.color}">
-                        <i class="${macroArea.icon}"></i>
-                    </div>
-                    <h3>${macroArea.title}</h3>
-                    ${getUserMacroProgress(key)}
-                </div>
-            `).join('')}
-            
-            <div class="menu-card" onclick="showSimulado()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <h3>Simulado Geral</h3>
-            </div>
-            
-            <div class="menu-card" onclick="showRanking()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%)">
-                    <i class="fas fa-trophy"></i>
-                </div>
-                <h3>Ranking</h3>
-            </div>
-        </div>
-    `;
-    showScreen('rops');
+        console.log('🔍 HTML inserido, chamando showScreen...');
+        showScreen('rops');
+        console.log('✅ showROPs() concluída!');
+        
+    } catch (error) {
+        console.error('❌ Erro em showROPs():', error);
+        alert('Erro ao carregar ROPs: ' + error.message);
+    }
 }
 
 function getUserMacroProgress(macroKey) {
