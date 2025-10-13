@@ -205,13 +205,14 @@ body {
 }
 
 .login-logo {
-    max-width: 500px;
-    max-height: 300px;
-    width: 90%;
+    max-width: 100%;
+    max-height: 400px;
+    width: 100%;
     height: auto;
     margin: 0 auto 40px;
     display: block;
     object-fit: contain;
+    padding: 0 20px;
 }
 
 .login-logo-fallback {
@@ -411,7 +412,7 @@ body {
 .header-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 5px 30px;
+    padding: 3px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;

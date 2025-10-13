@@ -1447,13 +1447,6 @@ function filterDocuments(sectionKey, category) {
                 </div>
                 <div class="document-info">
                     <div class="document-title">${doc.title}</div>
-                    <div class="document-meta">
-                        ${doc.codigo ? `<span class="document-badge">${doc.codigo}</span>` : ''}
-                        ${doc.categoria ? `<span class="document-badge">${doc.categoria}</span>` : ''}
-                        ${doc.tipo ? `<span class="document-badge">${doc.tipo}</span>` : ''}
-                        ${doc.periodo ? `<span class="document-badge">${doc.periodo}</span>` : ''}
-                        ${doc.ano ? `<span class="document-badge">${doc.ano}</span>` : ''}
-                    </div>
                 </div>
                 <i class="fas fa-external-link-alt" style="color: var(--primary-color);"></i>
             </div>
