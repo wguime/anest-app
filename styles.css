@@ -402,6 +402,9 @@ body {
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
+    min-height: 60px;
+    max-height: 60px;
+    /* HEADER ULTRA COMPACTO v3.0 */
 }
 
 [data-theme="dark"] .app-header {
