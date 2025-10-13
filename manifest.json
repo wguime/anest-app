@@ -2,8 +2,8 @@
   "name": "ANEST - Sistema de Gestão e Treinamento",
   "short_name": "ANEST",
   "description": "Sistema profissional de gestão, treinamento e quiz para equipe ANEST",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/anest-app/",
+  "scope": "/anest-app/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#1a4d2e",
@@ -80,19 +80,19 @@
       "name": "ROPs Quiz",
       "short_name": "Quiz",
       "description": "Iniciar quiz de ROPs",
-      "url": "/?shortcut=rops",
+      "url": "/anest-app/?shortcut=rops",
       "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Documentos",
       "short_name": "Docs",
       "description": "Acessar documentos",
-      "url": "/?shortcut=docs",
+      "url": "/anest-app/?shortcut=docs",
       "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ],
   "share_target": {
-    "action": "/share",
+    "action": "/anest-app/share",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {

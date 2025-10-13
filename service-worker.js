@@ -1,24 +1,24 @@
 // ==================== SERVICE WORKER - ANEST PWA ====================
 // Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v2.0.0';
+const CACHE_VERSION = 'v2.0.1';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache (funcionamento offline)
 const ESSENTIAL_FILES = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/permissions-styles.css',
-    '/app.js',
-    '/permissions-system.js',
-    '/firebase-config.js',
-    '/rops-data.js',
-    '/documents-data.js',
-    '/residencia-config.js',
-    '/residencia-app.js',
-    '/LogoANEST.png',
-    '/NovoLogoAnest.png',
-    '/manifest.json'
+    '/anest-app/',
+    '/anest-app/index.html',
+    '/anest-app/styles.css',
+    '/anest-app/permissions-styles.css',
+    '/anest-app/app.js',
+    '/anest-app/permissions-system.js',
+    '/anest-app/firebase-config.js',
+    '/anest-app/rops-data.js',
+    '/anest-app/documents-data.js',
+    '/anest-app/residencia-config.js',
+    '/anest-app/residencia-app.js',
+    '/anest-app/LogoANEST.png',
+    '/anest-app/NovoLogoAnest.png',
+    '/anest-app/manifest.json'
 ];
 
 // Arquivos que podem ser cacheados dinamicamente
@@ -133,7 +133,7 @@ async function cacheFirst(request) {
         console.error('[Service Worker] Erro no cache first:', error);
         
         // Fallback para página offline se disponível
-        const offlinePage = await caches.match('/offline.html');
+        const offlinePage = await caches.match('/anest-app/offline.html');
         if (offlinePage) {
             return offlinePage;
         }
@@ -172,7 +172,7 @@ async function networkFirst(request) {
         }
         
         // Fallback para página offline
-        const offlinePage = await caches.match('/offline.html');
+        const offlinePage = await caches.match('/anest-app/offline.html');
         if (offlinePage) {
             return offlinePage;
         }
@@ -232,7 +232,7 @@ self.addEventListener('push', (event) => {
         tag: 'anest-notification',
         requireInteraction: false,
         data: {
-            url: '/'
+            url: '/anest-app/'
         }
     };
     
@@ -245,7 +245,7 @@ self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     
     event.waitUntil(
-        clients.openWindow(event.notification.data.url || '/')
+        clients.openWindow(event.notification.data.url || '/anest-app/')
     );
 });
 
