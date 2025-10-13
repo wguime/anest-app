@@ -402,8 +402,8 @@ body {
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-    height: 60px;
-    /* HEADER ULTRA COMPACTO v3.0 */
+    height: 110px;
+    /* HEADER COM LOGO GRANDE v3.2 */
 }
 
 [data-theme="dark"] .app-header {
@@ -419,6 +419,7 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 100%;
+    gap: 20px;
 }
 
 .logo {
@@ -431,10 +432,10 @@ body {
 }
 
 .logo-img {
-    height: 50px;
+    height: 100px;
     width: auto;
     object-fit: contain;
-    max-width: 400px;
+    max-width: 800px;
 }
 
 .logo-fallback {
