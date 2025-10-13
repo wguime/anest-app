@@ -1708,7 +1708,3377 @@ const ropsData = {
                     // 30 questions about dangerous abbreviations...
                 ]
             },
-            
+
+            "rop-2-3": {
+                title: "ROP 2.3 – Conciliação Medicamentosa como Prioridade Estratégica",
+                audioFile: null,
+                questions: [
+{
+        question: "O que é conciliação medicamentosa?",
+        options: [
+            "Processo de comparar medicamentos do paciente em transições de cuidado",
+            "Reconciliação financeira de medicamentos",
+            "Processo de descarte de medicamentos vencidos",
+            "Sistema de controle de estoque de medicamentos"
+        ],
+        correctAnswer: 0,
+        explanation: "Conciliação medicamentosa é o processo formal de comparação dos medicamentos que o paciente estava usando antes com os medicamentos prescritos após uma transição de cuidado, identificando e resolvendo discrepâncias."
+    },
+    {
+        question: "Quais são os momentos críticos para realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas na admissão hospitalar",
+            "Somente na alta hospitalar",
+            "Na admissão, transferências e alta",
+            "Apenas em consultas ambulatoriais"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa deve ser realizada em todos os pontos de transição de cuidado: admissão, transferências entre unidades/serviços e na alta hospitalar."
+    },
+    {
+        question: "Por que a conciliação medicamentosa é considerada prioridade estratégica?",
+        options: [
+            "Apenas para cumprir requisitos legais",
+            "Reduz erros de medicação e eventos adversos",
+            "Diminui custos operacionais",
+            "Facilita o trabalho da farmácia"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa é prioridade estratégica porque reduz significativamente erros de medicação e eventos adversos a medicamentos, que são causas importantes de dano ao paciente."
+    },
+    {
+        question: "Quem deve realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas farmacêuticos",
+            "Somente médicos prescritores",
+            "Profissionais capacitados (médicos, farmacêuticos, enfermeiros)",
+            "Apenas técnicos de enfermagem"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa pode ser realizada por diferentes profissionais capacitados, incluindo médicos, farmacêuticos e enfermeiros, desde que devidamente treinados no processo."
+    },
+    {
+        question: "O que são discrepâncias intencionais na conciliação medicamentosa?",
+        options: [
+            "Erros cometidos propositalmente",
+            "Alterações documentadas e justificadas pelo prescritor",
+            "Diferenças causadas por falta de informação",
+            "Medicamentos não registrados"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias intencionais são alterações propositais nos medicamentos, documentadas e justificadas clinicamente pelo médico prescritor, como suspensão ou mudança de medicação por decisão terapêutica."
+    },
+    {
+        question: "O que são discrepâncias não intencionais?",
+        options: [
+            "Alterações planejadas pelo médico",
+            "Erros ou omissões não documentados",
+            "Medicamentos controlados",
+            "Prescrições eletrônicas"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais são erros ou omissões não documentados que ocorrem quando um medicamento é inadvertidamente omitido, adicionado, com dose alterada ou com frequência incorreta."
+    },
+    {
+        question: "Qual é o papel do paciente na conciliação medicamentosa?",
+        options: [
+            "Apenas responder perguntas quando solicitado",
+            "Fornecer lista completa e atualizada de medicamentos",
+            "Não tem papel relevante no processo",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O paciente ou cuidador tem papel fundamental fornecendo lista completa e atualizada de todos os medicamentos em uso, incluindo prescritos, automedicação, fitoterápicos e suplementos."
+    },
+    {
+        question: "O que deve constar na lista de medicamentos do paciente?",
+        options: [
+            "Apenas medicamentos prescritos pelo hospital",
+            "Somente medicamentos de uso contínuo",
+            "Todos: prescritos, automedicação, fitoterápicos, suplementos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "A lista completa deve incluir TODOS os medicamentos que o paciente utiliza: prescritos, automedicação, fitoterápicos, suplementos vitamínicos, homeopáticos, entre outros."
+    },
+    {
+        question: "Como deve ser registrada a conciliação medicamentosa?",
+        options: [
+            "Apenas verbalmente com o paciente",
+            "Em formulário específico no prontuário",
+            "Não precisa ser registrada",
+            "Somente em sistema informatizado"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser documentada em formulário específico no prontuário do paciente, seja em papel ou eletrônico, incluindo todas as informações relevantes."
+    },
+    {
+        question: "Qual informação é essencial sobre cada medicamento na conciliação?",
+        options: [
+            "Apenas o nome do medicamento",
+            "Nome, dose, via, frequência e última administração",
+            "Somente a dose prescrita",
+            "Apenas se é genérico ou referência"
+        ],
+        correctAnswer: 1,
+        explanation: "Para cada medicamento deve-se registrar: nome completo, dose, via de administração, frequência de uso e horário da última dose tomada."
+    },
+    {
+        question: "Quando ocorre a maioria dos erros de medicação relacionados a transições de cuidado?",
+        options: [
+            "Durante a internação hospitalar",
+            "Nas transições: admissão, transferência e alta",
+            "Apenas em consultas ambulatoriais",
+            "Somente em cirurgias"
+        ],
+        correctAnswer: 1,
+        explanation: "A maioria dos erros de medicação ocorre nas transições de cuidado, quando há falha na comunicação sobre os medicamentos do paciente entre diferentes níveis ou serviços de saúde."
+    },
+    {
+        question: "O que caracteriza uma política institucional efetiva de conciliação medicamentosa?",
+        options: [
+            "Aplicação apenas em casos selecionados",
+            "Implementação sistemática em todas as transições",
+            "Uso apenas na alta hospitalar",
+            "Realização quando houver tempo disponível"
+        ],
+        correctAnswer: 1,
+        explanation: "Uma política efetiva deve garantir implementação sistemática e obrigatória da conciliação medicamentosa em TODAS as transições de cuidado, não apenas em situações específicas."
+    },
+    {
+        question: "Como envolver o paciente de forma efetiva na conciliação?",
+        options: [
+            "Pedindo apenas que confirme a lista pronta",
+            "Educando e incentivando a trazer lista atualizada",
+            "Não envolver para não confundir",
+            "Apenas solicitar receitas antigas"
+        ],
+        correctAnswer: 1,
+        explanation: "O envolvimento efetivo inclui educar o paciente sobre a importância, incentivá-lo a manter lista atualizada de medicamentos e trazer embalagens ou receitas nas consultas e internações."
+    },
+    {
+        question: "Qual é o primeiro passo na conciliação medicamentosa na admissão?",
+        options: [
+            "Prescrever novos medicamentos",
+            "Obter história medicamentosa completa e precisa",
+            "Suspender todos os medicamentos anteriores",
+            "Consultar apenas o prontuário eletrônico"
+        ],
+        correctAnswer: 1,
+        explanation: "O primeiro passo é obter uma história medicamentosa completa e precisa, incluindo todos os medicamentos que o paciente estava usando antes da admissão."
+    },
+    {
+        question: "Quais fontes devem ser usadas para obter a história medicamentosa?",
+        options: [
+            "Apenas entrevista com o paciente",
+            "Somente receitas anteriores",
+            "Múltiplas fontes: paciente, cuidador, receitas, prontuários, farmácias",
+            "Apenas o sistema eletrônico"
+        ],
+        correctAnswer: 2,
+        explanation: "Deve-se usar múltiplas fontes de informação: entrevista com paciente/cuidador, receitas anteriores, prontuários de outras instituições, contato com farmácias e médico assistente."
+    },
+    {
+        question: "O que fazer quando há discrepância não intencional identificada?",
+        options: [
+            "Ignorar se não parecer grave",
+            "Comunicar ao prescritor para resolução imediata",
+            "Anotar apenas no prontuário sem avisar",
+            "Esperar a próxima visita médica"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais devem ser comunicadas IMEDIATAMENTE ao prescritor para resolução, pois representam potencial erro de medicação."
+    },
+    {
+        question: "Como deve ser a prescrição de alta com relação à conciliação?",
+        options: [
+            "Listar apenas medicamentos novos",
+            "Incluir todos: continuados, modificados, suspensos e novos",
+            "Prescrever apenas medicamentos hospitalares",
+            "Não incluir medicamentos de uso domiciliar"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição de alta deve listar TODOS os medicamentos: os que continuam, os modificados (com justificativa), os suspensos (com motivo) e os novos prescritos."
+    },
+    {
+        question: "Qual a importância da orientação na alta sobre medicamentos?",
+        options: [
+            "Não é necessária se entregar a receita",
+            "Fundamental para adesão e segurança do tratamento",
+            "Importante apenas para idosos",
+            "Relevante somente para medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "A orientação clara na alta sobre todos os medicamentos é fundamental para garantir adesão ao tratamento, prevenir erros e promover a segurança do paciente em domicílio."
+    },
+    {
+        question: "Quem deve receber as orientações de alta sobre medicamentos?",
+        options: [
+            "Apenas o paciente",
+            "Somente familiares",
+            "Paciente e cuidador/familiar responsável",
+            "Não é necessário orientar se tiver receita"
+        ],
+        correctAnswer: 2,
+        explanation: "As orientações devem ser fornecidas ao paciente E ao cuidador/familiar responsável, garantindo que haja mais de uma pessoa com conhecimento sobre o plano medicamentoso."
+    },
+    {
+        question: "O que é polifarmácia?",
+        options: [
+            "Uso de medicamentos falsificados",
+            "Uso de múltiplos medicamentos simultaneamente",
+            "Uso de medicamentos vencidos",
+            "Uso inadequado de antibióticos"
+        ],
+        correctAnswer: 1,
+        explanation: "Polifarmácia é o uso simultâneo de múltiplos medicamentos por um paciente, situação comum em idosos e pacientes com múltiplas comorbidades, aumentando risco de interações e eventos adversos."
+    },
+    {
+        question: "Por que idosos requerem atenção especial na conciliação?",
+        options: [
+            "Apenas por questões de memória",
+            "Maior risco: polifarmácia, alterações fisiológicas, múltiplos prescritores",
+            "Somente por dificuldade de comunicação",
+            "Não requerem cuidados especiais"
+        ],
+        correctAnswer: 1,
+        explanation: "Idosos requerem atenção especial devido a múltiplos fatores: frequente polifarmácia, alterações fisiológicas que afetam metabolismo de medicamentos, múltiplos prescritores e maior risco de eventos adversos."
+    },
+    {
+        question: "Como a tecnologia pode auxiliar na conciliação medicamentosa?",
+        options: [
+            "Substituindo completamente a avaliação clínica",
+            "Sistemas eletrônicos com alertas e histórico integrado",
+            "Apenas para gerar receitas",
+            "Não há benefício da tecnologia"
+        ],
+        correctAnswer: 1,
+        explanation: "A tecnologia auxilia através de prontuários eletrônicos integrados, sistemas com alertas de interações medicamentosas, histórico completo de prescrições e facilitação da comunicação entre serviços."
+    },
+    {
+        question: "O que são medicamentos de alto risco no contexto da conciliação?",
+        options: [
+            "Apenas medicamentos controlados",
+            "Medicamentos que podem causar dano grave se usados incorretamente",
+            "Somente medicamentos injetáveis",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de alto risco são aqueles que apresentam risco aumentado de causar danos graves ao paciente se houver erro no uso, como anticoagulantes, insulina, opioides, entre outros."
+    },
+    {
+        question: "Como deve ser o processo de conciliação na transferência entre unidades?",
+        options: [
+            "Não é necessário refazer",
+            "Repetir o processo completo na unidade receptora",
+            "Apenas copiar a prescrição anterior",
+            "Somente se houver mudança de médico"
+        ],
+        correctAnswer: 1,
+        explanation: "Na transferência entre unidades, o processo de conciliação deve ser repetido, comparando medicamentos da unidade de origem com a nova prescrição, identificando e documentando alterações."
+    },
+    {
+        question: "Qual o papel da farmácia clínica na conciliação medicamentosa?",
+        options: [
+            "Apenas dispensar medicamentos",
+            "Participação ativa: revisão, identificação de problemas, orientação",
+            "Somente controlar estoque",
+            "Não tem papel relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico tem papel fundamental: pode liderar o processo de conciliação, revisar prescrições, identificar problemas relacionados a medicamentos, orientar pacientes e apoiar a equipe."
+    },
+    {
+        question: "Como a equipe multidisciplinar contribui para a conciliação?",
+        options: [
+            "Apenas o médico é responsável",
+            "Todos contribuem com suas perspectivas e informações",
+            "Somente enfermagem participa",
+            "Não há necessidade de equipe multidisciplinar"
+        ],
+        correctAnswer: 1,
+        explanation: "A equipe multidisciplinar (médicos, enfermeiros, farmacêuticos, nutricionistas) contribui com diferentes perspectivas e informações, tornando o processo mais completo e seguro."
+    },
+    {
+        question: "O que é reconciliação medicamentosa eletrônica?",
+        options: [
+            "Apenas prescrição em computador",
+            "Sistema informatizado que integra história, prescrição e alertas",
+            "Receita digital simples",
+            "Consulta de medicamentos na internet"
+        ],
+        correctAnswer: 1,
+        explanation: "É um sistema eletrônico integrado que permite documentar história medicamentosa, comparar com prescrições atuais, gerar alertas de discrepâncias e interações, facilitando o processo de conciliação."
+    },
+    {
+        question: "Como garantir a continuidade do cuidado após a alta?",
+        options: [
+            "Apenas entregar receita ao paciente",
+            "Comunicação clara com atenção primária e orientação adequada",
+            "Não é responsabilidade do hospital",
+            "Somente agendar retorno"
+        ],
+        correctAnswer: 1,
+        explanation: "A continuidade requer: orientação adequada ao paciente/cuidador, comunicação clara com a atenção primária (contrarreferência), receitas legíveis com todos os medicamentos e agendamento de seguimento."
+    },
+    {
+        question: "Quais medicamentos devem ser conciliados na alta hospitalar?",
+        options: [
+            "Apenas os prescritos no hospital",
+            "Somente medicamentos novos",
+            "Todos: domiciliares, hospitalares, continuados e suspensos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "TODOS os medicamentos devem ser revisados na alta: os de uso domiciliar prévio (quais continuam), os usados no hospital, os novos prescritos e os que foram suspensos (com justificativa)."
+    },
+    {
+        question: "Como educar profissionais sobre conciliação medicamentosa?",
+        options: [
+            "Não é necessário treinamento formal",
+            "Treinamento inicial e educação continuada regular",
+            "Apenas ler um manual é suficiente",
+            "Somente aprender na prática"
+        ],
+        correctAnswer: 1,
+        explanation: "A educação efetiva requer treinamento inicial estruturado sobre o processo, seguido de educação continuada regular, discussão de casos, feedback e atualização sobre melhores práticas."
+    }
+                ]
+            },
+
+            "rop-2-4": {
+                title: "ROP 2.4 – Conciliação em Serviços de Assistência Aguda (Internação)",
+                audioFile: null,
+                questions: [
+{
+        question: "O que caracteriza a assistência aguda em internação?",
+        options: [
+            "Apenas consultas de rotina",
+            "Cuidado de pacientes internados com condições agudas",
+            "Somente atendimentos ambulatoriais",
+            "Apenas procedimentos cirúrgicos"
+        ],
+        correctAnswer: 1,
+        explanation: "Assistência aguda em internação refere-se ao cuidado prestado a pacientes que necessitam hospitalização para tratamento de condições agudas, exacerbações de doenças crônicas ou procedimentos que requerem internação."
+    },
+    {
+        question: "Quando deve ser realizada a primeira conciliação na internação?",
+        options: [
+            "Até 48 horas após admissão",
+            "Nas primeiras 24 horas, idealmente na admissão",
+            "Apenas quando o médico solicitar",
+            "Somente antes da alta"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser realizada nas primeiras 24 horas de internação, idealmente no momento da admissão, para prevenir erros desde o início da hospitalização."
+    },
+    {
+        question: "Quem é responsável por iniciar a conciliação na admissão hospitalar?",
+        options: [
+            "Apenas o médico plantonista",
+            "Profissional designado pela instituição (médico, farmacêutico ou enfermeiro)",
+            "Somente o farmacêutico",
+            "Apenas a enfermagem"
+        ],
+        correctAnswer: 1,
+        explanation: "A responsabilidade pode ser de diferentes profissionais, conforme definido pela instituição, mas deve haver designação clara e treinamento adequado do profissional responsável."
+    },
+    {
+        question: "O que fazer com medicamentos de uso contínuo na admissão hospitalar?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar individualmente e decidir continuidade",
+            "Manter todos sem revisar",
+            "Substituir todos por similares hospitalares"
+        ],
+        correctAnswer: 1,
+        explanation: "Cada medicamento de uso contínuo deve ser avaliado individualmente pelo médico, decidindo sobre continuidade, ajuste ou suspensão baseado na condição clínica e no motivo da internação."
+    },
+    {
+        question: "Como proceder com medicamentos trazidos de casa?",
+        options: [
+            "Permitir uso sem controle",
+            "Confiscar todos imediatamente",
+            "Avaliar, identificar, devolver à família ou armazenar com segurança",
+            "Permitir apenas se for genérico"
+        ],
+        correctAnswer: 2,
+        explanation: "Medicamentos trazidos devem ser identificados, avaliados quanto à necessidade de continuidade, e devolvidos à família ou armazenados com segurança. O uso deve ser controlado pela equipe."
+    },
+    {
+        question: "Qual a frequência ideal de revisão da prescrição em internação?",
+        options: [
+            "Uma vez por semana",
+            "Diariamente",
+            "Apenas na admissão e alta",
+            "Somente se houver problemas"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição deve ser revista diariamente, avaliando necessidade de continuidade de cada medicamento, ajuste de doses, identificação de interações e eventos adversos."
+    },
+    {
+        question: "O que é deprescribing?",
+        options: [
+            "Erro de prescrição",
+            "Processo de redução ou suspensão de medicamentos desnecessários",
+            "Prescrição eletrônica",
+            "Falta de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Deprescribing é o processo planejado e supervisionado de redução de dose ou suspensão de medicamentos que podem estar causando dano ou não trazendo benefício ao paciente."
+    },
+    {
+        question: "Como identificar medicamentos potencialmente inapropriados em idosos internados?",
+        options: [
+            "Todos medicamentos são apropriados",
+            "Usar critérios de Beers ou STOPP/START",
+            "Avaliar apenas o custo",
+            "Não há critérios estabelecidos"
+        ],
+        correctAnswer: 1,
+        explanation: "Critérios como Beers ou STOPP/START auxiliam na identificação de medicamentos potencialmente inapropriados em idosos, guiando decisões sobre continuidade ou substituição."
+    },
+    {
+        question: "O que fazer quando o paciente não sabe informar seus medicamentos?",
+        options: [
+            "Prescrever sem essa informação",
+            "Buscar fontes alternativas: família, farmácia, médico, prontuários",
+            "Aguardar que se lembre",
+            "Iniciar apenas medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando o paciente não pode informar, deve-se buscar ativamente outras fontes: contato com familiares, farmácia que dispensa, médico assistente, prontuários de outras instituições."
+    },
+    {
+        question: "Como documentar alterações medicamentosas durante a internação?",
+        options: [
+            "Apenas no sistema eletrônico",
+            "Em evolução médica com justificativa clara",
+            "Não é necessário documentar",
+            "Somente em relatório de alta"
+        ],
+        correctAnswer: 1,
+        explanation: "Todas as alterações medicamentosas devem ser documentadas na evolução médica com justificativa clara, permitindo continuidade do cuidado e compreensão do raciocínio clínico."
+    },
+    {
+        question: "Qual o papel da enfermagem na conciliação durante internação?",
+        options: [
+            "Apenas administrar medicamentos prescritos",
+            "Coletar história, identificar discrepâncias, comunicar equipe",
+            "Não participa do processo",
+            "Somente na alta hospitalar"
+        ],
+        correctAnswer: 1,
+        explanation: "A enfermagem tem papel fundamental: pode coletar história medicamentosa inicial, identificar discrepâncias durante administração, comunicar à equipe e educar o paciente."
+    },
+    {
+        question: "Como proceder com medicamentos de uso tópico e inalatório?",
+        options: [
+            "Ignorar, não são importantes",
+            "Incluir na conciliação como qualquer outro medicamento",
+            "Apenas perguntar se usa",
+            "Somente se for de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de uso tópico, inalatório, nasal, ocular devem ser incluídos na conciliação, pois podem causar interações sistêmicas e eventos adversos."
+    },
+    {
+        question: "O que fazer quando há conflito entre medicamentos domiciliares e hospitalares?",
+        options: [
+            "Sempre priorizar os hospitalares",
+            "Avaliar caso a caso, discutir com equipe e documentar decisão",
+            "Manter ambas as prescrições",
+            "Suspender todos os domiciliares"
+        ],
+        correctAnswer: 1,
+        explanation: "Conflitos devem ser avaliados individualmente, considerando condição clínica, evidências, disponibilidade e preferências. A decisão deve ser discutida e bem documentada."
+    },
+    {
+        question: "Como garantir a segurança em jejum pré-operatório com medicamentos?",
+        options: [
+            "Suspender todos os medicamentos",
+            "Avaliar individualmente: alguns devem continuar com pouco líquido",
+            "Manter todos normalmente",
+            "Apenas medicamentos injetáveis"
+        ],
+        correctAnswer: 1,
+        explanation: "Alguns medicamentos devem ser mantidos mesmo em jejum (anti-hipertensivos, anticonvulsivantes, etc.) com pequeno gole de água, enquanto outros devem ser suspensos. Avaliação individualizada é essencial."
+    },
+    {
+        question: "Qual a importância da conciliação em transferência para UTI?",
+        options: [
+            "Não é necessária, UTI tem equipe própria",
+            "Crítica: evita interrupções e duplicações em paciente grave",
+            "Apenas transferir a prescrição anterior",
+            "Somente se o paciente estiver consciente"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação na transferência para UTI é crítica: pacientes graves não toleram erros, pode haver alteração de apresentações (oral para venoso) e risco de interrupções inadvertidas."
+    },
+    {
+        question: "Como lidar com alergias medicamentosas na conciliação?",
+        options: [
+            "Apenas perguntar ao paciente",
+            "Documentar detalhadamente: medicamento, reação, gravidade, data",
+            "Anotar apenas o nome do medicamento",
+            "Não é parte da conciliação"
+        ],
+        correctAnswer: 1,
+        explanation: "Alergias devem ser documentadas detalhadamente: medicamento específico, tipo de reação, gravidade, data da ocorrência, e deve haver sinalização clara no prontuário e pulseira."
+    },
+    {
+        question: "O que são medicamentos sentinela?",
+        options: [
+            "Medicamentos experimentais",
+            "Medicamentos que indicam possíveis condições não diagnosticadas",
+            "Apenas medicamentos controlados",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos sentinela são aqueles cujo uso pode indicar condições clínicas não diagnosticadas ou não documentadas, como uso de anticoagulante sugerindo fibrilação atrial."
+    },
+    {
+        question: "Como proceder com suplementos e vitaminas na internação?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar necessidade, interações e manter se apropriado",
+            "Não são considerados medicamentos",
+            "Permitir apenas se o paciente insistir"
+        ],
+        correctAnswer: 1,
+        explanation: "Suplementos e vitaminas devem ser avaliados quanto à necessidade, possíveis interações com medicamentos prescritos e mantidos quando clinicamente apropriados."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com múltiplas comorbidades?",
+        options: [
+            "Não há diferença de outros pacientes",
+            "Fundamental: maior risco de interações e eventos adversos",
+            "Menos importante por já usarem muitos medicamentos",
+            "Apenas para controle administrativo"
+        ],
+        correctAnswer: 1,
+        explanation: "Em pacientes com múltiplas comorbidades, a conciliação é ainda mais importante devido à polifarmácia, maior risco de interações, duplicações e cascata de prescrições."
+    },
+    {
+        question: "Como envolver o farmacêutico na conciliação em internação?",
+        options: [
+            "Apenas para dispensação",
+            "Participação ativa: revisão de prescrições, identificação de problemas, orientação",
+            "Somente para controle de custos",
+            "Não há necessidade de envolvimento"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico deve participar ativamente: realizar conciliação, revisar prescrições, identificar e resolver problemas relacionados a medicamentos, e orientar pacientes e equipe."
+    },
+    {
+        question: "O que fazer com medicamentos de uso PRN (se necessário)?",
+        options: [
+            "Não incluir na conciliação",
+            "Incluir, avaliar necessidade e orientar sobre uso correto",
+            "Suspender todos na internação",
+            "Apenas anotar que o paciente usa"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos PRN devem ser incluídos na conciliação, avaliando indicação, frequência de uso real, efetividade e orientando sobre uso correto e alternativas se necessário."
+    },
+    {
+        question: "Como garantir a adesão às práticas de conciliação pela equipe?",
+        options: [
+            "Apenas criar protocolos escritos",
+            "Educação, feedback, indicadores, cultura de segurança",
+            "Punir quem não fizer",
+            "Não é possível garantir"
+        ],
+        correctAnswer: 1,
+        explanation: "A adesão requer múltiplas estratégias: educação contínua, feedback regular, monitoramento de indicadores, liderança engajada e cultura organizacional que valoriza segurança."
+    },
+    {
+        question: "Qual a relação entre conciliação e tempo de internação?",
+        options: [
+            "Não há relação",
+            "Conciliação adequada pode prevenir eventos e reduzir tempo",
+            "Sempre aumenta o tempo de internação",
+            "Apenas aumenta custos"
+        ],
+        correctAnswer: 1,
+        explanation: "Conciliação adequada pode prevenir eventos adversos a medicamentos que prolongariam internação, além de facilitar planejamento da alta e transição segura para domicílio."
+    },
+    {
+        question: "Como proceder com medicamentos em falta no hospital?",
+        options: [
+            "Suspender sem comunicar",
+            "Comunicar equipe, buscar alternativas terapêuticas adequadas",
+            "Pedir que família traga de casa",
+            "Aguardar sem substituir"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando um medicamento não está disponível, deve-se comunicar à equipe, avaliar alternativas terapêuticas equivalentes, documentar a substituição e orientar sobre a mudança."
+    },
+    {
+        question: "Qual o papel do médico assistente no processo de conciliação?",
+        options: [
+            "Não participa, é responsabilidade da farmácia",
+            "Responsável final: validar informações, decidir sobre medicamentos",
+            "Apenas prescrever medicamentos novos",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O médico assistente é o responsável final pela decisão sobre medicamentos, devendo validar a história coletada, decidir sobre continuidade, ajustes ou suspensões."
+    },
+    {
+        question: "Como documentar medicamentos suspensos?",
+        options: [
+            "Apenas retirar da prescrição",
+            "Documentar suspensão com justificativa clara",
+            "Não precisa documentar",
+            "Avisar apenas verbalmente"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos suspensos devem ser explicitamente documentados com justificativa clara, para evitar reinício inadvertido e informar próximos cuidadores sobre a decisão."
+    },
+    {
+        question: "O que é cascata de prescrições?",
+        options: [
+            "Prescrição em sequência",
+            "Prescrição de medicamentos para tratar efeitos adversos de outros",
+            "Prescrição eletrônica",
+            "Múltiplas prescrições simultâneas"
+        ],
+        correctAnswer: 1,
+        explanation: "Cascata de prescrições ocorre quando efeitos adversos de um medicamento são interpretados como nova condição, levando à prescrição de outro medicamento, criando ciclo prejudicial."
+    },
+    {
+        question: "Como a conciliação contribui para a segurança cirúrgica?",
+        options: [
+            "Não tem relação com cirurgia",
+            "Identifica medicamentos que devem ser suspensos/ajustados no perioperatório",
+            "Apenas para anestesia",
+            "Somente para cirurgias cardíacas"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação identifica medicamentos que precisam ser suspensos antes da cirurgia (anticoagulantes, hipoglicemiantes) ou ajustados, e aqueles que devem ser mantidos, contribuindo para segurança."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com insuficiência renal?",
+        options: [
+            "Mesma importância de outros pacientes",
+            "Fundamental: necessita ajuste de doses e evitar nefrotóxicos",
+            "Menos importante",
+            "Apenas para diálise"
+        ],
+        correctAnswer: 1,
+        explanation: "Em insuficiência renal, a conciliação é fundamental para ajustar doses conforme clearance, evitar medicamentos nefrotóxicos e prevenir acúmulo de metabólitos tóxicos."
+    },
+    {
+        question: "Como garantir a qualidade do processo de conciliação?",
+        options: [
+            "Não é possível mensurar",
+            "Indicadores, auditorias, feedback e melhoria contínua",
+            "Apenas contar quantas foram feitas",
+            "Confiar que todos fazem corretamente"
+        ],
+        correctAnswer: 1,
+        explanation: "A qualidade é garantida através de: indicadores de processo e resultado, auditorias periódicas, feedback à equipe, análise de discrepâncias identificadas e ciclos de melhoria contínua."
+    }
+                ]
+            },
+
+            "rop-2-3": {
+                title: "ROP 2.3 – Conciliação Medicamentosa como Prioridade Estratégica",
+                audioFile: null,
+                questions: [
+{
+        question: "O que é conciliação medicamentosa?",
+        options: [
+            "Processo de comparar medicamentos do paciente em transições de cuidado",
+            "Reconciliação financeira de medicamentos",
+            "Processo de descarte de medicamentos vencidos",
+            "Sistema de controle de estoque de medicamentos"
+        ],
+        correctAnswer: 0,
+        explanation: "Conciliação medicamentosa é o processo formal de comparação dos medicamentos que o paciente estava usando antes com os medicamentos prescritos após uma transição de cuidado, identificando e resolvendo discrepâncias."
+    },
+    {
+        question: "Quais são os momentos críticos para realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas na admissão hospitalar",
+            "Somente na alta hospitalar",
+            "Na admissão, transferências e alta",
+            "Apenas em consultas ambulatoriais"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa deve ser realizada em todos os pontos de transição de cuidado: admissão, transferências entre unidades/serviços e na alta hospitalar."
+    },
+    {
+        question: "Por que a conciliação medicamentosa é considerada prioridade estratégica?",
+        options: [
+            "Apenas para cumprir requisitos legais",
+            "Reduz erros de medicação e eventos adversos",
+            "Diminui custos operacionais",
+            "Facilita o trabalho da farmácia"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa é prioridade estratégica porque reduz significativamente erros de medicação e eventos adversos a medicamentos, que são causas importantes de dano ao paciente."
+    },
+    {
+        question: "Quem deve realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas farmacêuticos",
+            "Somente médicos prescritores",
+            "Profissionais capacitados (médicos, farmacêuticos, enfermeiros)",
+            "Apenas técnicos de enfermagem"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa pode ser realizada por diferentes profissionais capacitados, incluindo médicos, farmacêuticos e enfermeiros, desde que devidamente treinados no processo."
+    },
+    {
+        question: "O que são discrepâncias intencionais na conciliação medicamentosa?",
+        options: [
+            "Erros cometidos propositalmente",
+            "Alterações documentadas e justificadas pelo prescritor",
+            "Diferenças causadas por falta de informação",
+            "Medicamentos não registrados"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias intencionais são alterações propositais nos medicamentos, documentadas e justificadas clinicamente pelo médico prescritor, como suspensão ou mudança de medicação por decisão terapêutica."
+    },
+    {
+        question: "O que são discrepâncias não intencionais?",
+        options: [
+            "Alterações planejadas pelo médico",
+            "Erros ou omissões não documentados",
+            "Medicamentos controlados",
+            "Prescrições eletrônicas"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais são erros ou omissões não documentados que ocorrem quando um medicamento é inadvertidamente omitido, adicionado, com dose alterada ou com frequência incorreta."
+    },
+    {
+        question: "Qual é o papel do paciente na conciliação medicamentosa?",
+        options: [
+            "Apenas responder perguntas quando solicitado",
+            "Fornecer lista completa e atualizada de medicamentos",
+            "Não tem papel relevante no processo",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O paciente ou cuidador tem papel fundamental fornecendo lista completa e atualizada de todos os medicamentos em uso, incluindo prescritos, automedicação, fitoterápicos e suplementos."
+    },
+    {
+        question: "O que deve constar na lista de medicamentos do paciente?",
+        options: [
+            "Apenas medicamentos prescritos pelo hospital",
+            "Somente medicamentos de uso contínuo",
+            "Todos: prescritos, automedicação, fitoterápicos, suplementos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "A lista completa deve incluir TODOS os medicamentos que o paciente utiliza: prescritos, automedicação, fitoterápicos, suplementos vitamínicos, homeopáticos, entre outros."
+    },
+    {
+        question: "Como deve ser registrada a conciliação medicamentosa?",
+        options: [
+            "Apenas verbalmente com o paciente",
+            "Em formulário específico no prontuário",
+            "Não precisa ser registrada",
+            "Somente em sistema informatizado"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser documentada em formulário específico no prontuário do paciente, seja em papel ou eletrônico, incluindo todas as informações relevantes."
+    },
+    {
+        question: "Qual informação é essencial sobre cada medicamento na conciliação?",
+        options: [
+            "Apenas o nome do medicamento",
+            "Nome, dose, via, frequência e última administração",
+            "Somente a dose prescrita",
+            "Apenas se é genérico ou referência"
+        ],
+        correctAnswer: 1,
+        explanation: "Para cada medicamento deve-se registrar: nome completo, dose, via de administração, frequência de uso e horário da última dose tomada."
+    },
+    {
+        question: "Quando ocorre a maioria dos erros de medicação relacionados a transições de cuidado?",
+        options: [
+            "Durante a internação hospitalar",
+            "Nas transições: admissão, transferência e alta",
+            "Apenas em consultas ambulatoriais",
+            "Somente em cirurgias"
+        ],
+        correctAnswer: 1,
+        explanation: "A maioria dos erros de medicação ocorre nas transições de cuidado, quando há falha na comunicação sobre os medicamentos do paciente entre diferentes níveis ou serviços de saúde."
+    },
+    {
+        question: "O que caracteriza uma política institucional efetiva de conciliação medicamentosa?",
+        options: [
+            "Aplicação apenas em casos selecionados",
+            "Implementação sistemática em todas as transições",
+            "Uso apenas na alta hospitalar",
+            "Realização quando houver tempo disponível"
+        ],
+        correctAnswer: 1,
+        explanation: "Uma política efetiva deve garantir implementação sistemática e obrigatória da conciliação medicamentosa em TODAS as transições de cuidado, não apenas em situações específicas."
+    },
+    {
+        question: "Como envolver o paciente de forma efetiva na conciliação?",
+        options: [
+            "Pedindo apenas que confirme a lista pronta",
+            "Educando e incentivando a trazer lista atualizada",
+            "Não envolver para não confundir",
+            "Apenas solicitar receitas antigas"
+        ],
+        correctAnswer: 1,
+        explanation: "O envolvimento efetivo inclui educar o paciente sobre a importância, incentivá-lo a manter lista atualizada de medicamentos e trazer embalagens ou receitas nas consultas e internações."
+    },
+    {
+        question: "Qual é o primeiro passo na conciliação medicamentosa na admissão?",
+        options: [
+            "Prescrever novos medicamentos",
+            "Obter história medicamentosa completa e precisa",
+            "Suspender todos os medicamentos anteriores",
+            "Consultar apenas o prontuário eletrônico"
+        ],
+        correctAnswer: 1,
+        explanation: "O primeiro passo é obter uma história medicamentosa completa e precisa, incluindo todos os medicamentos que o paciente estava usando antes da admissão."
+    },
+    {
+        question: "Quais fontes devem ser usadas para obter a história medicamentosa?",
+        options: [
+            "Apenas entrevista com o paciente",
+            "Somente receitas anteriores",
+            "Múltiplas fontes: paciente, cuidador, receitas, prontuários, farmácias",
+            "Apenas o sistema eletrônico"
+        ],
+        correctAnswer: 2,
+        explanation: "Deve-se usar múltiplas fontes de informação: entrevista com paciente/cuidador, receitas anteriores, prontuários de outras instituições, contato com farmácias e médico assistente."
+    },
+    {
+        question: "O que fazer quando há discrepância não intencional identificada?",
+        options: [
+            "Ignorar se não parecer grave",
+            "Comunicar ao prescritor para resolução imediata",
+            "Anotar apenas no prontuário sem avisar",
+            "Esperar a próxima visita médica"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais devem ser comunicadas IMEDIATAMENTE ao prescritor para resolução, pois representam potencial erro de medicação."
+    },
+    {
+        question: "Como deve ser a prescrição de alta com relação à conciliação?",
+        options: [
+            "Listar apenas medicamentos novos",
+            "Incluir todos: continuados, modificados, suspensos e novos",
+            "Prescrever apenas medicamentos hospitalares",
+            "Não incluir medicamentos de uso domiciliar"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição de alta deve listar TODOS os medicamentos: os que continuam, os modificados (com justificativa), os suspensos (com motivo) e os novos prescritos."
+    },
+    {
+        question: "Qual a importância da orientação na alta sobre medicamentos?",
+        options: [
+            "Não é necessária se entregar a receita",
+            "Fundamental para adesão e segurança do tratamento",
+            "Importante apenas para idosos",
+            "Relevante somente para medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "A orientação clara na alta sobre todos os medicamentos é fundamental para garantir adesão ao tratamento, prevenir erros e promover a segurança do paciente em domicílio."
+    },
+    {
+        question: "Quem deve receber as orientações de alta sobre medicamentos?",
+        options: [
+            "Apenas o paciente",
+            "Somente familiares",
+            "Paciente e cuidador/familiar responsável",
+            "Não é necessário orientar se tiver receita"
+        ],
+        correctAnswer: 2,
+        explanation: "As orientações devem ser fornecidas ao paciente E ao cuidador/familiar responsável, garantindo que haja mais de uma pessoa com conhecimento sobre o plano medicamentoso."
+    },
+    {
+        question: "O que é polifarmácia?",
+        options: [
+            "Uso de medicamentos falsificados",
+            "Uso de múltiplos medicamentos simultaneamente",
+            "Uso de medicamentos vencidos",
+            "Uso inadequado de antibióticos"
+        ],
+        correctAnswer: 1,
+        explanation: "Polifarmácia é o uso simultâneo de múltiplos medicamentos por um paciente, situação comum em idosos e pacientes com múltiplas comorbidades, aumentando risco de interações e eventos adversos."
+    },
+    {
+        question: "Por que idosos requerem atenção especial na conciliação?",
+        options: [
+            "Apenas por questões de memória",
+            "Maior risco: polifarmácia, alterações fisiológicas, múltiplos prescritores",
+            "Somente por dificuldade de comunicação",
+            "Não requerem cuidados especiais"
+        ],
+        correctAnswer: 1,
+        explanation: "Idosos requerem atenção especial devido a múltiplos fatores: frequente polifarmácia, alterações fisiológicas que afetam metabolismo de medicamentos, múltiplos prescritores e maior risco de eventos adversos."
+    },
+    {
+        question: "Como a tecnologia pode auxiliar na conciliação medicamentosa?",
+        options: [
+            "Substituindo completamente a avaliação clínica",
+            "Sistemas eletrônicos com alertas e histórico integrado",
+            "Apenas para gerar receitas",
+            "Não há benefício da tecnologia"
+        ],
+        correctAnswer: 1,
+        explanation: "A tecnologia auxilia através de prontuários eletrônicos integrados, sistemas com alertas de interações medicamentosas, histórico completo de prescrições e facilitação da comunicação entre serviços."
+    },
+    {
+        question: "O que são medicamentos de alto risco no contexto da conciliação?",
+        options: [
+            "Apenas medicamentos controlados",
+            "Medicamentos que podem causar dano grave se usados incorretamente",
+            "Somente medicamentos injetáveis",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de alto risco são aqueles que apresentam risco aumentado de causar danos graves ao paciente se houver erro no uso, como anticoagulantes, insulina, opioides, entre outros."
+    },
+    {
+        question: "Como deve ser o processo de conciliação na transferência entre unidades?",
+        options: [
+            "Não é necessário refazer",
+            "Repetir o processo completo na unidade receptora",
+            "Apenas copiar a prescrição anterior",
+            "Somente se houver mudança de médico"
+        ],
+        correctAnswer: 1,
+        explanation: "Na transferência entre unidades, o processo de conciliação deve ser repetido, comparando medicamentos da unidade de origem com a nova prescrição, identificando e documentando alterações."
+    },
+    {
+        question: "Qual o papel da farmácia clínica na conciliação medicamentosa?",
+        options: [
+            "Apenas dispensar medicamentos",
+            "Participação ativa: revisão, identificação de problemas, orientação",
+            "Somente controlar estoque",
+            "Não tem papel relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico tem papel fundamental: pode liderar o processo de conciliação, revisar prescrições, identificar problemas relacionados a medicamentos, orientar pacientes e apoiar a equipe."
+    },
+    {
+        question: "Como a equipe multidisciplinar contribui para a conciliação?",
+        options: [
+            "Apenas o médico é responsável",
+            "Todos contribuem com suas perspectivas e informações",
+            "Somente enfermagem participa",
+            "Não há necessidade de equipe multidisciplinar"
+        ],
+        correctAnswer: 1,
+        explanation: "A equipe multidisciplinar (médicos, enfermeiros, farmacêuticos, nutricionistas) contribui com diferentes perspectivas e informações, tornando o processo mais completo e seguro."
+    },
+    {
+        question: "O que é reconciliação medicamentosa eletrônica?",
+        options: [
+            "Apenas prescrição em computador",
+            "Sistema informatizado que integra história, prescrição e alertas",
+            "Receita digital simples",
+            "Consulta de medicamentos na internet"
+        ],
+        correctAnswer: 1,
+        explanation: "É um sistema eletrônico integrado que permite documentar história medicamentosa, comparar com prescrições atuais, gerar alertas de discrepâncias e interações, facilitando o processo de conciliação."
+    },
+    {
+        question: "Como garantir a continuidade do cuidado após a alta?",
+        options: [
+            "Apenas entregar receita ao paciente",
+            "Comunicação clara com atenção primária e orientação adequada",
+            "Não é responsabilidade do hospital",
+            "Somente agendar retorno"
+        ],
+        correctAnswer: 1,
+        explanation: "A continuidade requer: orientação adequada ao paciente/cuidador, comunicação clara com a atenção primária (contrarreferência), receitas legíveis com todos os medicamentos e agendamento de seguimento."
+    },
+    {
+        question: "Quais medicamentos devem ser conciliados na alta hospitalar?",
+        options: [
+            "Apenas os prescritos no hospital",
+            "Somente medicamentos novos",
+            "Todos: domiciliares, hospitalares, continuados e suspensos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "TODOS os medicamentos devem ser revisados na alta: os de uso domiciliar prévio (quais continuam), os usados no hospital, os novos prescritos e os que foram suspensos (com justificativa)."
+    },
+    {
+        question: "Como educar profissionais sobre conciliação medicamentosa?",
+        options: [
+            "Não é necessário treinamento formal",
+            "Treinamento inicial e educação continuada regular",
+            "Apenas ler um manual é suficiente",
+            "Somente aprender na prática"
+        ],
+        correctAnswer: 1,
+        explanation: "A educação efetiva requer treinamento inicial estruturado sobre o processo, seguido de educação continuada regular, discussão de casos, feedback e atualização sobre melhores práticas."
+    }
+                ]
+            },
+
+            "rop-2-4": {
+                title: "ROP 2.4 – Conciliação em Serviços de Assistência Aguda (Internação)",
+                audioFile: null,
+                questions: [
+{
+        question: "O que caracteriza a assistência aguda em internação?",
+        options: [
+            "Apenas consultas de rotina",
+            "Cuidado de pacientes internados com condições agudas",
+            "Somente atendimentos ambulatoriais",
+            "Apenas procedimentos cirúrgicos"
+        ],
+        correctAnswer: 1,
+        explanation: "Assistência aguda em internação refere-se ao cuidado prestado a pacientes que necessitam hospitalização para tratamento de condições agudas, exacerbações de doenças crônicas ou procedimentos que requerem internação."
+    },
+    {
+        question: "Quando deve ser realizada a primeira conciliação na internação?",
+        options: [
+            "Até 48 horas após admissão",
+            "Nas primeiras 24 horas, idealmente na admissão",
+            "Apenas quando o médico solicitar",
+            "Somente antes da alta"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser realizada nas primeiras 24 horas de internação, idealmente no momento da admissão, para prevenir erros desde o início da hospitalização."
+    },
+    {
+        question: "Quem é responsável por iniciar a conciliação na admissão hospitalar?",
+        options: [
+            "Apenas o médico plantonista",
+            "Profissional designado pela instituição (médico, farmacêutico ou enfermeiro)",
+            "Somente o farmacêutico",
+            "Apenas a enfermagem"
+        ],
+        correctAnswer: 1,
+        explanation: "A responsabilidade pode ser de diferentes profissionais, conforme definido pela instituição, mas deve haver designação clara e treinamento adequado do profissional responsável."
+    },
+    {
+        question: "O que fazer com medicamentos de uso contínuo na admissão hospitalar?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar individualmente e decidir continuidade",
+            "Manter todos sem revisar",
+            "Substituir todos por similares hospitalares"
+        ],
+        correctAnswer: 1,
+        explanation: "Cada medicamento de uso contínuo deve ser avaliado individualmente pelo médico, decidindo sobre continuidade, ajuste ou suspensão baseado na condição clínica e no motivo da internação."
+    },
+    {
+        question: "Como proceder com medicamentos trazidos de casa?",
+        options: [
+            "Permitir uso sem controle",
+            "Confiscar todos imediatamente",
+            "Avaliar, identificar, devolver à família ou armazenar com segurança",
+            "Permitir apenas se for genérico"
+        ],
+        correctAnswer: 2,
+        explanation: "Medicamentos trazidos devem ser identificados, avaliados quanto à necessidade de continuidade, e devolvidos à família ou armazenados com segurança. O uso deve ser controlado pela equipe."
+    },
+    {
+        question: "Qual a frequência ideal de revisão da prescrição em internação?",
+        options: [
+            "Uma vez por semana",
+            "Diariamente",
+            "Apenas na admissão e alta",
+            "Somente se houver problemas"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição deve ser revista diariamente, avaliando necessidade de continuidade de cada medicamento, ajuste de doses, identificação de interações e eventos adversos."
+    },
+    {
+        question: "O que é deprescribing?",
+        options: [
+            "Erro de prescrição",
+            "Processo de redução ou suspensão de medicamentos desnecessários",
+            "Prescrição eletrônica",
+            "Falta de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Deprescribing é o processo planejado e supervisionado de redução de dose ou suspensão de medicamentos que podem estar causando dano ou não trazendo benefício ao paciente."
+    },
+    {
+        question: "Como identificar medicamentos potencialmente inapropriados em idosos internados?",
+        options: [
+            "Todos medicamentos são apropriados",
+            "Usar critérios de Beers ou STOPP/START",
+            "Avaliar apenas o custo",
+            "Não há critérios estabelecidos"
+        ],
+        correctAnswer: 1,
+        explanation: "Critérios como Beers ou STOPP/START auxiliam na identificação de medicamentos potencialmente inapropriados em idosos, guiando decisões sobre continuidade ou substituição."
+    },
+    {
+        question: "O que fazer quando o paciente não sabe informar seus medicamentos?",
+        options: [
+            "Prescrever sem essa informação",
+            "Buscar fontes alternativas: família, farmácia, médico, prontuários",
+            "Aguardar que se lembre",
+            "Iniciar apenas medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando o paciente não pode informar, deve-se buscar ativamente outras fontes: contato com familiares, farmácia que dispensa, médico assistente, prontuários de outras instituições."
+    },
+    {
+        question: "Como documentar alterações medicamentosas durante a internação?",
+        options: [
+            "Apenas no sistema eletrônico",
+            "Em evolução médica com justificativa clara",
+            "Não é necessário documentar",
+            "Somente em relatório de alta"
+        ],
+        correctAnswer: 1,
+        explanation: "Todas as alterações medicamentosas devem ser documentadas na evolução médica com justificativa clara, permitindo continuidade do cuidado e compreensão do raciocínio clínico."
+    },
+    {
+        question: "Qual o papel da enfermagem na conciliação durante internação?",
+        options: [
+            "Apenas administrar medicamentos prescritos",
+            "Coletar história, identificar discrepâncias, comunicar equipe",
+            "Não participa do processo",
+            "Somente na alta hospitalar"
+        ],
+        correctAnswer: 1,
+        explanation: "A enfermagem tem papel fundamental: pode coletar história medicamentosa inicial, identificar discrepâncias durante administração, comunicar à equipe e educar o paciente."
+    },
+    {
+        question: "Como proceder com medicamentos de uso tópico e inalatório?",
+        options: [
+            "Ignorar, não são importantes",
+            "Incluir na conciliação como qualquer outro medicamento",
+            "Apenas perguntar se usa",
+            "Somente se for de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de uso tópico, inalatório, nasal, ocular devem ser incluídos na conciliação, pois podem causar interações sistêmicas e eventos adversos."
+    },
+    {
+        question: "O que fazer quando há conflito entre medicamentos domiciliares e hospitalares?",
+        options: [
+            "Sempre priorizar os hospitalares",
+            "Avaliar caso a caso, discutir com equipe e documentar decisão",
+            "Manter ambas as prescrições",
+            "Suspender todos os domiciliares"
+        ],
+        correctAnswer: 1,
+        explanation: "Conflitos devem ser avaliados individualmente, considerando condição clínica, evidências, disponibilidade e preferências. A decisão deve ser discutida e bem documentada."
+    },
+    {
+        question: "Como garantir a segurança em jejum pré-operatório com medicamentos?",
+        options: [
+            "Suspender todos os medicamentos",
+            "Avaliar individualmente: alguns devem continuar com pouco líquido",
+            "Manter todos normalmente",
+            "Apenas medicamentos injetáveis"
+        ],
+        correctAnswer: 1,
+        explanation: "Alguns medicamentos devem ser mantidos mesmo em jejum (anti-hipertensivos, anticonvulsivantes, etc.) com pequeno gole de água, enquanto outros devem ser suspensos. Avaliação individualizada é essencial."
+    },
+    {
+        question: "Qual a importância da conciliação em transferência para UTI?",
+        options: [
+            "Não é necessária, UTI tem equipe própria",
+            "Crítica: evita interrupções e duplicações em paciente grave",
+            "Apenas transferir a prescrição anterior",
+            "Somente se o paciente estiver consciente"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação na transferência para UTI é crítica: pacientes graves não toleram erros, pode haver alteração de apresentações (oral para venoso) e risco de interrupções inadvertidas."
+    },
+    {
+        question: "Como lidar com alergias medicamentosas na conciliação?",
+        options: [
+            "Apenas perguntar ao paciente",
+            "Documentar detalhadamente: medicamento, reação, gravidade, data",
+            "Anotar apenas o nome do medicamento",
+            "Não é parte da conciliação"
+        ],
+        correctAnswer: 1,
+        explanation: "Alergias devem ser documentadas detalhadamente: medicamento específico, tipo de reação, gravidade, data da ocorrência, e deve haver sinalização clara no prontuário e pulseira."
+    },
+    {
+        question: "O que são medicamentos sentinela?",
+        options: [
+            "Medicamentos experimentais",
+            "Medicamentos que indicam possíveis condições não diagnosticadas",
+            "Apenas medicamentos controlados",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos sentinela são aqueles cujo uso pode indicar condições clínicas não diagnosticadas ou não documentadas, como uso de anticoagulante sugerindo fibrilação atrial."
+    },
+    {
+        question: "Como proceder com suplementos e vitaminas na internação?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar necessidade, interações e manter se apropriado",
+            "Não são considerados medicamentos",
+            "Permitir apenas se o paciente insistir"
+        ],
+        correctAnswer: 1,
+        explanation: "Suplementos e vitaminas devem ser avaliados quanto à necessidade, possíveis interações com medicamentos prescritos e mantidos quando clinicamente apropriados."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com múltiplas comorbidades?",
+        options: [
+            "Não há diferença de outros pacientes",
+            "Fundamental: maior risco de interações e eventos adversos",
+            "Menos importante por já usarem muitos medicamentos",
+            "Apenas para controle administrativo"
+        ],
+        correctAnswer: 1,
+        explanation: "Em pacientes com múltiplas comorbidades, a conciliação é ainda mais importante devido à polifarmácia, maior risco de interações, duplicações e cascata de prescrições."
+    },
+    {
+        question: "Como envolver o farmacêutico na conciliação em internação?",
+        options: [
+            "Apenas para dispensação",
+            "Participação ativa: revisão de prescrições, identificação de problemas, orientação",
+            "Somente para controle de custos",
+            "Não há necessidade de envolvimento"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico deve participar ativamente: realizar conciliação, revisar prescrições, identificar e resolver problemas relacionados a medicamentos, e orientar pacientes e equipe."
+    },
+    {
+        question: "O que fazer com medicamentos de uso PRN (se necessário)?",
+        options: [
+            "Não incluir na conciliação",
+            "Incluir, avaliar necessidade e orientar sobre uso correto",
+            "Suspender todos na internação",
+            "Apenas anotar que o paciente usa"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos PRN devem ser incluídos na conciliação, avaliando indicação, frequência de uso real, efetividade e orientando sobre uso correto e alternativas se necessário."
+    },
+    {
+        question: "Como garantir a adesão às práticas de conciliação pela equipe?",
+        options: [
+            "Apenas criar protocolos escritos",
+            "Educação, feedback, indicadores, cultura de segurança",
+            "Punir quem não fizer",
+            "Não é possível garantir"
+        ],
+        correctAnswer: 1,
+        explanation: "A adesão requer múltiplas estratégias: educação contínua, feedback regular, monitoramento de indicadores, liderança engajada e cultura organizacional que valoriza segurança."
+    },
+    {
+        question: "Qual a relação entre conciliação e tempo de internação?",
+        options: [
+            "Não há relação",
+            "Conciliação adequada pode prevenir eventos e reduzir tempo",
+            "Sempre aumenta o tempo de internação",
+            "Apenas aumenta custos"
+        ],
+        correctAnswer: 1,
+        explanation: "Conciliação adequada pode prevenir eventos adversos a medicamentos que prolongariam internação, além de facilitar planejamento da alta e transição segura para domicílio."
+    },
+    {
+        question: "Como proceder com medicamentos em falta no hospital?",
+        options: [
+            "Suspender sem comunicar",
+            "Comunicar equipe, buscar alternativas terapêuticas adequadas",
+            "Pedir que família traga de casa",
+            "Aguardar sem substituir"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando um medicamento não está disponível, deve-se comunicar à equipe, avaliar alternativas terapêuticas equivalentes, documentar a substituição e orientar sobre a mudança."
+    },
+    {
+        question: "Qual o papel do médico assistente no processo de conciliação?",
+        options: [
+            "Não participa, é responsabilidade da farmácia",
+            "Responsável final: validar informações, decidir sobre medicamentos",
+            "Apenas prescrever medicamentos novos",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O médico assistente é o responsável final pela decisão sobre medicamentos, devendo validar a história coletada, decidir sobre continuidade, ajustes ou suspensões."
+    },
+    {
+        question: "Como documentar medicamentos suspensos?",
+        options: [
+            "Apenas retirar da prescrição",
+            "Documentar suspensão com justificativa clara",
+            "Não precisa documentar",
+            "Avisar apenas verbalmente"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos suspensos devem ser explicitamente documentados com justificativa clara, para evitar reinício inadvertido e informar próximos cuidadores sobre a decisão."
+    },
+    {
+        question: "O que é cascata de prescrições?",
+        options: [
+            "Prescrição em sequência",
+            "Prescrição de medicamentos para tratar efeitos adversos de outros",
+            "Prescrição eletrônica",
+            "Múltiplas prescrições simultâneas"
+        ],
+        correctAnswer: 1,
+        explanation: "Cascata de prescrições ocorre quando efeitos adversos de um medicamento são interpretados como nova condição, levando à prescrição de outro medicamento, criando ciclo prejudicial."
+    },
+    {
+        question: "Como a conciliação contribui para a segurança cirúrgica?",
+        options: [
+            "Não tem relação com cirurgia",
+            "Identifica medicamentos que devem ser suspensos/ajustados no perioperatório",
+            "Apenas para anestesia",
+            "Somente para cirurgias cardíacas"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação identifica medicamentos que precisam ser suspensos antes da cirurgia (anticoagulantes, hipoglicemiantes) ou ajustados, e aqueles que devem ser mantidos, contribuindo para segurança."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com insuficiência renal?",
+        options: [
+            "Mesma importância de outros pacientes",
+            "Fundamental: necessita ajuste de doses e evitar nefrotóxicos",
+            "Menos importante",
+            "Apenas para diálise"
+        ],
+        correctAnswer: 1,
+        explanation: "Em insuficiência renal, a conciliação é fundamental para ajustar doses conforme clearance, evitar medicamentos nefrotóxicos e prevenir acúmulo de metabólitos tóxicos."
+    },
+    {
+        question: "Como garantir a qualidade do processo de conciliação?",
+        options: [
+            "Não é possível mensurar",
+            "Indicadores, auditorias, feedback e melhoria contínua",
+            "Apenas contar quantas foram feitas",
+            "Confiar que todos fazem corretamente"
+        ],
+        correctAnswer: 1,
+        explanation: "A qualidade é garantida através de: indicadores de processo e resultado, auditorias periódicas, feedback à equipe, análise de discrepâncias identificadas e ciclos de melhoria contínua."
+    }
+                ]
+            },
+
+            "rop-2-5": {
+                title: "ROP 2.5 – Conciliação em Atendimento Ambulatorial",
+                audioFile: null,
+                questions: [
+createQuestion(
+        "Qual a principal diferença da conciliação ambulatorial vs hospitalar?",
+        [
+            "Não há diferenças significativas",
+            "Ambulatorial foca em medicamentos crônicos e adesão",
+            "Ambulatorial é menos importante",
+            "Apenas frequência das consultas"
+        ],
+        1,
+        "No ambulatório, a conciliação foca em medicamentos de uso crônico, adesão ao tratamento e prevenção de interações, enquanto no hospital foca mais em transições agudas."
+    ),
+    createQuestion(
+        "Quando realizar conciliação em consulta ambulatorial?",
+        [
+            "Apenas na primeira consulta",
+            "Em todas as consultas",
+            "Somente se houver queixas",
+            "Uma vez por ano"
+        ],
+        1,
+        "A conciliação deve ser realizada em TODAS as consultas ambulatoriais para identificar mudanças, avaliar adesão e detectar problemas relacionados a medicamentos."
+    ),
+    createQuestion(
+        "Como abordar adesão medicamentosa no ambulatório?",
+        [
+            "Apenas perguntar se está tomando",
+            "Abordagem não julgadora, identificando barreiras",
+            "Assumir que está aderindo",
+            "Não é papel do ambulatório"
+        ],
+        2,
+        "A abordagem deve ser empática e não julgadora, explorando barreiras reais (custo, efeitos adversos, esquecimento) e trabalhando soluções conjuntas."
+    ),
+    createQuestion(
+        "Qual estratégia para melhorar adesão em ambulatório?",
+        [
+            "Aumentar número de medicamentos",
+            "Simplificar esquema: menor frequência, combinar medicamentos",
+            "Apenas reforçar importância",
+            "Ameaçar com consequências"
+        ],
+        1,
+        "Simplificar o esquema terapêutico (reduzir frequência, usar combinações fixas, ajustar horários à rotina) melhora significativamente a adesão."
+    ),
+    createQuestion(
+        "Como identificar cascata de prescrições no ambulatório?",
+        [
+            "Não é possível identificar",
+            "Revisar sintomas novos que podem ser efeitos adversos",
+            "Apenas pelo número de medicamentos",
+            "Só médicos especialistas podem"
+        ],
+        1,
+        "Cascata ocorre quando efeitos adversos são tratados como novos problemas. Revisar cronologicamente sintomas e prescrições ajuda a identificar."
+    ),
+    createQuestion(
+        "Papel do farmacêutico na consulta ambulatorial?",
+        [
+            "Apenas dispensar medicamentos",
+            "Consulta farmacêutica: revisar, orientar, identificar problemas",
+            "Não participa de ambulatório",
+            "Somente controle de estoque"
+        ],
+        1,
+        "Farmacêutico pode realizar consulta farmacêutica, revisando todos os medicamentos, identificando problemas, orientando uso correto e apoiando médico."
+    ),
+    createQuestion(
+        "O que é deprescribing no contexto ambulatorial?",
+        [
+            "Prescrever mais medicamentos",
+            "Retirada supervisionada de medicamentos inapropriados",
+            "Substituir por genéricos",
+            "Apenas reduzir doses"
+        ],
+        1,
+        "Deprescribing é processo planejado de redução ou suspensão de medicamentos que podem não trazer benefício ou causar dano, especialmente em idosos."
+    ),
+    createQuestion(
+        "Como avaliar custo-efetividade no ambulatório?",
+        [
+            "Sempre prescrever o mais barato",
+            "Avaliar custo total, incluindo consultas por eventos adversos",
+            "Custo não é relevante",
+            "Apenas medicamentos de marca"
+        ],
+        1,
+        "Deve-se considerar custo total: medicamento, monitoramento, consultas por falha terapêutica ou eventos adversos, não apenas preço do fármaco."
+    ),
+    createQuestion(
+        "Importância da lista de medicamentos atualizada?",
+        [
+            "Apenas para controle administrativo",
+            "Fundamental para evitar duplicações e interações",
+            "Não é necessária se usar sistema eletrônico",
+            "Apenas para pacientes internados"
+        ],
+        1,
+        "Lista atualizada que o paciente carrega previne duplicações, interações em diferentes serviços e facilita atendimentos de urgência."
+    ),
+    createQuestion(
+        "Como orientar paciente sobre armazenamento de medicamentos?",
+        [
+            "Qualquer lugar serve",
+            "Local fresco, seco, protegido de luz, longe de crianças",
+            "Sempre na geladeira",
+            "Apenas em armários altos"
+        ],
+        1,
+        "Medicamentos devem ser armazenados em local fresco e seco, protegidos de luz e umidade, fora do alcance de crianças, geralmente não na geladeira (salvo exceções)."
+    ),
+    createQuestion(
+        "Quando considerar interação medicamento-alimento?",
+        [
+            "Não são relevantes",
+            "Sempre revisar, algumas significativas",
+            "Apenas antibióticos",
+            "Não existem"
+        ],
+        1,
+        "Algumas interações são clinicamente significativas (ex: varfarina e vegetais verdes, levotiroxina e café, bifosfonatos e alimentos) e devem ser orientadas."
+    ),
+    createQuestion(
+        "Como lidar com automedicação identificada?",
+        [
+            "Proibir terminantemente",
+            "Avaliar segurança, orientar riscos, considerar na prescrição",
+            "Ignorar",
+            "Apenas anotar"
+        ],
+        2,
+        "Automedicação deve ser avaliada quanto à segurança e necessidade. Orientar sobre riscos, considerar interações e, se apropriado, incorporar à prescrição formal."
+    ),
+    createQuestion(
+        "Papel da telemedicina na conciliação ambulatorial?",
+        [
+            "Impossível fazer conciliação por telemedicina",
+            "Viável se paciente tiver lista atualizada e acesso a medicamentos",
+            "Apenas para receitas simples",
+            "Não é recomendada"
+        ],
+        1,
+        "Telemedicina pode incluir conciliação efetiva se paciente tiver lista atualizada, conseguir mostrar embalagens/receitas e houver boa comunicação."
+    ),
+    createQuestion(
+        "Como orientar sobre descarte de medicamentos?",
+        [
+            "Jogar no lixo comum",
+            "Devolver em farmácias com coleta ou programa municipal",
+            "Jogar na pia/vaso sanitário",
+            "Guardar indefinidamente"
+        ],
+        1,
+        "Medicamentos devem ser descartados em locais apropriados (farmácias com programa de coleta, pontos de coleta municipal), nunca em lixo comum ou esgoto."
+    ),
+    createQuestion(
+        "Importância da revisão periódica de medicamentos crônicos?",
+        [
+            "Não é necessária se está funcionando",
+            "Fundamental: reavaliar necessidade, doses, interações",
+            "Apenas se paciente solicitar",
+            "Somente em especialistas"
+        ],
+        1,
+        "Revisão periódica (anual no mínimo) é essencial para reavaliar necessidade contínua, adequação de doses, novas interações e possibilidade de deprescribing."
+    ),
+    createQuestion(
+        "Como abordar fitoterápicos e suplementos?",
+        [
+            "Não são medicamentos, ignorar",
+            "Perguntar e avaliar interações com medicamentos prescritos",
+            "Sempre proibir o uso",
+            "Não são importantes"
+        ],
+        1,
+        "Fitoterápicos e suplementos podem causar interações significativas (ex: Ginkgo biloba com anticoagulantes) e devem ser ativamente questionados e avaliados."
+    ),
+    createQuestion(
+        "Qual a frequência ideal de consultas para ajuste de medicamentos?",
+        [
+            "Sempre semanal",
+            "Varia conforme condição: 1-4 semanas para ajustes iniciais",
+            "Uma vez ao ano",
+            "Apenas se houver problemas"
+        ],
+        1,
+        "Para medicamentos novos ou ajustes: 1-4 semanas inicialmente. Para tratamento estável: conforme protocolo da condição, geralmente 3-6 meses."
+    ),
+    createQuestion(
+        "Como otimizar horários de medicamentos?",
+        [
+            "Paciente deve seguir exatamente a prescrição",
+            "Adaptar à rotina do paciente quando possível",
+            "Todos devem ser à noite",
+            "Horários não importam"
+        ],
+        1,
+        "Quando clinicamente viável, adaptar horários à rotina do paciente (refeições, trabalho, sono) melhora adesão sem comprometer eficácia."
+    ),
+    createQuestion(
+        "Importância do feedback sobre efetividade do tratamento?",
+        [
+            "Paciente não precisa avaliar",
+            "Fundamental: paciente reporta sintomas, melhora, efeitos adversos",
+            "Apenas exames laboratoriais importam",
+            "Não é relevante"
+        ],
+        1,
+        "Feedback do paciente sobre sintomas, qualidade de vida e efeitos adversos é essencial para avaliar efetividade real e ajustar tratamento."
+    ),
+    createQuestion(
+        "Como lidar com receitas de múltiplos prescritores?",
+        [
+            "Não é problema do médico atual",
+            "Revisar todas, identificar duplicações e interações",
+            "Manter todas sem revisar",
+            "Suspender automaticamente"
+        ],
+        1,
+        "Médico que realiza consulta deve revisar TODAS as prescrições de diferentes fontes, identificando problemas e coordenando com outros prescritores se necessário."
+    ),
+    createQuestion(
+        "Estratégias para pacientes com baixa literacia em saúde?",
+        [
+            "Apenas dar receita escrita",
+            "Linguagem simples, demonstração, confirmação de entendimento",
+            "Não é possível atender adequadamente",
+            "Apenas prescrever menos medicamentos"
+        ],
+        1,
+        "Usar linguagem simples, demonstrar como tomar, usar figuras/cores, pedir que explique de volta (teach-back), envolver cuidador."
+    ),
+    createQuestion(
+        "Papel da enfermagem em consultas ambulatoriais?",
+        [
+            "Apenas verificar sinais vitais",
+            "Coletar história, revisar medicamentos, educar paciente",
+            "Não participa de conciliação",
+            "Apenas agendar retornos"
+        ],
+        1,
+        "Enfermagem pode coletar história medicamentosa inicial, verificar adesão, identificar problemas, educar sobre uso correto e reforçar orientações médicas."
+    ),
+    createQuestion(
+        "Como documentar conciliação ambulatorial?",
+        [
+            "Apenas prescrever novos medicamentos",
+            "Registrar lista completa e alterações feitas com justificativa",
+            "Não precisa documentar",
+            "Somente em sistema eletrônico"
+        ],
+        1,
+        "Documentar lista completa de medicamentos atuais, alterações realizadas (suspensões, adições, ajustes) com justificativa clara no prontuário."
+    ),
+    createQuestion(
+        "Importância da reconciliação pós-alta hospitalar?",
+        [
+            "Não é necessária no ambulatório",
+            "Crítica: comparar prescrição de alta com uso domiciliar prévio",
+            "Apenas se paciente reclamar",
+            "Hospital já fez"
+        ],
+        1,
+        "Primeira consulta pós-alta é crítica para revisar prescrição hospitalar, comparar com medicamentos prévios e esclarecer mudanças, prevenindo erros."
+    ),
+    createQuestion(
+        "Como abordar relutância em iniciar medicamento?",
+        [
+            "Insistir que é obrigatório",
+            "Explorar preocupações, educar riscos-benefícios, respeitar autonomia",
+            "Ameaçar com consequências",
+            "Prescrever sem discutir"
+        ],
+        1,
+        "Abordagem centrada no paciente: explorar preocupações, educar sobre necessidade e benefícios, discutir alternativas, respeitar decisão informada."
+    ),
+    createQuestion(
+        "O que é prescrição em cascata?",
+        [
+            "Prescrição de muitos medicamentos",
+            "Prescrever para tratar efeito adverso sem reconhecer causa",
+            "Prescrição sequencial",
+            "Receitas impressas"
+        ],
+        1,
+        "Ocorre quando efeito adverso de um medicamento é interpretado como novo problema e tratado com outro medicamento, criando cascata evitável."
+    ),
+    createQuestion(
+        "Importância da monitorização laboratorial?",
+        [
+            "Sempre necessária para todos medicamentos",
+            "Essencial para medicamentos específicos conforme protocolo",
+            "Nunca necessária em ambulatório",
+            "Apenas se paciente solicitar"
+        ],
+        1,
+        "Alguns medicamentos requerem monitorização laboratorial específica (ex: estatinas/TGO-TGP, varfarina/INR, lítio/nível sérico) conforme protocolos estabelecidos."
+    ),
+    createQuestion(
+        "Como otimizar prescrição para idosos em ambulatório?",
+        [
+            "Prescrever como para adultos jovens",
+            "Iniciar baixo, progredir lento, revisar frequentemente",
+            "Sempre usar doses máximas",
+            "Evitar prescrever"
+        ],
+        1,
+        "Em idosos: iniciar com doses menores, aumentar gradualmente, revisar frequentemente, atentar para interações e efeitos adversos, aplicar critérios de Beers/STOPP."
+    ),
+    createQuestion(
+        "Papel da farmacovigilância ambulatorial?",
+        [
+            "Não aplicável em ambulatório",
+            "Notificar eventos adversos, monitorar segurança",
+            "Apenas em hospitais",
+            "Não é relevante"
+        ],
+        1,
+        "Profissionais ambulatoriais devem notificar eventos adversos aos sistemas de farmacovigilância, contribuindo para monitoramento de segurança de medicamentos."
+    ),
+    createQuestion(
+        "Como garantir continuidade entre diferentes níveis de atenção?",
+        [
+            "Não é possível garantir",
+            "Comunicação efetiva: contrarreferência, relatórios, lista atualizada",
+            "Paciente deve se responsabilizar sozinho",
+            "Não é necessário"
+        ],
+        1,
+        "Requer comunicação efetiva entre níveis: relatórios completos, contrarreferência, lista atualizada de medicamentos e orientações claras ao paciente."
+    )
+                ]
+            },
+
+            "rop-2-6": {
+                title: "ROP 2.6 – Conciliação no Serviço de Emergência",
+                audioFile: null,
+                questions: [
+createQuestion(
+        "Qual desafio único da conciliação em emergência?",
+        [
+            "Não há desafios específicos",
+            "Tempo limitado, paciente crítico, informação fragmentada",
+            "Apenas falta de medicamentos",
+            "Sempre é impossível fazer"
+        ],
+        1,
+        "Emergência apresenta desafios: tempo limitado, paciente frequentemente incapaz de informar, informação fragmentada, necessidade de decisões rápidas."
+    ),
+    createQuestion(
+        "Quando realizar conciliação em emergência?",
+        [
+            "Apenas se houver tempo sobrando",
+            "Logo após estabilização inicial, antes da primeira prescrição",
+            "Não é prioridade em emergência",
+            "Somente na alta da emergência"
+        ],
+        1,
+        "Deve ser feita após estabilização inicial mas ANTES da primeira prescrição, para prevenir interações críticas e duplicações em paciente já vulnerável."
+    ),
+    createQuestion(
+        "Fontes de informação quando paciente inconsciente?",
+        [
+            "Impossível obter informação",
+            "Acompanhantes, carteira, celular, pulseiras, sistemas integrados",
+            "Apenas receitas se tiver",
+            "Aguardar recuperar consciência"
+        ],
+        1,
+        "Buscar ativamente: acompanhantes, objetos pessoais, carteiras com receitas/cartões, celular, pulseiras de alerta, sistemas de informação integrados."
+    ),
+    createQuestion(
+        "Importância de medicamentos em uso na avaliação do quadro agudo?",
+        [
+            "Não são relevantes para emergência",
+            "Podem ser causa ou contribuir para o quadro atual",
+            "Apenas tratamento agudo importa",
+            "Somente para prescrição de alta"
+        ],
+        1,
+        "Medicamentos em uso podem ser CAUSA do quadro (intoxicação, efeito adverso) ou contribuir (interações, omissão de dose crítica) e devem ser considerados."
+    ),
+    createQuestion(
+        "Como proceder com anticoagulantes em emergência?",
+        [
+            "Suspender automaticamente",
+            "Avaliar indicação, risco-benefício, verificar última dose e efeito",
+            "Sempre reverter",
+            "Ignorar"
+        ],
+        1,
+        "Anticoagulantes requerem avaliação cuidadosa: verificar indicação, última dose, exames de coagulação, avaliar risco hemorrágico vs. trombótico do quadro atual."
+    ),
+    createQuestion(
+        "Papel da conciliação na síndrome coronariana aguda?",
+        [
+            "Não fazer, foca apenas no infarto",
+            "Essencial: identificar beta-bloqueadores, aspirina, antiagregantes em uso",
+            "Apenas após sair da UTI",
+            "Não é relevante"
+        ],
+        1,
+        "Crítico identificar medicamentos cardiovasculares prévios, especialmente beta-bloqueadores, aspirina, antiagregantes que devem continuar e influenciam tratamento."
+    ),
+    createQuestion(
+        "Como documentar conciliação em emergência?",
+        [
+            "Não há tempo para documentar",
+            "Registro conciso mas completo no prontuário de emergência",
+            "Apenas prescrever tratamento agudo",
+            "Documentar só se paciente internar"
+        ],
+        1,
+        "Mesmo com tempo limitado, deve-se documentar concisamente: fonte de informação, medicamentos identificados, alterações feitas e justificativa."
+    ),
+    createQuestion(
+        "Medicamentos críticos que não podem ser omitidos?",
+        [
+            "Todos podem ser omitidos temporariamente",
+            "Anticonvulsivantes, insulina, corticoides crônicos, antiparkinsonianos",
+            "Apenas insulina",
+            "Não existem medicamentos críticos"
+        ],
+        1,
+        "Alguns medicamentos não devem ser omitidos: anticonvulsivantes (risco de status), insulina tipo 1, corticoides (crise adrenal), levotiroxina, antiparkinsonianos."
+    ),
+    createQuestion(
+        "Como lidar com polifarmácia em idoso na emergência?",
+        [
+            "Suspender todos temporariamente",
+            "Avaliar quais são essenciais e manter, suspender desnecessários",
+            "Manter todos sem revisar",
+            "Não é momento para revisar"
+        ],
+        1,
+        "Avaliar criticamente: manter medicamentos essenciais, considerar suspender temporariamente os não críticos, identificar contribuintes para quadro atual."
+    ),
+    createQuestion(
+        "Importância da conciliação em intoxicações?",
+        [
+            "Não é relevante",
+            "Fundamental: identificar agente, dose, tempo, interações",
+            "Apenas fazer lavagem gástrica",
+            "Só importante em casos graves"
+        ],
+        1,
+        "Essencial identificar TODOS os medicamentos disponíveis ao paciente, quantificar o que falta (dose ingerida), tempo da ingestão e possíveis interações."
+    ),
+    createQuestion(
+        "Como proceder com medicamentos na crise hipertensiva?",
+        [
+            "Iniciar apenas medicamentos novos",
+            "Avaliar adesão prévia, ajustar/trocar se falha terapêutica",
+            "Sempre manter os mesmos",
+            "Suspender todos anti-hipertensivos"
+        ],
+        1,
+        "Investigar adesão aos anti-hipertensivos prévios, avaliar se há falha terapêutica, ajustar esquema se necessário, não apenas adicionar novo medicamento."
+    ),
+    createQuestion(
+        "Papel da conciliação em AVC agudo?",
+        [
+            "Não é prioritário",
+        "Crítico: identificar anticoagulantes, antiagregantes, última dose",
+            "Apenas após trombólise",
+            "Só importante se for hemorrágico"
+        ],
+        1,
+        "Urgente identificar anticoagulantes/antiagregantes antes de trombólise ou anticoagulação, pois afeta elegibilidade e segurança do tratamento."
+    ),
+    createQuestion(
+        "Como obter informação em emergência psiquiátrica?",
+        [
+            "Impossível se paciente agitado",
+            "Acompanhantes, serviços prévios, prescrições anteriores",
+            "Aguardar sedação completa",
+            "Não fazer conciliação"
+        ],
+        1,
+        "Buscar familiares/acompanhantes, contatar serviços de saúde mental prévios, verificar objetos pessoais, revisar prontuários anteriores se disponíveis."
+    ),
+    createQuestion(
+        "Importância de identificar hipoglicemiantes em emergência?",
+        [
+            "Não é urgente",
+            "Crítico: podem causar hipoglicemia, requerem ajuste em jejum/doença aguda",
+            "Apenas se for diabético conhecido",
+            "Suspender automaticamente"
+        ],
+        1,
+        "Identificar hipoglicemiantes é urgente: podem causar hipoglicemia grave, requerem ajuste durante doença aguda, jejum ou procedimentos."
+    ),
+    createQuestion(
+        "Como documentar discrepâncias encontradas em emergência?",
+        [
+            "Apenas resolver, sem documentar",
+            "Registrar discrepância, ação tomada e comunicação com equipe",
+            "Não há tempo para isso",
+            "Somente avisar verbalmente"
+        ],
+        1,
+        "Documentar: discrepância encontrada, decisão tomada (manter/alterar/suspender), comunicação com médico emergencista e, se internar, equipe receptora."
+    ),
+    createQuestion(
+        "Papel da tecnologia na conciliação em emergência?",
+        [
+            "Não há tecnologia útil",
+            "Sistemas integrados, alertas de interações, histórico eletrônico",
+            "Apenas dificulta o processo",
+            "Somente para prescrição"
+        ],
+        1,
+        "Tecnologia auxilia: acesso rápido a histórico de outras instituições, alertas automáticos de interações críticas, prescrição com verificações de segurança."
+    ),
+    createQuestion(
+        "Como proceder na alta da emergência?",
+        [
+            "Apenas dar receita nova",
+            "Reconciliar: lista completa com continuados, alterados, suspensos, novos",
+            "Não é necessário",
+            "Paciente procura ambulatório"
+        ],
+        1,
+        "Alta requer reconciliação completa: quais medicamentos domiciliares continuar, quais foram alterados (com justificativa), suspensos e novos prescritos."
+    ),
+    createQuestion(
+        "Importância da conciliação em trauma?",
+        [
+            "Não é prioritário no trauma",
+            "Pode influenciar manejo: anticoagulantes, antiagregantes, alergias",
+            "Apenas se houver lesão neurológica",
+            "Só após cirurgia"
+        ],
+        1,
+        "Importante saber uso de anticoagulantes/antiagregantes (sangramento), corticoides (estresse), medicamentos que afetam anestesia e alergias."
+    ),
+    createQuestion(
+        "Como lidar com medicamentos não padronizados?",
+        [
+            "Sempre suspender",
+            "Avaliar necessidade, buscar similar padronizado ou permitir trazido",
+            "Ignorar",
+            "Substituir por qualquer outro"
+        ],
+        1,
+        "Avaliar criticidade: se essencial e sem similar, contatar farmácia para providenciar ou permitir uso supervisionado do medicamento trazido."
+    ),
+    createQuestion(
+        "Papel da enfermagem na conciliação em emergência?",
+        [
+            "Apenas administrar o que for prescrito",
+            "Coletar história inicial, identificar medicamentos trazidos, alertar equipe",
+            "Não participa em emergência",
+            "Apenas verificar sinais vitais"
+        ],
+        1,
+        "Enfermagem frequentemente é primeira a contatar paciente/família e pode iniciar coleta de história, identificar medicamentos trazidos e alertar médico."
+    ),
+    createQuestion(
+        "Como priorizar em emergência com múltiplos pacientes graves?",
+        [
+            "Não fazer conciliação",
+            "Focar em medicamentos críticos primeiro, completar quando possível",
+            "Fazer igual para todos",
+            "Apenas para pacientes estáveis"
+        ],
+        1,
+        "Em múltiplos graves, priorizar informações críticas (anticoagulantes, hipoglicemiantes, anticonvulsivantes) e completar história quando situação permitir."
+    ),
+    createQuestion(
+        "Importância de questionar sobre medicamentos sem prescrição?",
+        [
+            "Não são relevantes em emergência",
+            "Podem causar intoxicação, interação ou ser causa do quadro",
+            "Apenas se paciente mencionar",
+            "Não há tempo para perguntar"
+        ],
+        1,
+        "Medicamentos sem prescrição, fitoterápicos e suplementos podem ser causa de intoxicação, interação crítica ou contribuir para quadro atual."
+    ),
+    createQuestion(
+        "Como garantir continuidade após admissão pela emergência?",
+        [
+            "Não é responsabilidade da emergência",
+            "Transferir informações completas para equipe de internação",
+            "Paciente deve informar novamente",
+            "Sistema faz automaticamente"
+        ],
+        1,
+        "Emergência deve documentar e comunicar claramente à equipe de internação: medicamentos prévios identificados, alterações feitas e pendências a resolver."
+    ),
+    createQuestion(
+        "Papel da conciliação em crise asmática?",
+        [
+            "Apenas tratar broncoespasmo",
+            "Avaliar uso/adesão de inaladores, identificar desencadeantes medicamentosos",
+            "Não é relevante",
+            "Só prescrever broncodilatador"
+        ],
+        1,
+        "Importante avaliar: adesão ao tratamento de manutenção, técnica inalatória, medicamentos que podem piorar asma (beta-bloqueadores, AINEs)."
+    ),
+    createQuestion(
+        "Como proceder com medicamentos controlados identificados?",
+        [
+            "Confiscar imediatamente",
+            "Verificar prescrição, armazenar com segurança, documentar",
+            "Permitir uso livre",
+            "Descartar"
+        ],
+        1,
+        "Verificar legitimidade da prescrição, armazenar com segurança conforme normas, documentar no prontuário, avaliar necessidade de continuidade."
+    ),
+    createQuestion(
+        "Importância da conciliação em insuficiência cardíaca descompensada?",
+        [
+            "Não é prioritário",
+            "Avaliar adesão, interações, medicamentos que pioram (AINEs, cálcio-antagonistas)",
+            "Apenas otimizar diuréticos",
+            "Não há relação"
+        ],
+        1,
+        "Essencial avaliar: adesão a medicamentos prévios, identificar medicamentos que pioram IC (AINEs, cálcio-antagonistas não diidroppiridínicos), otimizar terapia."
+    ),
+    createQuestion(
+        "Como abordar discordância entre fontes de informação?",
+        [
+            "Usar qualquer uma",
+            "Buscar fonte mais confiável, confirmar com múltiplas fontes",
+            "Ignorar discordâncias",
+            "Prescrever sem confirmar"
+        ],
+        1,
+        "Discordâncias requerem investigação: buscar fonte mais confiável (prescrição recente, contato com prescritor), confirmar com múltiplas fontes quando possível."
+    ),
+    createQuestion(
+        "Papel da conciliação em sepse?",
+        [
+            "Não fazer, foca apenas em antibiótico",
+            "Identificar medicamentos que afetam imunidade, interações com antibióticos",
+            "Apenas após estabilização hemodinâmica",
+            "Não é relevante"
+        ],
+        1,
+        "Importante identificar: imunossupressores, corticoides crônicos (pode precisar dose estresse), medicamentos nefrotóxicos, interações com antibióticos."
+    ),
+    createQuestion(
+        "Como garantir que informação chegue ao ambulatório?",
+        [
+            "Não é possível garantir",
+            "Relatório de alta completo, contrarreferência, orientação ao paciente",
+            "Paciente deve contar tudo novamente",
+            "Sistema integrado faz automaticamente"
+        ],
+        1,
+        "Requer: relatório de alta detalhado com todas as mudanças, contrarreferência formal se possível, orientação clara ao paciente sobre o que contar no ambulatório."
+    ),
+    createQuestion(
+        "Importância da educação da equipe de emergência sobre conciliação?",
+        [
+            "Não é necessária, é intuitivo",
+            "Fundamental: protocolo claro, treinamento regular, feedback",
+            "Apenas para farmacêuticos",
+            "Não há tempo para treinar"
+        ],
+        1,
+        "Essencial: protocolo adaptado à realidade da emergência, treinamento de toda equipe, feedback regular, discussão de casos e melhoria contínua."
+    )
+                ]
+            },
+
+            "rop-2-3": {
+                title: "ROP 2.3 – Conciliação Medicamentosa como Prioridade Estratégica",
+                audioFile: null,
+                questions: [
+{
+        question: "O que é conciliação medicamentosa?",
+        options: [
+            "Processo de comparar medicamentos do paciente em transições de cuidado",
+            "Reconciliação financeira de medicamentos",
+            "Processo de descarte de medicamentos vencidos",
+            "Sistema de controle de estoque de medicamentos"
+        ],
+        correctAnswer: 0,
+        explanation: "Conciliação medicamentosa é o processo formal de comparação dos medicamentos que o paciente estava usando antes com os medicamentos prescritos após uma transição de cuidado, identificando e resolvendo discrepâncias."
+    },
+    {
+        question: "Quais são os momentos críticos para realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas na admissão hospitalar",
+            "Somente na alta hospitalar",
+            "Na admissão, transferências e alta",
+            "Apenas em consultas ambulatoriais"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa deve ser realizada em todos os pontos de transição de cuidado: admissão, transferências entre unidades/serviços e na alta hospitalar."
+    },
+    {
+        question: "Por que a conciliação medicamentosa é considerada prioridade estratégica?",
+        options: [
+            "Apenas para cumprir requisitos legais",
+            "Reduz erros de medicação e eventos adversos",
+            "Diminui custos operacionais",
+            "Facilita o trabalho da farmácia"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa é prioridade estratégica porque reduz significativamente erros de medicação e eventos adversos a medicamentos, que são causas importantes de dano ao paciente."
+    },
+    {
+        question: "Quem deve realizar a conciliação medicamentosa?",
+        options: [
+            "Apenas farmacêuticos",
+            "Somente médicos prescritores",
+            "Profissionais capacitados (médicos, farmacêuticos, enfermeiros)",
+            "Apenas técnicos de enfermagem"
+        ],
+        correctAnswer: 2,
+        explanation: "A conciliação medicamentosa pode ser realizada por diferentes profissionais capacitados, incluindo médicos, farmacêuticos e enfermeiros, desde que devidamente treinados no processo."
+    },
+    {
+        question: "O que são discrepâncias intencionais na conciliação medicamentosa?",
+        options: [
+            "Erros cometidos propositalmente",
+            "Alterações documentadas e justificadas pelo prescritor",
+            "Diferenças causadas por falta de informação",
+            "Medicamentos não registrados"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias intencionais são alterações propositais nos medicamentos, documentadas e justificadas clinicamente pelo médico prescritor, como suspensão ou mudança de medicação por decisão terapêutica."
+    },
+    {
+        question: "O que são discrepâncias não intencionais?",
+        options: [
+            "Alterações planejadas pelo médico",
+            "Erros ou omissões não documentados",
+            "Medicamentos controlados",
+            "Prescrições eletrônicas"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais são erros ou omissões não documentados que ocorrem quando um medicamento é inadvertidamente omitido, adicionado, com dose alterada ou com frequência incorreta."
+    },
+    {
+        question: "Qual é o papel do paciente na conciliação medicamentosa?",
+        options: [
+            "Apenas responder perguntas quando solicitado",
+            "Fornecer lista completa e atualizada de medicamentos",
+            "Não tem papel relevante no processo",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O paciente ou cuidador tem papel fundamental fornecendo lista completa e atualizada de todos os medicamentos em uso, incluindo prescritos, automedicação, fitoterápicos e suplementos."
+    },
+    {
+        question: "O que deve constar na lista de medicamentos do paciente?",
+        options: [
+            "Apenas medicamentos prescritos pelo hospital",
+            "Somente medicamentos de uso contínuo",
+            "Todos: prescritos, automedicação, fitoterápicos, suplementos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "A lista completa deve incluir TODOS os medicamentos que o paciente utiliza: prescritos, automedicação, fitoterápicos, suplementos vitamínicos, homeopáticos, entre outros."
+    },
+    {
+        question: "Como deve ser registrada a conciliação medicamentosa?",
+        options: [
+            "Apenas verbalmente com o paciente",
+            "Em formulário específico no prontuário",
+            "Não precisa ser registrada",
+            "Somente em sistema informatizado"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser documentada em formulário específico no prontuário do paciente, seja em papel ou eletrônico, incluindo todas as informações relevantes."
+    },
+    {
+        question: "Qual informação é essencial sobre cada medicamento na conciliação?",
+        options: [
+            "Apenas o nome do medicamento",
+            "Nome, dose, via, frequência e última administração",
+            "Somente a dose prescrita",
+            "Apenas se é genérico ou referência"
+        ],
+        correctAnswer: 1,
+        explanation: "Para cada medicamento deve-se registrar: nome completo, dose, via de administração, frequência de uso e horário da última dose tomada."
+    },
+    {
+        question: "Quando ocorre a maioria dos erros de medicação relacionados a transições de cuidado?",
+        options: [
+            "Durante a internação hospitalar",
+            "Nas transições: admissão, transferência e alta",
+            "Apenas em consultas ambulatoriais",
+            "Somente em cirurgias"
+        ],
+        correctAnswer: 1,
+        explanation: "A maioria dos erros de medicação ocorre nas transições de cuidado, quando há falha na comunicação sobre os medicamentos do paciente entre diferentes níveis ou serviços de saúde."
+    },
+    {
+        question: "O que caracteriza uma política institucional efetiva de conciliação medicamentosa?",
+        options: [
+            "Aplicação apenas em casos selecionados",
+            "Implementação sistemática em todas as transições",
+            "Uso apenas na alta hospitalar",
+            "Realização quando houver tempo disponível"
+        ],
+        correctAnswer: 1,
+        explanation: "Uma política efetiva deve garantir implementação sistemática e obrigatória da conciliação medicamentosa em TODAS as transições de cuidado, não apenas em situações específicas."
+    },
+    {
+        question: "Como envolver o paciente de forma efetiva na conciliação?",
+        options: [
+            "Pedindo apenas que confirme a lista pronta",
+            "Educando e incentivando a trazer lista atualizada",
+            "Não envolver para não confundir",
+            "Apenas solicitar receitas antigas"
+        ],
+        correctAnswer: 1,
+        explanation: "O envolvimento efetivo inclui educar o paciente sobre a importância, incentivá-lo a manter lista atualizada de medicamentos e trazer embalagens ou receitas nas consultas e internações."
+    },
+    {
+        question: "Qual é o primeiro passo na conciliação medicamentosa na admissão?",
+        options: [
+            "Prescrever novos medicamentos",
+            "Obter história medicamentosa completa e precisa",
+            "Suspender todos os medicamentos anteriores",
+            "Consultar apenas o prontuário eletrônico"
+        ],
+        correctAnswer: 1,
+        explanation: "O primeiro passo é obter uma história medicamentosa completa e precisa, incluindo todos os medicamentos que o paciente estava usando antes da admissão."
+    },
+    {
+        question: "Quais fontes devem ser usadas para obter a história medicamentosa?",
+        options: [
+            "Apenas entrevista com o paciente",
+            "Somente receitas anteriores",
+            "Múltiplas fontes: paciente, cuidador, receitas, prontuários, farmácias",
+            "Apenas o sistema eletrônico"
+        ],
+        correctAnswer: 2,
+        explanation: "Deve-se usar múltiplas fontes de informação: entrevista com paciente/cuidador, receitas anteriores, prontuários de outras instituições, contato com farmácias e médico assistente."
+    },
+    {
+        question: "O que fazer quando há discrepância não intencional identificada?",
+        options: [
+            "Ignorar se não parecer grave",
+            "Comunicar ao prescritor para resolução imediata",
+            "Anotar apenas no prontuário sem avisar",
+            "Esperar a próxima visita médica"
+        ],
+        correctAnswer: 1,
+        explanation: "Discrepâncias não intencionais devem ser comunicadas IMEDIATAMENTE ao prescritor para resolução, pois representam potencial erro de medicação."
+    },
+    {
+        question: "Como deve ser a prescrição de alta com relação à conciliação?",
+        options: [
+            "Listar apenas medicamentos novos",
+            "Incluir todos: continuados, modificados, suspensos e novos",
+            "Prescrever apenas medicamentos hospitalares",
+            "Não incluir medicamentos de uso domiciliar"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição de alta deve listar TODOS os medicamentos: os que continuam, os modificados (com justificativa), os suspensos (com motivo) e os novos prescritos."
+    },
+    {
+        question: "Qual a importância da orientação na alta sobre medicamentos?",
+        options: [
+            "Não é necessária se entregar a receita",
+            "Fundamental para adesão e segurança do tratamento",
+            "Importante apenas para idosos",
+            "Relevante somente para medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "A orientação clara na alta sobre todos os medicamentos é fundamental para garantir adesão ao tratamento, prevenir erros e promover a segurança do paciente em domicílio."
+    },
+    {
+        question: "Quem deve receber as orientações de alta sobre medicamentos?",
+        options: [
+            "Apenas o paciente",
+            "Somente familiares",
+            "Paciente e cuidador/familiar responsável",
+            "Não é necessário orientar se tiver receita"
+        ],
+        correctAnswer: 2,
+        explanation: "As orientações devem ser fornecidas ao paciente E ao cuidador/familiar responsável, garantindo que haja mais de uma pessoa com conhecimento sobre o plano medicamentoso."
+    },
+    {
+        question: "O que é polifarmácia?",
+        options: [
+            "Uso de medicamentos falsificados",
+            "Uso de múltiplos medicamentos simultaneamente",
+            "Uso de medicamentos vencidos",
+            "Uso inadequado de antibióticos"
+        ],
+        correctAnswer: 1,
+        explanation: "Polifarmácia é o uso simultâneo de múltiplos medicamentos por um paciente, situação comum em idosos e pacientes com múltiplas comorbidades, aumentando risco de interações e eventos adversos."
+    },
+    {
+        question: "Por que idosos requerem atenção especial na conciliação?",
+        options: [
+            "Apenas por questões de memória",
+            "Maior risco: polifarmácia, alterações fisiológicas, múltiplos prescritores",
+            "Somente por dificuldade de comunicação",
+            "Não requerem cuidados especiais"
+        ],
+        correctAnswer: 1,
+        explanation: "Idosos requerem atenção especial devido a múltiplos fatores: frequente polifarmácia, alterações fisiológicas que afetam metabolismo de medicamentos, múltiplos prescritores e maior risco de eventos adversos."
+    },
+    {
+        question: "Como a tecnologia pode auxiliar na conciliação medicamentosa?",
+        options: [
+            "Substituindo completamente a avaliação clínica",
+            "Sistemas eletrônicos com alertas e histórico integrado",
+            "Apenas para gerar receitas",
+            "Não há benefício da tecnologia"
+        ],
+        correctAnswer: 1,
+        explanation: "A tecnologia auxilia através de prontuários eletrônicos integrados, sistemas com alertas de interações medicamentosas, histórico completo de prescrições e facilitação da comunicação entre serviços."
+    },
+    {
+        question: "O que são medicamentos de alto risco no contexto da conciliação?",
+        options: [
+            "Apenas medicamentos controlados",
+            "Medicamentos que podem causar dano grave se usados incorretamente",
+            "Somente medicamentos injetáveis",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de alto risco são aqueles que apresentam risco aumentado de causar danos graves ao paciente se houver erro no uso, como anticoagulantes, insulina, opioides, entre outros."
+    },
+    {
+        question: "Como deve ser o processo de conciliação na transferência entre unidades?",
+        options: [
+            "Não é necessário refazer",
+            "Repetir o processo completo na unidade receptora",
+            "Apenas copiar a prescrição anterior",
+            "Somente se houver mudança de médico"
+        ],
+        correctAnswer: 1,
+        explanation: "Na transferência entre unidades, o processo de conciliação deve ser repetido, comparando medicamentos da unidade de origem com a nova prescrição, identificando e documentando alterações."
+    },
+    {
+        question: "Qual o papel da farmácia clínica na conciliação medicamentosa?",
+        options: [
+            "Apenas dispensar medicamentos",
+            "Participação ativa: revisão, identificação de problemas, orientação",
+            "Somente controlar estoque",
+            "Não tem papel relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico tem papel fundamental: pode liderar o processo de conciliação, revisar prescrições, identificar problemas relacionados a medicamentos, orientar pacientes e apoiar a equipe."
+    },
+    {
+        question: "Como a equipe multidisciplinar contribui para a conciliação?",
+        options: [
+            "Apenas o médico é responsável",
+            "Todos contribuem com suas perspectivas e informações",
+            "Somente enfermagem participa",
+            "Não há necessidade de equipe multidisciplinar"
+        ],
+        correctAnswer: 1,
+        explanation: "A equipe multidisciplinar (médicos, enfermeiros, farmacêuticos, nutricionistas) contribui com diferentes perspectivas e informações, tornando o processo mais completo e seguro."
+    },
+    {
+        question: "O que é reconciliação medicamentosa eletrônica?",
+        options: [
+            "Apenas prescrição em computador",
+            "Sistema informatizado que integra história, prescrição e alertas",
+            "Receita digital simples",
+            "Consulta de medicamentos na internet"
+        ],
+        correctAnswer: 1,
+        explanation: "É um sistema eletrônico integrado que permite documentar história medicamentosa, comparar com prescrições atuais, gerar alertas de discrepâncias e interações, facilitando o processo de conciliação."
+    },
+    {
+        question: "Como garantir a continuidade do cuidado após a alta?",
+        options: [
+            "Apenas entregar receita ao paciente",
+            "Comunicação clara com atenção primária e orientação adequada",
+            "Não é responsabilidade do hospital",
+            "Somente agendar retorno"
+        ],
+        correctAnswer: 1,
+        explanation: "A continuidade requer: orientação adequada ao paciente/cuidador, comunicação clara com a atenção primária (contrarreferência), receitas legíveis com todos os medicamentos e agendamento de seguimento."
+    },
+    {
+        question: "Quais medicamentos devem ser conciliados na alta hospitalar?",
+        options: [
+            "Apenas os prescritos no hospital",
+            "Somente medicamentos novos",
+            "Todos: domiciliares, hospitalares, continuados e suspensos",
+            "Apenas medicamentos controlados"
+        ],
+        correctAnswer: 2,
+        explanation: "TODOS os medicamentos devem ser revisados na alta: os de uso domiciliar prévio (quais continuam), os usados no hospital, os novos prescritos e os que foram suspensos (com justificativa)."
+    },
+    {
+        question: "Como educar profissionais sobre conciliação medicamentosa?",
+        options: [
+            "Não é necessário treinamento formal",
+            "Treinamento inicial e educação continuada regular",
+            "Apenas ler um manual é suficiente",
+            "Somente aprender na prática"
+        ],
+        correctAnswer: 1,
+        explanation: "A educação efetiva requer treinamento inicial estruturado sobre o processo, seguido de educação continuada regular, discussão de casos, feedback e atualização sobre melhores práticas."
+    }
+                ]
+            },
+
+            "rop-2-4": {
+                title: "ROP 2.4 – Conciliação em Serviços de Assistência Aguda (Internação)",
+                audioFile: null,
+                questions: [
+{
+        question: "O que caracteriza a assistência aguda em internação?",
+        options: [
+            "Apenas consultas de rotina",
+            "Cuidado de pacientes internados com condições agudas",
+            "Somente atendimentos ambulatoriais",
+            "Apenas procedimentos cirúrgicos"
+        ],
+        correctAnswer: 1,
+        explanation: "Assistência aguda em internação refere-se ao cuidado prestado a pacientes que necessitam hospitalização para tratamento de condições agudas, exacerbações de doenças crônicas ou procedimentos que requerem internação."
+    },
+    {
+        question: "Quando deve ser realizada a primeira conciliação na internação?",
+        options: [
+            "Até 48 horas após admissão",
+            "Nas primeiras 24 horas, idealmente na admissão",
+            "Apenas quando o médico solicitar",
+            "Somente antes da alta"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação medicamentosa deve ser realizada nas primeiras 24 horas de internação, idealmente no momento da admissão, para prevenir erros desde o início da hospitalização."
+    },
+    {
+        question: "Quem é responsável por iniciar a conciliação na admissão hospitalar?",
+        options: [
+            "Apenas o médico plantonista",
+            "Profissional designado pela instituição (médico, farmacêutico ou enfermeiro)",
+            "Somente o farmacêutico",
+            "Apenas a enfermagem"
+        ],
+        correctAnswer: 1,
+        explanation: "A responsabilidade pode ser de diferentes profissionais, conforme definido pela instituição, mas deve haver designação clara e treinamento adequado do profissional responsável."
+    },
+    {
+        question: "O que fazer com medicamentos de uso contínuo na admissão hospitalar?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar individualmente e decidir continuidade",
+            "Manter todos sem revisar",
+            "Substituir todos por similares hospitalares"
+        ],
+        correctAnswer: 1,
+        explanation: "Cada medicamento de uso contínuo deve ser avaliado individualmente pelo médico, decidindo sobre continuidade, ajuste ou suspensão baseado na condição clínica e no motivo da internação."
+    },
+    {
+        question: "Como proceder com medicamentos trazidos de casa?",
+        options: [
+            "Permitir uso sem controle",
+            "Confiscar todos imediatamente",
+            "Avaliar, identificar, devolver à família ou armazenar com segurança",
+            "Permitir apenas se for genérico"
+        ],
+        correctAnswer: 2,
+        explanation: "Medicamentos trazidos devem ser identificados, avaliados quanto à necessidade de continuidade, e devolvidos à família ou armazenados com segurança. O uso deve ser controlado pela equipe."
+    },
+    {
+        question: "Qual a frequência ideal de revisão da prescrição em internação?",
+        options: [
+            "Uma vez por semana",
+            "Diariamente",
+            "Apenas na admissão e alta",
+            "Somente se houver problemas"
+        ],
+        correctAnswer: 1,
+        explanation: "A prescrição deve ser revista diariamente, avaliando necessidade de continuidade de cada medicamento, ajuste de doses, identificação de interações e eventos adversos."
+    },
+    {
+        question: "O que é deprescribing?",
+        options: [
+            "Erro de prescrição",
+            "Processo de redução ou suspensão de medicamentos desnecessários",
+            "Prescrição eletrônica",
+            "Falta de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Deprescribing é o processo planejado e supervisionado de redução de dose ou suspensão de medicamentos que podem estar causando dano ou não trazendo benefício ao paciente."
+    },
+    {
+        question: "Como identificar medicamentos potencialmente inapropriados em idosos internados?",
+        options: [
+            "Todos medicamentos são apropriados",
+            "Usar critérios de Beers ou STOPP/START",
+            "Avaliar apenas o custo",
+            "Não há critérios estabelecidos"
+        ],
+        correctAnswer: 1,
+        explanation: "Critérios como Beers ou STOPP/START auxiliam na identificação de medicamentos potencialmente inapropriados em idosos, guiando decisões sobre continuidade ou substituição."
+    },
+    {
+        question: "O que fazer quando o paciente não sabe informar seus medicamentos?",
+        options: [
+            "Prescrever sem essa informação",
+            "Buscar fontes alternativas: família, farmácia, médico, prontuários",
+            "Aguardar que se lembre",
+            "Iniciar apenas medicamentos novos"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando o paciente não pode informar, deve-se buscar ativamente outras fontes: contato com familiares, farmácia que dispensa, médico assistente, prontuários de outras instituições."
+    },
+    {
+        question: "Como documentar alterações medicamentosas durante a internação?",
+        options: [
+            "Apenas no sistema eletrônico",
+            "Em evolução médica com justificativa clara",
+            "Não é necessário documentar",
+            "Somente em relatório de alta"
+        ],
+        correctAnswer: 1,
+        explanation: "Todas as alterações medicamentosas devem ser documentadas na evolução médica com justificativa clara, permitindo continuidade do cuidado e compreensão do raciocínio clínico."
+    },
+    {
+        question: "Qual o papel da enfermagem na conciliação durante internação?",
+        options: [
+            "Apenas administrar medicamentos prescritos",
+            "Coletar história, identificar discrepâncias, comunicar equipe",
+            "Não participa do processo",
+            "Somente na alta hospitalar"
+        ],
+        correctAnswer: 1,
+        explanation: "A enfermagem tem papel fundamental: pode coletar história medicamentosa inicial, identificar discrepâncias durante administração, comunicar à equipe e educar o paciente."
+    },
+    {
+        question: "Como proceder com medicamentos de uso tópico e inalatório?",
+        options: [
+            "Ignorar, não são importantes",
+            "Incluir na conciliação como qualquer outro medicamento",
+            "Apenas perguntar se usa",
+            "Somente se for de prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos de uso tópico, inalatório, nasal, ocular devem ser incluídos na conciliação, pois podem causar interações sistêmicas e eventos adversos."
+    },
+    {
+        question: "O que fazer quando há conflito entre medicamentos domiciliares e hospitalares?",
+        options: [
+            "Sempre priorizar os hospitalares",
+            "Avaliar caso a caso, discutir com equipe e documentar decisão",
+            "Manter ambas as prescrições",
+            "Suspender todos os domiciliares"
+        ],
+        correctAnswer: 1,
+        explanation: "Conflitos devem ser avaliados individualmente, considerando condição clínica, evidências, disponibilidade e preferências. A decisão deve ser discutida e bem documentada."
+    },
+    {
+        question: "Como garantir a segurança em jejum pré-operatório com medicamentos?",
+        options: [
+            "Suspender todos os medicamentos",
+            "Avaliar individualmente: alguns devem continuar com pouco líquido",
+            "Manter todos normalmente",
+            "Apenas medicamentos injetáveis"
+        ],
+        correctAnswer: 1,
+        explanation: "Alguns medicamentos devem ser mantidos mesmo em jejum (anti-hipertensivos, anticonvulsivantes, etc.) com pequeno gole de água, enquanto outros devem ser suspensos. Avaliação individualizada é essencial."
+    },
+    {
+        question: "Qual a importância da conciliação em transferência para UTI?",
+        options: [
+            "Não é necessária, UTI tem equipe própria",
+            "Crítica: evita interrupções e duplicações em paciente grave",
+            "Apenas transferir a prescrição anterior",
+            "Somente se o paciente estiver consciente"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação na transferência para UTI é crítica: pacientes graves não toleram erros, pode haver alteração de apresentações (oral para venoso) e risco de interrupções inadvertidas."
+    },
+    {
+        question: "Como lidar com alergias medicamentosas na conciliação?",
+        options: [
+            "Apenas perguntar ao paciente",
+            "Documentar detalhadamente: medicamento, reação, gravidade, data",
+            "Anotar apenas o nome do medicamento",
+            "Não é parte da conciliação"
+        ],
+        correctAnswer: 1,
+        explanation: "Alergias devem ser documentadas detalhadamente: medicamento específico, tipo de reação, gravidade, data da ocorrência, e deve haver sinalização clara no prontuário e pulseira."
+    },
+    {
+        question: "O que são medicamentos sentinela?",
+        options: [
+            "Medicamentos experimentais",
+            "Medicamentos que indicam possíveis condições não diagnosticadas",
+            "Apenas medicamentos controlados",
+            "Medicamentos mais caros"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos sentinela são aqueles cujo uso pode indicar condições clínicas não diagnosticadas ou não documentadas, como uso de anticoagulante sugerindo fibrilação atrial."
+    },
+    {
+        question: "Como proceder com suplementos e vitaminas na internação?",
+        options: [
+            "Suspender todos automaticamente",
+            "Avaliar necessidade, interações e manter se apropriado",
+            "Não são considerados medicamentos",
+            "Permitir apenas se o paciente insistir"
+        ],
+        correctAnswer: 1,
+        explanation: "Suplementos e vitaminas devem ser avaliados quanto à necessidade, possíveis interações com medicamentos prescritos e mantidos quando clinicamente apropriados."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com múltiplas comorbidades?",
+        options: [
+            "Não há diferença de outros pacientes",
+            "Fundamental: maior risco de interações e eventos adversos",
+            "Menos importante por já usarem muitos medicamentos",
+            "Apenas para controle administrativo"
+        ],
+        correctAnswer: 1,
+        explanation: "Em pacientes com múltiplas comorbidades, a conciliação é ainda mais importante devido à polifarmácia, maior risco de interações, duplicações e cascata de prescrições."
+    },
+    {
+        question: "Como envolver o farmacêutico na conciliação em internação?",
+        options: [
+            "Apenas para dispensação",
+            "Participação ativa: revisão de prescrições, identificação de problemas, orientação",
+            "Somente para controle de custos",
+            "Não há necessidade de envolvimento"
+        ],
+        correctAnswer: 1,
+        explanation: "O farmacêutico clínico deve participar ativamente: realizar conciliação, revisar prescrições, identificar e resolver problemas relacionados a medicamentos, e orientar pacientes e equipe."
+    },
+    {
+        question: "O que fazer com medicamentos de uso PRN (se necessário)?",
+        options: [
+            "Não incluir na conciliação",
+            "Incluir, avaliar necessidade e orientar sobre uso correto",
+            "Suspender todos na internação",
+            "Apenas anotar que o paciente usa"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos PRN devem ser incluídos na conciliação, avaliando indicação, frequência de uso real, efetividade e orientando sobre uso correto e alternativas se necessário."
+    },
+    {
+        question: "Como garantir a adesão às práticas de conciliação pela equipe?",
+        options: [
+            "Apenas criar protocolos escritos",
+            "Educação, feedback, indicadores, cultura de segurança",
+            "Punir quem não fizer",
+            "Não é possível garantir"
+        ],
+        correctAnswer: 1,
+        explanation: "A adesão requer múltiplas estratégias: educação contínua, feedback regular, monitoramento de indicadores, liderança engajada e cultura organizacional que valoriza segurança."
+    },
+    {
+        question: "Qual a relação entre conciliação e tempo de internação?",
+        options: [
+            "Não há relação",
+            "Conciliação adequada pode prevenir eventos e reduzir tempo",
+            "Sempre aumenta o tempo de internação",
+            "Apenas aumenta custos"
+        ],
+        correctAnswer: 1,
+        explanation: "Conciliação adequada pode prevenir eventos adversos a medicamentos que prolongariam internação, além de facilitar planejamento da alta e transição segura para domicílio."
+    },
+    {
+        question: "Como proceder com medicamentos em falta no hospital?",
+        options: [
+            "Suspender sem comunicar",
+            "Comunicar equipe, buscar alternativas terapêuticas adequadas",
+            "Pedir que família traga de casa",
+            "Aguardar sem substituir"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando um medicamento não está disponível, deve-se comunicar à equipe, avaliar alternativas terapêuticas equivalentes, documentar a substituição e orientar sobre a mudança."
+    },
+    {
+        question: "Qual o papel do médico assistente no processo de conciliação?",
+        options: [
+            "Não participa, é responsabilidade da farmácia",
+            "Responsável final: validar informações, decidir sobre medicamentos",
+            "Apenas prescrever medicamentos novos",
+            "Somente assinar documentos"
+        ],
+        correctAnswer: 1,
+        explanation: "O médico assistente é o responsável final pela decisão sobre medicamentos, devendo validar a história coletada, decidir sobre continuidade, ajustes ou suspensões."
+    },
+    {
+        question: "Como documentar medicamentos suspensos?",
+        options: [
+            "Apenas retirar da prescrição",
+            "Documentar suspensão com justificativa clara",
+            "Não precisa documentar",
+            "Avisar apenas verbalmente"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos suspensos devem ser explicitamente documentados com justificativa clara, para evitar reinício inadvertido e informar próximos cuidadores sobre a decisão."
+    },
+    {
+        question: "O que é cascata de prescrições?",
+        options: [
+            "Prescrição em sequência",
+            "Prescrição de medicamentos para tratar efeitos adversos de outros",
+            "Prescrição eletrônica",
+            "Múltiplas prescrições simultâneas"
+        ],
+        correctAnswer: 1,
+        explanation: "Cascata de prescrições ocorre quando efeitos adversos de um medicamento são interpretados como nova condição, levando à prescrição de outro medicamento, criando ciclo prejudicial."
+    },
+    {
+        question: "Como a conciliação contribui para a segurança cirúrgica?",
+        options: [
+            "Não tem relação com cirurgia",
+            "Identifica medicamentos que devem ser suspensos/ajustados no perioperatório",
+            "Apenas para anestesia",
+            "Somente para cirurgias cardíacas"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação identifica medicamentos que precisam ser suspensos antes da cirurgia (anticoagulantes, hipoglicemiantes) ou ajustados, e aqueles que devem ser mantidos, contribuindo para segurança."
+    },
+    {
+        question: "Qual a importância da conciliação em pacientes com insuficiência renal?",
+        options: [
+            "Mesma importância de outros pacientes",
+            "Fundamental: necessita ajuste de doses e evitar nefrotóxicos",
+            "Menos importante",
+            "Apenas para diálise"
+        ],
+        correctAnswer: 1,
+        explanation: "Em insuficiência renal, a conciliação é fundamental para ajustar doses conforme clearance, evitar medicamentos nefrotóxicos e prevenir acúmulo de metabólitos tóxicos."
+    },
+    {
+        question: "Como garantir a qualidade do processo de conciliação?",
+        options: [
+            "Não é possível mensurar",
+            "Indicadores, auditorias, feedback e melhoria contínua",
+            "Apenas contar quantas foram feitas",
+            "Confiar que todos fazem corretamente"
+        ],
+        correctAnswer: 1,
+        explanation: "A qualidade é garantida através de: indicadores de processo e resultado, auditorias periódicas, feedback à equipe, análise de discrepâncias identificadas e ciclos de melhoria contínua."
+    }
+                ]
+            },
+
+            "rop-2-5": {
+                title: "ROP 2.5 – Conciliação em Atendimento Ambulatorial",
+                audioFile: null,
+                questions: [
+{
+        question: "Qual a principal diferença da conciliação ambulatorial vs hospitalar?",
+        options: [
+            "Não há diferenças significativas",
+            "Ambulatorial foca em medicamentos crônicos e adesão",
+            "Ambulatorial é menos importante",
+            "Apenas frequência das consultas"
+        ],
+        correctAnswer: 1,
+        explanation: "No ambulatório, a conciliação foca em medicamentos de uso crônico, adesão ao tratamento e prevenção de interações, enquanto no hospital foca mais em transições agudas."
+    },
+    {
+        question: "Quando realizar conciliação em consulta ambulatorial?",
+        options: [
+            "Apenas na primeira consulta",
+            "Em todas as consultas",
+            "Somente se houver queixas",
+            "Uma vez por ano"
+        ],
+        correctAnswer: 1,
+        explanation: "A conciliação deve ser realizada em TODAS as consultas ambulatoriais para identificar mudanças, avaliar adesão e detectar problemas relacionados a medicamentos."
+    },
+    {
+        question: "Como abordar adesão medicamentosa no ambulatório?",
+        options: [
+            "Apenas perguntar se está tomando",
+            "Abordagem não julgadora, identificando barreiras",
+            "Assumir que está aderindo",
+            "Não é papel do ambulatório"
+        ],
+        correctAnswer: 2,
+        explanation: "A abordagem deve ser empática e não julgadora, explorando barreiras reais (custo, efeitos adversos, esquecimento) e trabalhando soluções conjuntas."
+    },
+    {
+        question: "Qual estratégia para melhorar adesão em ambulatório?",
+        options: [
+            "Aumentar número de medicamentos",
+            "Simplificar esquema: menor frequência, combinar medicamentos",
+            "Apenas reforçar importância",
+            "Ameaçar com consequências"
+        ],
+        correctAnswer: 1,
+        explanation: "Simplificar o esquema terapêutico (reduzir frequência, usar combinações fixas, ajustar horários à rotina) melhora significativamente a adesão."
+    },
+    {
+        question: "Como identificar cascata de prescrições no ambulatório?",
+        options: [
+            "Não é possível identificar",
+            "Revisar sintomas novos que podem ser efeitos adversos",
+            "Apenas pelo número de medicamentos",
+            "Só médicos especialistas podem"
+        ],
+        correctAnswer: 1,
+        explanation: "Cascata ocorre quando efeitos adversos são tratados como novos problemas. Revisar cronologicamente sintomas e prescrições ajuda a identificar."
+    },
+    {
+        question: "Papel do farmacêutico na consulta ambulatorial?",
+        options: [
+            "Apenas dispensar medicamentos",
+            "Consulta farmacêutica: revisar, orientar, identificar problemas",
+            "Não participa de ambulatório",
+            "Somente controle de estoque"
+        ],
+        correctAnswer: 1,
+        explanation: "Farmacêutico pode realizar consulta farmacêutica, revisando todos os medicamentos, identificando problemas, orientando uso correto e apoiando médico."
+    },
+    {
+        question: "O que é deprescribing no contexto ambulatorial?",
+        options: [
+            "Prescrever mais medicamentos",
+            "Retirada supervisionada de medicamentos inapropriados",
+            "Substituir por genéricos",
+            "Apenas reduzir doses"
+        ],
+        correctAnswer: 1,
+        explanation: "Deprescribing é processo planejado de redução ou suspensão de medicamentos que podem não trazer benefício ou causar dano, especialmente em idosos."
+    },
+    {
+        question: "Como avaliar custo-efetividade no ambulatório?",
+        options: [
+            "Sempre prescrever o mais barato",
+            "Avaliar custo total, incluindo consultas por eventos adversos",
+            "Custo não é relevante",
+            "Apenas medicamentos de marca"
+        ],
+        correctAnswer: 1,
+        explanation: "Deve-se considerar custo total: medicamento, monitoramento, consultas por falha terapêutica ou eventos adversos, não apenas preço do fármaco."
+    },
+    {
+        question: "Importância da lista de medicamentos atualizada?",
+        options: [
+            "Apenas para controle administrativo",
+            "Fundamental para evitar duplicações e interações",
+            "Não é necessária se usar sistema eletrônico",
+            "Apenas para pacientes internados"
+        ],
+        correctAnswer: 1,
+        explanation: "Lista atualizada que o paciente carrega previne duplicações, interações em diferentes serviços e facilita atendimentos de urgência."
+    },
+    {
+        question: "Como orientar paciente sobre armazenamento de medicamentos?",
+        options: [
+            "Qualquer lugar serve",
+            "Local fresco, seco, protegido de luz, longe de crianças",
+            "Sempre na geladeira",
+            "Apenas em armários altos"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos devem ser armazenados em local fresco e seco, protegidos de luz e umidade, fora do alcance de crianças, geralmente não na geladeira (salvo exceções)."
+    },
+    {
+        question: "Quando considerar interação medicamento-alimento?",
+        options: [
+            "Não são relevantes",
+            "Sempre revisar, algumas significativas",
+            "Apenas antibióticos",
+            "Não existem"
+        ],
+        correctAnswer: 1,
+        explanation: "Algumas interações são clinicamente significativas (ex: varfarina e vegetais verdes, levotiroxina e café, bifosfonatos e alimentos) e devem ser orientadas."
+    },
+    {
+        question: "Como lidar com automedicação identificada?",
+        options: [
+            "Proibir terminantemente",
+            "Avaliar segurança, orientar riscos, considerar na prescrição",
+            "Ignorar",
+            "Apenas anotar"
+        ],
+        correctAnswer: 2,
+        explanation: "Automedicação deve ser avaliada quanto à segurança e necessidade. Orientar sobre riscos, considerar interações e, se apropriado, incorporar à prescrição formal."
+    },
+    {
+        question: "Papel da telemedicina na conciliação ambulatorial?",
+        options: [
+            "Impossível fazer conciliação por telemedicina",
+            "Viável se paciente tiver lista atualizada e acesso a medicamentos",
+            "Apenas para receitas simples",
+            "Não é recomendada"
+        ],
+        correctAnswer: 1,
+        explanation: "Telemedicina pode incluir conciliação efetiva se paciente tiver lista atualizada, conseguir mostrar embalagens/receitas e houver boa comunicação."
+    },
+    {
+        question: "Como orientar sobre descarte de medicamentos?",
+        options: [
+            "Jogar no lixo comum",
+            "Devolver em farmácias com coleta ou programa municipal",
+            "Jogar na pia/vaso sanitário",
+            "Guardar indefinidamente"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos devem ser descartados em locais apropriados (farmácias com programa de coleta, pontos de coleta municipal), nunca em lixo comum ou esgoto."
+    },
+    {
+        question: "Importância da revisão periódica de medicamentos crônicos?",
+        options: [
+            "Não é necessária se está funcionando",
+            "Fundamental: reavaliar necessidade, doses, interações",
+            "Apenas se paciente solicitar",
+            "Somente em especialistas"
+        ],
+        correctAnswer: 1,
+        explanation: "Revisão periódica (anual no mínimo) é essencial para reavaliar necessidade contínua, adequação de doses, novas interações e possibilidade de deprescribing."
+    },
+    {
+        question: "Como abordar fitoterápicos e suplementos?",
+        options: [
+            "Não são medicamentos, ignorar",
+            "Perguntar e avaliar interações com medicamentos prescritos",
+            "Sempre proibir o uso",
+            "Não são importantes"
+        ],
+        correctAnswer: 1,
+        explanation: "Fitoterápicos e suplementos podem causar interações significativas (ex: Ginkgo biloba com anticoagulantes) e devem ser ativamente questionados e avaliados."
+    },
+    {
+        question: "Qual a frequência ideal de consultas para ajuste de medicamentos?",
+        options: [
+            "Sempre semanal",
+            "Varia conforme condição: 1-4 semanas para ajustes iniciais",
+            "Uma vez ao ano",
+            "Apenas se houver problemas"
+        ],
+        correctAnswer: 1,
+        explanation: "Para medicamentos novos ou ajustes: 1-4 semanas inicialmente. Para tratamento estável: conforme protocolo da condição, geralmente 3-6 meses."
+    },
+    {
+        question: "Como otimizar horários de medicamentos?",
+        options: [
+            "Paciente deve seguir exatamente a prescrição",
+            "Adaptar à rotina do paciente quando possível",
+            "Todos devem ser à noite",
+            "Horários não importam"
+        ],
+        correctAnswer: 1,
+        explanation: "Quando clinicamente viável, adaptar horários à rotina do paciente (refeições, trabalho, sono) melhora adesão sem comprometer eficácia."
+    },
+    {
+        question: "Importância do feedback sobre efetividade do tratamento?",
+        options: [
+            "Paciente não precisa avaliar",
+            "Fundamental: paciente reporta sintomas, melhora, efeitos adversos",
+            "Apenas exames laboratoriais importam",
+            "Não é relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "Feedback do paciente sobre sintomas, qualidade de vida e efeitos adversos é essencial para avaliar efetividade real e ajustar tratamento."
+    },
+    {
+        question: "Como lidar com receitas de múltiplos prescritores?",
+        options: [
+            "Não é problema do médico atual",
+            "Revisar todas, identificar duplicações e interações",
+            "Manter todas sem revisar",
+            "Suspender automaticamente"
+        ],
+        correctAnswer: 1,
+        explanation: "Médico que realiza consulta deve revisar TODAS as prescrições de diferentes fontes, identificando problemas e coordenando com outros prescritores se necessário."
+    },
+    {
+        question: "Estratégias para pacientes com baixa literacia em saúde?",
+        options: [
+            "Apenas dar receita escrita",
+            "Linguagem simples, demonstração, confirmação de entendimento",
+            "Não é possível atender adequadamente",
+            "Apenas prescrever menos medicamentos"
+        ],
+        correctAnswer: 1,
+        explanation: "Usar linguagem simples, demonstrar como tomar, usar figuras/cores, pedir que explique de volta (teach-back), envolver cuidador."
+    },
+    {
+        question: "Papel da enfermagem em consultas ambulatoriais?",
+        options: [
+            "Apenas verificar sinais vitais",
+            "Coletar história, revisar medicamentos, educar paciente",
+            "Não participa de conciliação",
+            "Apenas agendar retornos"
+        ],
+        correctAnswer: 1,
+        explanation: "Enfermagem pode coletar história medicamentosa inicial, verificar adesão, identificar problemas, educar sobre uso correto e reforçar orientações médicas."
+    },
+    {
+        question: "Como documentar conciliação ambulatorial?",
+        options: [
+            "Apenas prescrever novos medicamentos",
+            "Registrar lista completa e alterações feitas com justificativa",
+            "Não precisa documentar",
+            "Somente em sistema eletrônico"
+        ],
+        correctAnswer: 1,
+        explanation: "Documentar lista completa de medicamentos atuais, alterações realizadas (suspensões, adições, ajustes) com justificativa clara no prontuário."
+    },
+    {
+        question: "Importância da reconciliação pós-alta hospitalar?",
+        options: [
+            "Não é necessária no ambulatório",
+            "Crítica: comparar prescrição de alta com uso domiciliar prévio",
+            "Apenas se paciente reclamar",
+            "Hospital já fez"
+        ],
+        correctAnswer: 1,
+        explanation: "Primeira consulta pós-alta é crítica para revisar prescrição hospitalar, comparar com medicamentos prévios e esclarecer mudanças, prevenindo erros."
+    },
+    {
+        question: "Como abordar relutância em iniciar medicamento?",
+        options: [
+            "Insistir que é obrigatório",
+            "Explorar preocupações, educar riscos-benefícios, respeitar autonomia",
+            "Ameaçar com consequências",
+            "Prescrever sem discutir"
+        ],
+        correctAnswer: 1,
+        explanation: "Abordagem centrada no paciente: explorar preocupações, educar sobre necessidade e benefícios, discutir alternativas, respeitar decisão informada."
+    },
+    {
+        question: "O que é prescrição em cascata?",
+        options: [
+            "Prescrição de muitos medicamentos",
+            "Prescrever para tratar efeito adverso sem reconhecer causa",
+            "Prescrição sequencial",
+            "Receitas impressas"
+        ],
+        correctAnswer: 1,
+        explanation: "Ocorre quando efeito adverso de um medicamento é interpretado como novo problema e tratado com outro medicamento, criando cascata evitável."
+    },
+    {
+        question: "Importância da monitorização laboratorial?",
+        options: [
+            "Sempre necessária para todos medicamentos",
+            "Essencial para medicamentos específicos conforme protocolo",
+            "Nunca necessária em ambulatório",
+            "Apenas se paciente solicitar"
+        ],
+        correctAnswer: 1,
+        explanation: "Alguns medicamentos requerem monitorização laboratorial específica (ex: estatinas/TGO-TGP, varfarina/INR, lítio/nível sérico) conforme protocolos estabelecidos."
+    },
+    {
+        question: "Como otimizar prescrição para idosos em ambulatório?",
+        options: [
+            "Prescrever como para adultos jovens",
+            "Iniciar baixo, progredir lento, revisar frequentemente",
+            "Sempre usar doses máximas",
+            "Evitar prescrever"
+        ],
+        correctAnswer: 1,
+        explanation: "Em idosos: iniciar com doses menores, aumentar gradualmente, revisar frequentemente, atentar para interações e efeitos adversos, aplicar critérios de Beers/STOPP."
+    },
+    {
+        question: "Papel da farmacovigilância ambulatorial?",
+        options: [
+            "Não aplicável em ambulatório",
+            "Notificar eventos adversos, monitorar segurança",
+            "Apenas em hospitais",
+            "Não é relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "Profissionais ambulatoriais devem notificar eventos adversos aos sistemas de farmacovigilância, contribuindo para monitoramento de segurança de medicamentos."
+    },
+    {
+        question: "Como garantir continuidade entre diferentes níveis de atenção?",
+        options: [
+            "Não é possível garantir",
+            "Comunicação efetiva: contrarreferência, relatórios, lista atualizada",
+            "Paciente deve se responsabilizar sozinho",
+            "Não é necessário"
+        ],
+        correctAnswer: 1,
+        explanation: "Requer comunicação efetiva entre níveis: relatórios completos, contrarreferência, lista atualizada de medicamentos e orientações claras ao paciente."
+    }
+                ]
+            },
+
+            "rop-2-6": {
+                title: "ROP 2.6 – Conciliação no Serviço de Emergência",
+                audioFile: null,
+                questions: [
+{
+        question: "Qual desafio único da conciliação em emergência?",
+        options: [
+            "Não há desafios específicos",
+            "Tempo limitado, paciente crítico, informação fragmentada",
+            "Apenas falta de medicamentos",
+            "Sempre é impossível fazer"
+        ],
+        correctAnswer: 1,
+        explanation: "Emergência apresenta desafios: tempo limitado, paciente frequentemente incapaz de informar, informação fragmentada, necessidade de decisões rápidas."
+    },
+    {
+        question: "Quando realizar conciliação em emergência?",
+        options: [
+            "Apenas se houver tempo sobrando",
+            "Logo após estabilização inicial, antes da primeira prescrição",
+            "Não é prioridade em emergência",
+            "Somente na alta da emergência"
+        ],
+        correctAnswer: 1,
+        explanation: "Deve ser feita após estabilização inicial mas ANTES da primeira prescrição, para prevenir interações críticas e duplicações em paciente já vulnerável."
+    },
+    {
+        question: "Fontes de informação quando paciente inconsciente?",
+        options: [
+            "Impossível obter informação",
+            "Acompanhantes, carteira, celular, pulseiras, sistemas integrados",
+            "Apenas receitas se tiver",
+            "Aguardar recuperar consciência"
+        ],
+        correctAnswer: 1,
+        explanation: "Buscar ativamente: acompanhantes, objetos pessoais, carteiras com receitas/cartões, celular, pulseiras de alerta, sistemas de informação integrados."
+    },
+    {
+        question: "Importância de medicamentos em uso na avaliação do quadro agudo?",
+        options: [
+            "Não são relevantes para emergência",
+            "Podem ser causa ou contribuir para o quadro atual",
+            "Apenas tratamento agudo importa",
+            "Somente para prescrição de alta"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos em uso podem ser CAUSA do quadro (intoxicação, efeito adverso) ou contribuir (interações, omissão de dose crítica) e devem ser considerados."
+    },
+    {
+        question: "Como proceder com anticoagulantes em emergência?",
+        options: [
+            "Suspender automaticamente",
+            "Avaliar indicação, risco-benefício, verificar última dose e efeito",
+            "Sempre reverter",
+            "Ignorar"
+        ],
+        correctAnswer: 1,
+        explanation: "Anticoagulantes requerem avaliação cuidadosa: verificar indicação, última dose, exames de coagulação, avaliar risco hemorrágico vs. trombótico do quadro atual."
+    },
+    {
+        question: "Papel da conciliação na síndrome coronariana aguda?",
+        options: [
+            "Não fazer, foca apenas no infarto",
+            "Essencial: identificar beta-bloqueadores, aspirina, antiagregantes em uso",
+            "Apenas após sair da UTI",
+            "Não é relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "Crítico identificar medicamentos cardiovasculares prévios, especialmente beta-bloqueadores, aspirina, antiagregantes que devem continuar e influenciam tratamento."
+    },
+    {
+        question: "Como documentar conciliação em emergência?",
+        options: [
+            "Não há tempo para documentar",
+            "Registro conciso mas completo no prontuário de emergência",
+            "Apenas prescrever tratamento agudo",
+            "Documentar só se paciente internar"
+        ],
+        correctAnswer: 1,
+        explanation: "Mesmo com tempo limitado, deve-se documentar concisamente: fonte de informação, medicamentos identificados, alterações feitas e justificativa."
+    },
+    {
+        question: "Medicamentos críticos que não podem ser omitidos?",
+        options: [
+            "Todos podem ser omitidos temporariamente",
+            "Anticonvulsivantes, insulina, corticoides crônicos, antiparkinsonianos",
+            "Apenas insulina",
+            "Não existem medicamentos críticos"
+        ],
+        correctAnswer: 1,
+        explanation: "Alguns medicamentos não devem ser omitidos: anticonvulsivantes (risco de status), insulina tipo 1, corticoides (crise adrenal), levotiroxina, antiparkinsonianos."
+    },
+    {
+        question: "Como lidar com polifarmácia em idoso na emergência?",
+        options: [
+            "Suspender todos temporariamente",
+            "Avaliar quais são essenciais e manter, suspender desnecessários",
+            "Manter todos sem revisar",
+            "Não é momento para revisar"
+        ],
+        correctAnswer: 1,
+        explanation: "Avaliar criticamente: manter medicamentos essenciais, considerar suspender temporariamente os não críticos, identificar contribuintes para quadro atual."
+    },
+    {
+        question: "Importância da conciliação em intoxicações?",
+        options: [
+            "Não é relevante",
+            "Fundamental: identificar agente, dose, tempo, interações",
+            "Apenas fazer lavagem gástrica",
+            "Só importante em casos graves"
+        ],
+        correctAnswer: 1,
+        explanation: "Essencial identificar TODOS os medicamentos disponíveis ao paciente, quantificar o que falta (dose ingerida), tempo da ingestão e possíveis interações."
+    },
+    {
+        question: "Como proceder com medicamentos na crise hipertensiva?",
+        options: [
+            "Iniciar apenas medicamentos novos",
+            "Avaliar adesão prévia, ajustar/trocar se falha terapêutica",
+            "Sempre manter os mesmos",
+            "Suspender todos anti-hipertensivos"
+        ],
+        correctAnswer: 1,
+        explanation: "Investigar adesão aos anti-hipertensivos prévios, avaliar se há falha terapêutica, ajustar esquema se necessário, não apenas adicionar novo medicamento."
+    },
+    {
+        question: "Papel da conciliação em AVC agudo?",
+        options: [
+            "Não é prioritário",
+            "Crítico: identificar anticoagulantes, antiagregantes, última dose",
+            "Apenas após trombólise",
+            "Só importante se for hemorrágico"
+        ],
+        correctAnswer: 1,
+        explanation: "Urgente identificar anticoagulantes/antiagregantes antes de trombólise ou anticoagulação, pois afeta elegibilidade e segurança do tratamento."
+    },
+    {
+        question: "Como obter informação em emergência psiquiátrica?",
+        options: [
+            "Impossível se paciente agitado",
+            "Acompanhantes, serviços prévios, prescrições anteriores",
+            "Aguardar sedação completa",
+            "Não fazer conciliação"
+        ],
+        correctAnswer: 1,
+        explanation: "Buscar familiares/acompanhantes, contatar serviços de saúde mental prévios, verificar objetos pessoais, revisar prontuários anteriores se disponíveis."
+    },
+    {
+        question: "Importância de identificar hipoglicemiantes em emergência?",
+        options: [
+            "Não é urgente",
+            "Crítico: podem causar hipoglicemia, requerem ajuste em jejum/doença aguda",
+            "Apenas se for diabético conhecido",
+            "Suspender automaticamente"
+        ],
+        correctAnswer: 1,
+        explanation: "Identificar hipoglicemiantes é urgente: podem causar hipoglicemia grave, requerem ajuste durante doença aguda, jejum ou procedimentos."
+    },
+    {
+        question: "Como documentar discrepâncias encontradas em emergência?",
+        options: [
+            "Apenas resolver, sem documentar",
+            "Registrar discrepância, ação tomada e comunicação com equipe",
+            "Não há tempo para isso",
+            "Somente avisar verbalmente"
+        ],
+        correctAnswer: 1,
+        explanation: "Documentar: discrepância encontrada, decisão tomada (manter/alterar/suspender), comunicação com médico emergencista e, se internar, equipe receptora."
+    },
+    {
+        question: "Papel da tecnologia na conciliação em emergência?",
+        options: [
+            "Não há tecnologia útil",
+            "Sistemas integrados, alertas de interações, histórico eletrônico",
+            "Apenas dificulta o processo",
+            "Somente para prescrição"
+        ],
+        correctAnswer: 1,
+        explanation: "Tecnologia auxilia: acesso rápido a histórico de outras instituições, alertas automáticos de interações críticas, prescrição com verificações de segurança."
+    },
+    {
+        question: "Como proceder na alta da emergência?",
+        options: [
+            "Apenas dar receita nova",
+            "Reconciliar: lista completa com continuados, alterados, suspensos, novos",
+            "Não é necessário",
+            "Paciente procura ambulatório"
+        ],
+        correctAnswer: 1,
+        explanation: "Alta requer reconciliação completa: quais medicamentos domiciliares continuar, quais foram alterados (com justificativa), suspensos e novos prescritos."
+    },
+    {
+        question: "Importância da conciliação em trauma?",
+        options: [
+            "Não é prioritário no trauma",
+            "Pode influenciar manejo: anticoagulantes, antiagregantes, alergias",
+            "Apenas se houver lesão neurológica",
+            "Só após cirurgia"
+        ],
+        correctAnswer: 1,
+        explanation: "Importante saber uso de anticoagulantes/antiagregantes (sangramento), corticoides (estresse), medicamentos que afetam anestesia e alergias."
+    },
+    {
+        question: "Como lidar com medicamentos não padronizados?",
+        options: [
+            "Sempre suspender",
+            "Avaliar necessidade, buscar similar padronizado ou permitir trazido",
+            "Ignorar",
+            "Substituir por qualquer outro"
+        ],
+        correctAnswer: 1,
+        explanation: "Avaliar criticidade: se essencial e sem similar, contatar farmácia para providenciar ou permitir uso supervisionado do medicamento trazido."
+    },
+    {
+        question: "Papel da enfermagem na conciliação em emergência?",
+        options: [
+            "Apenas administrar o que for prescrito",
+            "Coletar história inicial, identificar medicamentos trazidos, alertar equipe",
+            "Não participa em emergência",
+            "Apenas verificar sinais vitais"
+        ],
+        correctAnswer: 1,
+        explanation: "Enfermagem frequentemente é primeira a contatar paciente/família e pode iniciar coleta de história, identificar medicamentos trazidos e alertar médico."
+    },
+    {
+        question: "Como priorizar em emergência com múltiplos pacientes graves?",
+        options: [
+            "Não fazer conciliação",
+            "Focar em medicamentos críticos primeiro, completar quando possível",
+            "Fazer igual para todos",
+            "Apenas para pacientes estáveis"
+        ],
+        correctAnswer: 1,
+        explanation: "Em múltiplos graves, priorizar informações críticas (anticoagulantes, hipoglicemiantes, anticonvulsivantes) e completar história quando situação permitir."
+    },
+    {
+        question: "Importância de questionar sobre medicamentos sem prescrição?",
+        options: [
+            "Não são relevantes em emergência",
+            "Podem causar intoxicação, interação ou ser causa do quadro",
+            "Apenas se paciente mencionar",
+            "Não há tempo para perguntar"
+        ],
+        correctAnswer: 1,
+        explanation: "Medicamentos sem prescrição, fitoterápicos e suplementos podem ser causa de intoxicação, interação crítica ou contribuir para quadro atual."
+    },
+    {
+        question: "Como garantir continuidade após admissão pela emergência?",
+        options: [
+            "Não é responsabilidade da emergência",
+            "Transferir informações completas para equipe de internação",
+            "Paciente deve informar novamente",
+            "Sistema faz automaticamente"
+        ],
+        correctAnswer: 1,
+        explanation: "Emergência deve documentar e comunicar claramente à equipe de internação: medicamentos prévios identificados, alterações feitas e pendências a resolver."
+    },
+    {
+        question: "Papel da conciliação em crise asmática?",
+        options: [
+            "Apenas tratar broncoespasmo",
+            "Avaliar uso/adesão de inaladores, identificar desencadeantes medicamentosos",
+            "Não é relevante",
+            "Só prescrever broncodilatador"
+        ],
+        correctAnswer: 1,
+        explanation: "Importante avaliar: adesão ao tratamento de manutenção, técnica inalatória, medicamentos que podem piorar asma (beta-bloqueadores, AINEs)."
+    },
+    {
+        question: "Como proceder com medicamentos controlados identificados?",
+        options: [
+            "Confiscar imediatamente",
+            "Verificar prescrição, armazenar com segurança, documentar",
+            "Permitir uso livre",
+            "Descartar"
+        ],
+        correctAnswer: 1,
+        explanation: "Verificar legitimidade da prescrição, armazenar com segurança conforme normas, documentar no prontuário, avaliar necessidade de continuidade."
+    },
+    {
+        question: "Importância da conciliação em insuficiência cardíaca descompensada?",
+        options: [
+            "Não é prioritário",
+            "Avaliar adesão, interações, medicamentos que pioram (AINEs, cálcio-antagonistas)",
+            "Apenas otimizar diuréticos",
+            "Não há relação"
+        ],
+        correctAnswer: 1,
+        explanation: "Essencial avaliar: adesão a medicamentos prévios, identificar medicamentos que pioram IC (AINEs, cálcio-antagonistas não diidroppiridínicos), otimizar terapia."
+    },
+    {
+        question: "Como abordar discordância entre fontes de informação?",
+        options: [
+            "Usar qualquer uma",
+            "Buscar fonte mais confiável, confirmar com múltiplas fontes",
+            "Ignorar discordâncias",
+            "Prescrever sem confirmar"
+        ],
+        correctAnswer: 1,
+        explanation: "Discordâncias requerem investigação: buscar fonte mais confiável (prescrição recente, contato com prescritor), confirmar com múltiplas fontes quando possível."
+    },
+    {
+        question: "Papel da conciliação em sepse?",
+        options: [
+            "Não fazer, foca apenas em antibiótico",
+            "Identificar medicamentos que afetam imunidade, interações com antibióticos",
+            "Apenas após estabilização hemodinâmica",
+            "Não é relevante"
+        ],
+        correctAnswer: 1,
+        explanation: "Importante identificar: imunossupressores, corticoides crônicos (pode precisar dose estresse), medicamentos nefrotóxicos, interações com antibióticos."
+    },
+    {
+        question: "Como garantir que informação chegue ao ambulatório?",
+        options: [
+            "Não é possível garantir",
+            "Relatório de alta completo, contrarreferência, orientação ao paciente",
+            "Paciente deve contar tudo novamente",
+            "Sistema integrado faz automaticamente"
+        ],
+        correctAnswer: 1,
+        explanation: "Requer: relatório de alta detalhado com todas as mudanças, contrarreferência formal se possível, orientação clara ao paciente sobre o que contar no ambulatório."
+    },
+    {
+        question: "Importância da educação da equipe de emergência sobre conciliação?",
+        options: [
+            "Não é necessária, é intuitivo",
+            "Fundamental: protocolo claro, treinamento regular, feedback",
+            "Apenas para farmacêuticos",
+            "Não há tempo para treinar"
+        ],
+        correctAnswer: 1,
+        explanation: "Essencial: protocolo adaptado à realidade da emergência, treinamento de toda equipe, feedback regular, discussão de casos e melhoria contínua."
+    }
+                ]
+            },
+
             "rop-2-7": {
                 title: "ROP 2.7 – Lista de Verificação para Cirurgia Segura",
                 audioFile: null,
