@@ -1,6 +1,6 @@
 // ==================== SERVICE WORKER - ANEST PWA ====================
 // Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v2.1.0';
+const CACHE_VERSION = 'v2.2.0';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache (funcionamento offline)
@@ -16,6 +16,8 @@ const ESSENTIAL_FILES = [
     '/anest-app/documents-data.js',
     '/anest-app/residencia-config.js',
     '/anest-app/residencia-app.js',
+    '/anest-app/google-sheets-integration.js',
+    '/anest-app/google-sheets-styles.css',
     '/anest-app/LogoANEST.png',
     '/anest-app/NovoLogoAnest.png',
     '/anest-app/manifest.json'

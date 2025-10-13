@@ -11,6 +11,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="permissions-styles.css">
+    <link rel="stylesheet" href="google-sheets-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -181,6 +182,42 @@
                         <p>Protocolos, políticas e mais</p>
                     </div>
 
+                    <!-- Plantões (NOVO) -->
+                    <div class="menu-card" onclick="showPlantoes()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <h3>Plantões</h3>
+                        <p>Escala de plantões</p>
+                    </div>
+
+                    <!-- Escalas (NOVO) -->
+                    <div class="menu-card" onclick="showEscalas()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%)">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>Escalas</h3>
+                        <p>Escalas de trabalho</p>
+                    </div>
+
+                    <!-- Estágios (NOVO) -->
+                    <div class="menu-card" onclick="showEstagios()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>Estágios</h3>
+                        <p>Cronograma de estágios</p>
+                    </div>
+
+                    <!-- Férias (NOVO) -->
+                    <div class="menu-card" onclick="showFerias()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%)">
+                            <i class="fas fa-umbrella-beach"></i>
+                        </div>
+                        <h3>Férias</h3>
+                        <p>Planejamento de férias</p>
+                    </div>
+
                     <!-- Notificações (NOVO) -->
                     <div class="menu-card" onclick="abrirNotificacoes()">
                         <div class="card-icon" style="background: linear-gradient(135deg, #f5a623 0%, #f76b1c 100%)">
@@ -243,6 +280,11 @@
     <!-- Admin Screen -->
     <div id="adminScreen" class="screen"></div>
 
+    <!-- Custom Content Screen (Google Sheets) -->
+    <div id="custom" class="screen" style="display: none;">
+        <div id="customContent"></div>
+    </div>
+
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
 
@@ -264,6 +306,7 @@
     <script src="documents-data.js"></script>
     <script src="residencia-config.js"></script>
     <script src="residencia-app.js"></script>
+    <script src="google-sheets-integration.js"></script>
     <script src="app.js"></script>
     
     <!-- PWA Service Worker Registration -->

@@ -76,7 +76,6 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
         showLoading();
         await auth.signInWithEmailAndPassword(email, password);
         hideLoading();
-        showToast('Login realizado com sucesso!', 'success');
     } catch (error) {
         hideLoading();
         handleAuthError(error);
@@ -146,7 +145,6 @@ async function loginWithGoogle() {
         }
         
         hideLoading();
-        showToast('Login com Google realizado com sucesso!', 'success');
     } catch (error) {
         hideLoading();
         handleAuthError(error);
