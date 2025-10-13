@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Converte BancoDeQuestoesQmentum.json para formato rops-data.js
-Com títulos corretos das ROPs
+Com mapeamento CORRETO dos títulos das ROPs
 """
 
 import json
@@ -18,52 +18,50 @@ def convert_banco_questoes():
     
     macroareas = data.get('macroareas', [])
     
-    # Mapeamento de títulos corretos das ROPs
-    rop_titles = {
-        # Macro área 1 – Cultura de Segurança
-        'rop-responsabilização-pela-qualidade': 'ROP 1.1 – Responsabilização pela Qualidade',
-        'rop-gestão-de-incidentes-sobre-a-segurança-dos-pacientes': 'ROP 1.2 – Gestão de Incidentes sobre a Segurança dos Pacientes',
-        'rop-relatórios-trimestrais-sobre-a-segurança-dos-pacientes': 'ROP 1.3 – Relatórios Trimestrais sobre a Segurança dos Pacientes',
-        'rop-divulgação-de-incidentes-sobre-a-segurança-dos-pacientes': 'ROP 1.4 – Divulgação de Incidentes (Disclosure)',
+    # Mapeamento CORRETO dos títulos das ROPs
+    # Chave: título no banco -> Valor: título correto
+    rop_title_mapping = {
+        # Cultura de Segurança
+        'Responsabilização pela Qualidade': 'ROP 1.1 – Responsabilização pela Qualidade',
+        'Gestão de Incidentes sobre a Segurança dos Pacientes': 'ROP 1.2 – Gestão de Incidentes sobre a Segurança dos Pacientes',
+        'Relatórios Trimestrais sobre a Segurança dos Pacientes': 'ROP 1.3 – Relatórios Trimestrais sobre a Segurança dos Pacientes',
+        'Divulgação de Incidentes sobre a Segurança dos Pacientes': 'ROP 1.4 – Divulgação de Incidentes (Disclosure)',
         
-        # Macro área 2 – Comunicação
-        'rop-identificação-do-cliente': 'ROP 2.1 – Identificação do Cliente',
-        'rop-lista-de-abreviações-perigosas': 'ROP 2.2 – Lista de Abreviações Perigosas',
-        'rop-conciliação-medicamentosa-como-prioridade-estratégica': 'ROP 2.3 – Conciliação Medicamentosa como Prioridade Estratégica',
-        'rop-conciliação-medicamentosa-nas-transições-(serviços-de-internação)': 'ROP 2.4 – Conciliação em Serviços de Assistência Aguda (Internação)',
-        'rop-conciliação-medicamentosa-nas-transições-(ambulatório)': 'ROP 2.5 – Conciliação em Atendimento Ambulatorial',
-        'rop-conciliação-medicamentosa-nas-transições-(emergência)': 'ROP 2.6 – Conciliação no Serviço de Emergência',
-        'rop-lista-de-verificação-para-cirurgia-segura': 'ROP 2.7 – Lista de Verificação para Cirurgia Segura',
-        'rop-transferência-de-informações-nas-transições-do-cuidado': 'ROP 2.8 – Transferência de Informações nas Transições (Handoff)',
-        'rop-resultados-críticos-de-exames:-comunicação-oportuna': 'ROP 2.9 – Resultados Críticos de Exames',
+        # Comunicação
+        'Identificação do Cliente': 'ROP 2.1 – Identificação do Cliente',
+        'Lista de Abreviações Perigosas': 'ROP 2.2 – Lista de Abreviações Perigosas',
+        'Conciliação Medicamentosa como Prioridade Estratégica': 'ROP 2.3 – Conciliação Medicamentosa como Prioridade Estratégica',
+        'Conciliação Medicamentosa nas Transições (Serviços de Internação)': 'ROP 2.4 – Conciliação em Serviços de Assistência Aguda (Internação)',
+        'Conciliação Medicamentosa nas Transições (Ambulatório)': 'ROP 2.5 – Conciliação em Atendimento Ambulatorial',
+        'Conciliação Medicamentosa nas Transições (Emergência)': 'ROP 2.6 – Conciliação no Serviço de Emergência',
+        'Lista de Verificação para Cirurgia Segura': 'ROP 2.7 – Lista de Verificação para Cirurgia Segura',
+        'Transferência de Informações nas Transições do Cuidado': 'ROP 2.8 – Transferência de Informações nas Transições (Handoff)',
         
-        # Macro área 3 – Uso de Medicamentos
-        'rop-medicações-de-alto-risco:-identificação-e-controle': 'ROP 3.1 – Uso Racional de Antimicrobianos',
-        'rop-eletrólitos-concentrados:-restrição-e-rotulagem': 'ROP 3.2 – Eletrólitos Concentrados',
-        'rop-medicamentos-lasa-(parecidos-no-nome/aparência)': 'ROP 3.3 – Segurança no Uso da Heparina',
-        'rop-segurança-no-uso-de-opioides-e-controlados': 'ROP 3.4 – Medicamentos de Alta Vigilância (MAV)',
-        'rop-bombas-de-infusão:-padronização-e-segurança': 'ROP 3.5 – Segurança das Bombas de Infusão',
-        # ROP 3.6 adicionar
+        # Uso de Medicamentos
+        'Medicações de Alto Risco: Identificação e Controle': 'ROP 3.1 – Uso Racional de Antimicrobianos',
+        'Eletrólitos Concentrados: Restrição e Rotulagem': 'ROP 3.2 – Eletrólitos Concentrados',
+        'Medicamentos LASA (Parecidos no Nome/Aparência)': 'ROP 3.3 – Segurança no Uso da Heparina',
+        'Segurança no Uso de Opioides e Controlados': 'ROP 3.4 – Medicamentos de Alta Vigilância (MAV)',
+        'Bombas de Infusão: Padronização e Segurança': 'ROP 3.5 – Segurança das Bombas de Infusão',
         
-        # Macro área 4 – Vida Profissional / Força de Trabalho
-        'rop-orientação,-treinamento-e-competência-da-equipe': 'ROP 4.1 – Programa de Manutenção Preventiva',
-        'rop-gestão-da-fadiga-e-jornada-de-trabalho-segura': 'ROP 4.2 – Segurança do Paciente: Capacitação e Treinamento',
-        'rop-prevenção-e-resposta-à-violência-no-local-de-trabalho': 'ROP 4.3 – Prevenção de Violência no Local de Trabalho',
-        'rop-comunicação-de-situações-de-risco-e-cultura-justa': 'ROP 4.4 – Fluxo de Clientes',
-        'rop-bem‑estar-da-equipe-e-apoio-ao-segundo-vítima': 'ROP 4.5 – Plano de Segurança do Paciente',
+        # Vida Profissional e Força de Trabalho
+        'Orientação, Treinamento e Competência da Equipe': 'ROP 4.1 – Programa de Manutenção Preventiva',
+        'Gestão da Fadiga e Jornada de Trabalho Segura': 'ROP 4.2 – Segurança do Paciente: Capacitação e Treinamento',
+        'Prevenção e Resposta à Violência no Local de Trabalho': 'ROP 4.3 – Prevenção de Violência no Local de Trabalho',
+        'Comunicação de Situações de Risco e Cultura Justa': 'ROP 4.4 – Fluxo de Clientes',
+        'Bem‑estar da Equipe e Apoio ao Segundo Vítima': 'ROP 4.5 – Plano de Segurança do Paciente',
         
-        # Macro área 5 – Prevenção de Infecções
-        'rop-higiene-das-mãos:-adesão-e-monitoramento': 'ROP 5.1 – Aderência às Práticas de Higiene das Mãos',
-        'rop-reprocessamento-de-produtos-para-saúde-(esterilização)': 'ROP 5.2 – Higiene das Mãos: Capacitação e Treinamento',
-        'rop-limpeza-e-desinfecção-de-superfícies-e-equipamentos': 'ROP 5.3 – Taxas de Infecção',
-        'rop-prevenção-de-infecções-associadas-a-dispositivos-invasivos': 'ROP 5.4 – Reprocessamento',
-        'rop-precauções-e-isolamento-para-patógenos-de-importância': 'ROP 5.5 – Precauções e Isolamento',
+        # Prevenção de Infecções
+        'Higiene das Mãos: Adesão e Monitoramento': 'ROP 5.1 – Aderência às Práticas de Higiene das Mãos',
+        'Reprocessamento de Produtos para Saúde (Esterilização)': 'ROP 5.2 – Higiene das Mãos: Capacitação e Treinamento',
+        'Limpeza e Desinfecção de Superfícies e Equipamentos': 'ROP 5.3 – Taxas de Infecção',
+        'Prevenção de Infecções Associadas a Dispositivos Invasivos': 'ROP 5.4 – Reprocessamento',
         
-        # Macro área 6 – Avaliação de Riscos
-        'rop-prevenção-de-quedas': 'ROP 6.1 – Prevenção de Quedas e Redução de Lesões (Internação)',
-        'rop-prevenção-de-lesão-por-pressão': 'ROP 6.2 – Prevenção de Úlceras por Pressão',
-        'rop-avaliação-do-risco-de-tromboembolismo-venoso-(tev)': 'ROP 6.3 – Prevenção de Suicídio',
-        'rop-avaliação-e-manejo-do-risco-de-suicídio/autoagressão': 'ROP 6.4 – Profilaxia para Tromboembolia Venosa (TEV)',
+        # Avaliação de Riscos
+        'Prevenção de Quedas': 'ROP 6.1 – Prevenção de Quedas e Redução de Lesões (Internação)',
+        'Prevenção de Lesão por Pressão': 'ROP 6.2 – Prevenção de Úlceras por Pressão',
+        'Avaliação do Risco de Tromboembolismo Venoso (TEV)': 'ROP 6.3 – Prevenção de Suicídio',
+        'Avaliação e Manejo do Risco de Suicídio/Autoagressão': 'ROP 6.4 – Profilaxia para Tromboembolia Venosa (TEV)',
     }
     
     # Mapeamento de macro áreas
@@ -104,15 +102,16 @@ def convert_banco_questoes():
     js_content = '''// ROPs - Práticas Organizacionais Obrigatórias
 // Convertido de BancoDeQuestoesQmentum.json
 // Respostas corretas RANDOMIZADAS
-// Títulos corretos das ROPs
+// Títulos CORRETOS das ROPs
 
 const ropsData = {
 '''
     
     total_rops = 0
     total_questions = 0
+    rop_counter = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
     
-    for macro in macroareas:
+    for macro_idx, macro in enumerate(macroareas, 1):
         macro_nome = macro.get('nome', '')
         macro_info = macro_mapping.get(macro_nome, {
             'key': macro_nome.lower().replace(' ', '-'),
@@ -120,11 +119,11 @@ const ropsData = {
             'color': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
         })
         
-        print(f"\n📝 {macro_nome}:")
+        print(f"\n📝 Macro Área {macro_idx}: {macro_nome}")
         
-        js_content += f'''    // ==================== {macro_nome.upper()} ====================
+        js_content += f'''    // ==================== MACRO ÁREA {macro_idx} - {macro_nome.upper()} ====================
     "{macro_info['key']}": {{
-        title: "{macro_nome}",
+        title: "Macro área {macro_idx} – {macro_nome}",
         icon: "{macro_info['icon']}",
         color: "{macro_info['color']}",
         subdivisoes: {{
@@ -133,21 +132,23 @@ const ropsData = {
         rops = macro.get('rops', [])
         
         for rop in rops:
-            rop_id = rop.get('rop', '').replace('.', '-').lower()
-            rop_key = f"rop-{rop_id}"
+            rop_counter[macro_idx] += 1
+            rop_num = rop_counter[macro_idx]
             
-            # Criar chave de busca normalizada
-            search_key = rop_id.replace(' ', '-').replace('–', '-').replace('—', '-').lower()
+            rop_original_title = rop.get('rop', '')
             
-            # Buscar título correto ou usar o original
-            rop_title = rop_titles.get(search_key, rop.get('rop', 'ROP'))
+            # Buscar título correto no mapeamento
+            rop_title = rop_title_mapping.get(rop_original_title, f"ROP {macro_idx}.{rop_num} – {rop_original_title}")
+            
+            # Criar chave da ROP
+            rop_key = f"rop-{macro_idx}-{rop_num}"
             
             questions = rop.get('questions', [])
             
             total_rops += 1
             total_questions += len(questions)
             
-            print(f"   {rop_title}: {len(questions)} questões")
+            print(f"   ✅ {rop_title}: {len(questions)} questões")
             
             js_content += f'''            "{rop_key}": {{
                 title: "{rop_title}",
@@ -206,7 +207,7 @@ const ropsData = {
     
     js_content += '''};
 
-console.log('✅ ROPs carregadas (do Banco de Questões - Títulos Corretos):', Object.keys(ropsData));
+console.log('✅ ROPs carregadas (Títulos Corretos):', Object.keys(ropsData));
 '''
     
     # Salvar arquivo
@@ -225,7 +226,7 @@ console.log('✅ ROPs carregadas (do Banco de Questões - Títulos Corretos):', 
     print(f"📊 Tamanho: {size_kb:.1f}KB")
     print("📄 Arquivo: rops-data-from-banco.js")
     print("🔀 Respostas corretas RANDOMIZADAS")
-    print("✅ Títulos das ROPs corrigidos")
+    print("✅ Títulos das ROPs CORRIGIDOS")
 
 if __name__ == "__main__":
     convert_banco_questoes()
