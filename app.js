@@ -1,20 +1,14 @@
-// ==================== ANEST-APP QMENTUM - SISTEMA COMPLETO ====================
-// Versão Profissional com Grid de Ícones, Permissões e Modo Noturno
-
 // ==================== GLOBAL STATE ====================
 let currentUser = null;
 let userProfile = null;
-let userPermissions = null;
 let navigationStack = [];
 let currentQuiz = null;
 let currentQuizData = [];
-let isDarkMode = false;
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
     setupEventListeners();
-    loadDarkModePreference();
 });
 
 function initializeApp() {
@@ -28,8 +22,6 @@ function initializeApp() {
             if (!userProfile || !userProfile.firstName || !userProfile.lastName) {
                 showProfileModal();
             } else {
-                // Load permissions
-                userPermissions = getUserPermissions(userProfile);
                 showMainApp();
             }
         } else {
@@ -46,264 +38,241 @@ function setupEventListeners() {
             document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-            document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
         });
     });
 
     // Login form
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+            showLoading();
+            await auth.signInWithEmailAndPassword(email, password);
+            hideLoading();
+            showToast('Login realizado com sucesso!', 'success');
+        } catch (error) {
+            hideLoading();
+            showToast(getErrorMessage(error), 'error');
+        }
+    });
 
     // Register form
-    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const firstName = document.getElementById('registerFirstName').value.trim();
+        const lastName = document.getElementById('registerLastName').value.trim();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+        
+        if (password !== confirmPassword) {
+            showToast('As senhas não coincidem!', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showToast('A senha deve ter pelo menos 6 caracteres!', 'error');
+            return;
+        }
 
-    // Google login
-    document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
+        if (!firstName || !lastName) {
+            showToast('Nome e sobrenome são obrigatórios!', 'error');
+            return;
+        }
+        
+        try {
+            showLoading();
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            // Create user profile with mandatory fields
+            await db.collection('users').doc(userCredential.user.uid).set({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                profileComplete: true,
+                progress: {},
+                totalPoints: 0
+            });
+            
+            hideLoading();
+            showToast('Conta criada com sucesso!', 'success');
+        } catch (error) {
+            hideLoading();
+            showToast(getErrorMessage(error), 'error');
+        }
+    });
 
     // Profile form
-    document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
-
-    // Header buttons
-    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-    document.getElementById('adminBtn').addEventListener('click', showAdminPanel);
-    document.getElementById('profileBtn').addEventListener('click', toggleProfileMenu);
-    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-
-    // Profile menu buttons
-    document.getElementById('editProfileBtn').addEventListener('click', () => {
-        toggleProfileMenu();
-        showProfileModal();
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const firstName = document.getElementById('profileFirstName').value.trim();
+        const lastName = document.getElementById('profileLastName').value.trim();
+        
+        if (!firstName || !lastName) {
+            showToast('Nome e sobrenome são obrigatórios!', 'error');
+            return;
+        }
+        
+        try {
+            showLoading();
+            await db.collection('users').doc(currentUser.uid).update({
+                firstName: firstName,
+                lastName: lastName,
+                profileComplete: true,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            userProfile.firstName = firstName;
+            userProfile.lastName = lastName;
+            userProfile.profileComplete = true;
+            
+            hideLoading();
+            hideProfileModal();
+            showMainApp();
+            showToast('Perfil atualizado com sucesso!', 'success');
+        } catch (error) {
+            hideLoading();
+            showToast('Erro ao atualizar perfil: ' + error.message, 'error');
+        }
     });
-    document.getElementById('closeProfileMenuBtn').addEventListener('click', toggleProfileMenu);
+
+    // Forgot password
+    document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        
+        if (!email) {
+            showToast('Digite seu email no campo acima', 'info');
+            return;
+        }
+        
+        try {
+            await auth.sendPasswordResetEmail(email);
+            showToast('Email de recuperação enviado!', 'success');
+        } catch (error) {
+            showToast('Erro ao enviar email: ' + error.message, 'error');
+        }
+    });
 
     // Navigation buttons
     document.querySelectorAll('.nav-button').forEach(btn => {
         btn.addEventListener('click', () => {
-            const page = btn.dataset.page;
-            navigateToPage(page);
+            const pageName = btn.dataset.page;
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            navigationStack = [];
+            renderPage(pageName);
         });
     });
 
-    // Click outside profile menu to close
-    document.addEventListener('click', (e) => {
-        const profileMenu = document.getElementById('profileMenu');
-        const profileBtn = document.getElementById('profileBtn');
-        if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
-            profileMenu.style.display = 'none';
+    // Back button
+    document.getElementById('back-button').addEventListener('click', () => {
+        if (navigationStack.length > 0) {
+            const previousPageId = navigationStack.pop();
+            renderPage(previousPageId, false);
         }
     });
+
+    // Profile button
+    document.getElementById('profileButton').addEventListener('click', () => {
+        showProfileMenu();
+    });
+
+    // Page content click delegation
+    document.getElementById('page-content').addEventListener('click', handlePageClick);
 }
 
-// ==================== AUTHENTICATION ====================
-async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    try {
-        showLoading();
-        await auth.signInWithEmailAndPassword(email, password);
-        hideLoading();
-        showToast('Login realizado com sucesso!', 'success');
-    } catch (error) {
-        hideLoading();
-        showToast(getErrorMessage(error), 'error');
-    }
-}
-
-async function handleRegister(e) {
-    e.preventDefault();
-    const firstName = document.getElementById('registerFirstName').value.trim();
-    const lastName = document.getElementById('registerLastName').value.trim();
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('registerPasswordConfirm').value;
-    
-    if (password !== confirmPassword) {
-        showToast('As senhas não coincidem!', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showToast('A senha deve ter pelo menos 6 caracteres!', 'error');
-        return;
-    }
-
-    if (!firstName || !lastName) {
-        showToast('Nome e sobrenome são obrigatórios!', 'error');
-        return;
-    }
-    
-    try {
-        showLoading();
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        
-        // Create user profile with mandatory fields
-        await db.collection('users').doc(userCredential.user.uid).set({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            role: 'visitante', // Default role
-            customPermissions: {},
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            profileComplete: true,
-            active: true,
-            progress: {},
-            totalPoints: 0
-        });
-        
-        hideLoading();
-        showToast('Conta criada com sucesso!', 'success');
-    } catch (error) {
-        hideLoading();
-        showToast(getErrorMessage(error), 'error');
-    }
-}
-
-async function handleGoogleLogin() {
-    try {
-        showLoading();
-        const result = await auth.signInWithPopup(googleProvider);
-        
-        // Check if user profile exists
-        const userDoc = await db.collection('users').doc(result.user.uid).get();
-        if (!userDoc.exists) {
-            // Create profile for new Google user
-            await db.collection('users').doc(result.user.uid).set({
-                firstName: result.user.displayName?.split(' ')[0] || '',
-                lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
-                email: result.user.email,
-                role: 'visitante',
-                customPermissions: {},
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                profileComplete: false,
-                active: true,
-                progress: {},
-                totalPoints: 0
-            });
-        }
-        
-        hideLoading();
-        showToast('Login com Google realizado!', 'success');
-    } catch (error) {
-        hideLoading();
-        showToast(getErrorMessage(error), 'error');
-    }
-}
-
-async function handleLogout() {
-    if (confirm('Deseja realmente sair?')) {
-        try {
-            await auth.signOut();
-            showToast('Logout realizado!', 'success');
-            showLoginScreen();
-        } catch (error) {
-            showToast('Erro ao fazer logout: ' + error.message, 'error');
-        }
-    }
-}
-
-// ==================== PROFILE MANAGEMENT ====================
+// ==================== USER PROFILE ====================
 async function loadUserProfile() {
     try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists) {
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+            userProfile = doc.data();
+        } else {
+            // Create initial profile
             userProfile = {
-                uid: userDoc.id,
-                ...userDoc.data()
+                email: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                profileComplete: false,
+                progress: {},
+                totalPoints: 0
             };
-            updateProfileDisplay();
+            await db.collection('users').doc(currentUser.uid).set(userProfile);
         }
     } catch (error) {
-        console.error('Erro ao carregar perfil:', error);
-    }
-}
-
-function updateProfileDisplay() {
-    if (!userProfile) return;
-    
-    const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim();
-    document.getElementById('profileName').textContent = fullName || 'Usuário';
-    document.getElementById('profileEmail').textContent = userProfile.email || '';
-    
-    const roleBadge = document.getElementById('profileRole');
-    const roleInfo = ROLES_TEMPLATES[userProfile.role] || ROLES_TEMPLATES['visitante'];
-    roleBadge.textContent = roleInfo.name;
-    roleBadge.style.background = roleInfo.color;
-    
-    // Show/hide admin button
-    const adminBtn = document.getElementById('adminBtn');
-    if (hasPermission(userProfile, 'admin-panel')) {
-        adminBtn.style.display = 'flex';
-    } else {
-        adminBtn.style.display = 'none';
+        console.error('Error loading profile:', error);
     }
 }
 
 function showProfileModal() {
     const modal = document.getElementById('profileModal');
     modal.classList.add('active');
+    modal.style.display = 'flex';
     
-    if (userProfile) {
-        document.getElementById('profileFirstName').value = userProfile.firstName || '';
-        document.getElementById('profileLastName').value = userProfile.lastName || '';
+    // Pre-fill if data exists
+    if (userProfile.firstName) {
+        document.getElementById('profileFirstName').value = userProfile.firstName;
+    }
+    if (userProfile.lastName) {
+        document.getElementById('profileLastName').value = userProfile.lastName;
     }
 }
 
 function hideProfileModal() {
-    document.getElementById('profileModal').classList.remove('active');
+    const modal = document.getElementById('profileModal');
+    modal.classList.remove('active');
+    modal.style.display = 'none';
 }
 
-async function handleProfileUpdate(e) {
-    e.preventDefault();
-    const firstName = document.getElementById('profileFirstName').value.trim();
-    const lastName = document.getElementById('profileLastName').value.trim();
+function showProfileMenu() {
+    const userName = userProfile.firstName && userProfile.lastName ?
+        `${userProfile.firstName} ${userProfile.lastName}` :
+        currentUser.email;
     
-    if (!firstName || !lastName) {
-        showToast('Nome e sobrenome são obrigatórios!', 'error');
-        return;
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>Perfil</h2>
+            <div class="content-section">
+                <p><strong>Nome:</strong> ${userProfile.firstName || 'Não informado'}</p>
+                <p><strong>Sobrenome:</strong> ${userProfile.lastName || 'Não informado'}</p>
+                <p><strong>Email:</strong> ${currentUser.email}</p>
+                <p><strong>Pontos:</strong> ${userProfile.totalPoints || 0}</p>
+            </div>
+            <button class="btn-primary" onclick="editProfile()">Editar Perfil</button>
+            <button class="btn-primary" style="background: var(--cor-perigo); margin-top: 10px;" onclick="logout()">Sair</button>
+            <button class="btn-primary" style="background: var(--cor-texto-claro); margin-top: 10px;" onclick="closeModal(this)">Fechar</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+window.editProfile = function() {
+    closeModal();
+    showProfileModal();
+};
+
+window.closeModal = function(btn) {
+    const modal = btn ? btn.closest('.modal') : document.querySelector('.modal');
+    if (modal && !modal.id) {
+        modal.remove();
     }
-    
+};
+
+window.logout = async function() {
     try {
-        await db.collection('users').doc(currentUser.uid).update({
-            firstName: firstName,
-            lastName: lastName,
-            profileComplete: true
-        });
-        
-        await loadUserProfile();
-        hideProfileModal();
-        showToast('Perfil atualizado com sucesso!', 'success');
-        showMainApp();
+        await auth.signOut();
+        showToast('Logout realizado!', 'success');
     } catch (error) {
-        showToast('Erro ao atualizar perfil: ' + error.message, 'error');
+        showToast('Erro ao sair: ' + error.message, 'error');
     }
-}
-
-function toggleProfileMenu() {
-    const menu = document.getElementById('profileMenu');
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-}
-
-// ==================== DARK MODE ====================
-function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    localStorage.setItem('darkMode', isDarkMode);
-    
-    const icon = document.querySelector('#darkModeToggle i');
-    icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
-}
-
-function loadDarkModePreference() {
-    const saved = localStorage.getItem('darkMode');
-    if (saved === 'true') {
-        isDarkMode = true;
-        document.body.classList.add('dark-mode');
-        const icon = document.querySelector('#darkModeToggle i');
-        if (icon) icon.className = 'fas fa-sun';
-    }
-}
+};
 
 // ==================== SCREEN MANAGEMENT ====================
 function showLoginScreen() {
@@ -316,9 +285,7 @@ function showMainApp() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appContainer').style.display = 'flex';
     document.getElementById('loadingScreen').style.display = 'none';
-    
-    // Load initial page
-    navigateToPage('painel');
+    renderPage('painel');
 }
 
 function showLoading() {
@@ -329,1717 +296,1013 @@ function hideLoading() {
     document.getElementById('loadingScreen').style.display = 'none';
 }
 
-// ==================== NAVIGATION ====================
-function navigateToPage(pageId) {
-    // Clear navigation stack when using bottom nav
-    navigationStack = [];
-    
-    // Update active button
-    document.querySelectorAll('.nav-button').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.page === pageId);
-    });
-    
-    // Render page
-    renderPage(pageId);
-}
+// ==================== PAGE DATABASE ====================
+const pages = {
+    // NÍVEL 1: PRINCIPAL
+    painel: {
+        title: "Painel Principal",
+        type: 'list',
+        items: [
+            { id: 'comunicados', icon: 'fa-bullhorn', color: 'var(--cor-perigo)', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias da diretoria' },
+            { id: 'podcasts', icon: 'fa-podcast', color: '#9b59b6', title: 'Podcasts Educativos', subtitle: 'Cultura de segurança e qualidade' },
+            { id: 'kpis', icon: 'fa-chart-line', color: 'var(--cor-sucesso)', title: 'Indicadores de Qualidade', subtitle: 'Acompanhe as métricas' }
+        ]
+    },
+    qualidade: {
+        title: "Qualidade e Segurança",
+        type: 'list',
+        items: [
+            { id: 'incidentes', icon: 'fa-exclamation-triangle', color: 'var(--cor-perigo)', title: 'Gestão de Incidentes', subtitle: 'Notificar eventos adversos' },
+            { id: 'auditorias', icon: 'fa-clipboard-check', color: 'var(--cor-info)', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
+            { id: 'relatorios', icon: 'fa-file-alt', color: 'var(--cor-texto-claro)', title: 'Relatórios de Segurança', subtitle: 'Consulte os relatórios trimestrais' },
+            { id: 'capacitacao', icon: 'fa-graduation-cap', color: 'var(--cor-secundaria)', title: 'Capacitação e Treinamento', subtitle: 'Acesse os materiais de estudo' }
+        ]
+    },
+    protocolos: {
+        title: "Protocolos e Documentos",
+        type: 'list',
+        items: [
+            { id: 'documentos', icon: 'fa-folder-open', color: 'var(--cor-primaria)', title: 'Biblioteca de Documentos', subtitle: 'Todos os POPs, políticas e protocolos' },
+            { id: 'protocolos_anest', icon: 'fa-file-medical', color: '#e74c3c', title: 'Protocolos de Anestesia', subtitle: 'Protocolos específicos do serviço' },
+            { id: 'segMedicamentos', icon: 'fa-pills', color: 'var(--cor-perigo)', title: 'Segurança de Medicamentos', subtitle: 'Medicações de alto risco' }
+        ]
+    },
+    ferramentas: {
+        title: "Ferramentas Clínicas",
+        type: 'list',
+        items: [
+            { id: 'calculadoras', icon: 'fa-calculator', color: '#6f42c1', title: 'Calculadoras Anestésicas', subtitle: 'Calculadoras clínicas completas' },
+            { id: 'checklist', icon: 'fa-check-double', color: 'var(--cor-sucesso)', title: 'Checklist de Cirurgia Segura', subtitle: 'Ferramenta interativa da OMS' },
+            { id: 'avaliacaoRiscos', icon: 'fa-user-shield', color: 'var(--cor-secundaria)', title: 'Avaliação de Riscos', subtitle: 'Escalas de risco' }
+        ]
+    },
+    rops: {
+        title: "ROPs - Desafio",
+        type: 'custom',
+        render: renderROPsMainPage
+    },
+    residencia: {
+        title: "Residência Médica",
+        type: 'list',
+        items: [
+            { id: 'residencia_sheets', icon: 'fa-calendar-alt', color: 'var(--cor-info)', title: 'Escalas e Cronogramas', subtitle: 'Plantões, estágios e férias' },
+            { id: 'materialEstudo', icon: 'fa-book-open', color: 'var(--cor-primaria)', title: 'Material de Estudo', subtitle: 'Artigos e diretrizes' }
+        ]
+    },
 
-function renderPage(pageId) {
+    // NÍVEL 2: SUBPÁGINAS
+    podcasts: {
+        title: "Podcasts Educativos",
+        type: 'custom',
+        render: renderPodcastsPage
+    },
+    documentos: {
+        title: "Biblioteca de Documentos",
+        type: 'custom',
+        render: renderDocumentosPage
+    },
+    calculadoras: {
+        title: "Calculadoras Anestésicas",
+        type: 'list',
+        items: [
+            { id: 'calc_qmentum', icon: 'fa-certificate', color: '#e74c3c', title: 'Calculadoras Qmentum', subtitle: 'Escalas para acreditação' },
+            { id: 'calc_anestesiologia', icon: 'fa-kit-medical', color: '#003B73', title: 'Anestesiologia Geral', subtitle: 'Calculadoras gerais' },
+            { id: 'calc_doses_pediatricas', icon: 'fa-baby', color: '#9b59b6', title: 'Doses Pediátricas', subtitle: 'Calculadora automática de doses por peso' }
+        ]
+    },
+    calc_qmentum: {
+        title: "Calculadoras Qmentum",
+        type: 'custom',
+        render: () => renderCalculatorList('qmentum')
+    },
+    calc_anestesiologia: {
+        title: "Anestesiologia Geral",
+        type: 'custom',
+        render: () => renderCalculatorList('anestesiologia')
+    },
+    calc_doses_pediatricas: {
+        title: "Doses Pediátricas",
+        type: 'custom',
+        render: renderDosesPediatricasPage
+    },
+    checklist: {
+        title: "Cirurgia Segura (OMS)",
+        type: 'custom',
+        render: renderChecklistPage
+    },
+    residencia_sheets: {
+        title: "Escalas e Cronogramas",
+        type: 'custom',
+        render: renderResidenciaSheets
+    }
+};
+
+// Add calculator pages dynamically
+calculatorDefinitions.forEach(calc => {
+    pages[calc.id] = {
+        title: calc.title,
+        type: 'calculator',
+        calcData: calc
+    };
+});
+
+// ==================== PAGE RENDERING ====================
+function renderPage(pageId, addToStack = true) {
+    const pageData = pages[pageId];
     const pageContent = document.getElementById('page-content');
-    pageContent.style.opacity = '0';
+    const headerTitle = document.getElementById('header-title');
+    const backButton = document.getElementById('back-button');
     
+    // Add current page to stack before navigating
+    if (addToStack && navigationStack.length === 0) {
+        const currentActive = document.querySelector('.nav-button.active');
+        if (currentActive && currentActive.dataset.page !== pageId) {
+            navigationStack.push(currentActive.dataset.page);
+        }
+    } else if (addToStack) {
+        const lastPage = navigationStack[navigationStack.length - 1];
+        if (lastPage !== pageId) {
+            navigationStack.push(lastPage);
+        }
+    }
+    
+    pageContent.style.opacity = 0;
     setTimeout(() => {
-        let content = '';
-        
-        switch(pageId) {
-            case 'painel':
-                content = renderPainelPrincipal();
-                break;
-            case 'qualidade':
-                content = renderQualidadePage();
-                break;
-            case 'protocolos':
-                content = renderProtocolosPage();
-                break;
-            case 'ferramentas':
-                content = renderFerramentasPage();
-                break;
-            case 'rops':
-                content = renderROPsPage();
-                break;
-            case 'residencia':
-                content = renderResidenciaPage();
-                break;
-            default:
-                content = '<div class="page-title">Página em Construção</div>';
+        if (!pageData) {
+            pageContent.innerHTML = `<h1 class="page-title">Página em Construção</h1>`;
+            headerTitle.textContent = "Erro";
+        } else {
+            headerTitle.textContent = pageData.title;
+            let contentHTML = '';
+            
+            if (pageData.type === 'list') {
+                contentHTML = renderListPage(pageData);
+            } else if (pageData.type === 'custom') {
+                contentHTML = pageData.render();
+            } else if (pageData.type === 'calculator') {
+                contentHTML = renderCalculatorPage(pageData.calcData);
+            } else {
+                contentHTML = `<h1 class="page-title">Página em Construção</h1>`;
+            }
+            
+            pageContent.innerHTML = contentHTML;
         }
         
-        pageContent.innerHTML = content;
-        pageContent.style.opacity = '1';
         pageContent.scrollTop = 0;
-    }, 150);
+        backButton.style.display = navigationStack.length > 0 ? 'block' : 'none';
+        pageContent.style.opacity = 1;
+    }, 100);
 }
 
-// ==================== PAINEL PRINCIPAL (GRID DE ÍCONES) ====================
-function renderPainelPrincipal() {
-    const items = [
-        { id: 'comunicados', icon: 'fa-bullhorn', color: '#1a4d2e', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias importantes' },
-        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos adversos' },
-        { id: 'rops-main', icon: 'fa-award', color: '#40916c', title: 'ROPs', subtitle: '6 macroáreas - Questões e Podcasts' },
-        { id: 'residencia', icon: 'fa-user-md', color: '#52b788', title: 'Residência Médica', subtitle: 'Cronograma e materiais' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Painel Principal</h1>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
+function renderListPage(pageData) {
+    let itemsHTML = pageData.items.map(item => {
+        const subtitleHTML = item.subtitle ? `<div class="subtitle">${item.subtitle}</div>` : '';
+        return `<li class="list-item" data-target-page="${item.id}">
+                    <span class="icon" style="background-color: ${item.color};"><i class="fas ${item.icon}"></i></span>
+                    <div class="text-content">
+                        <div class="title">${item.title}</div>${subtitleHTML}
+                    </div><i class="chevron fas fa-chevron-right"></i>
+                </li>`;
+    }).join('');
+    return `<h1 class="page-title">${pageData.title}</h1><ul class="list-section">${itemsHTML}</ul>`;
 }
 
-// ==================== QUALIDADE ====================
-function renderQualidadePage() {
-    const items = [
-        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos adversos' },
-        { id: 'auditorias-conformidade', icon: 'fa-clipboard-check', color: '#52b788', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
-        { id: 'capacitacao-treinamento', icon: 'fa-graduation-cap', color: '#40916c', title: 'Capacitação e Treinamento', subtitle: 'Materiais e recursos' },
-        { id: 'indicadores-qualidade', icon: 'fa-chart-line', color: '#1a4d2e', title: 'Indicadores de Qualidade', subtitle: 'Métricas e resultados' }
-    ];
+// ==================== PAGE CLICK HANDLER ====================
+function handlePageClick(e) {
+    const target = e.target;
+    const listItem = target.closest('.list-item');
+    const quizOption = target.closest('.quiz-option');
+    const calcForm = target.closest('#calc-form');
     
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Qualidade e Segurança</h1>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
-}
-
-// ==================== PROTOCOLOS ====================
-function renderProtocolosPage() {
-    const items = [
-        { id: 'biblioteca-documentos', icon: 'fa-search', color: '#1a4d2e', title: 'Biblioteca de Documentos', subtitle: 'Pesquise todos os POPs e políticas' },
-        { id: 'seguranca-medicamentos', icon: 'fa-pills', color: '#dc3545', title: 'Segurança de Medicamentos', subtitle: 'MAVs, eletrólitos, heparina e mais' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Protocolos e POPs</h1>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
-}
-
-// ==================== FERRAMENTAS ====================
-function renderFerramentasPage() {
-    const items = [
-        { id: 'calculadoras-anestesicas', icon: 'fa-calculator', color: '#1a4d2e', title: 'Calculadoras Anestésicas', subtitle: 'Qmentum e Anestesiologia Geral' },
-        { id: 'checklist', icon: 'fa-check-double', color: '#40916c', title: 'Checklist de Cirurgia Segura', subtitle: 'Protocolo OMS' },
-        { id: 'conciliacao-medicamentosa', icon: 'fa-exchange-alt', color: '#52b788', title: 'Conciliação Medicamentosa', subtitle: 'Admissão, Transferência e Alta' },
-        { id: 'avaliacao-riscos', icon: 'fa-user-shield', color: '#74c69d', title: 'Avaliação de Riscos', subtitle: 'Quedas, Úlceras e TEV' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Ferramentas Clínicas</h1>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
-}
-
-// ==================== ROPs (ESTRUTURA HIERÁRQUICA) ====================
-// ROPs Main → mostra 6 macroáreas
-function renderROPsMainPage() {
-    const macroAreas = [
-        { id: 'cultura-seguranca', icon: 'fa-shield-heart', color: '#9b59b6', title: 'Cultura de Segurança', subtitle: '4 ROPs' },
-        { id: 'comunicacao', icon: 'fa-comments', color: '#3498db', title: 'Comunicação', subtitle: '8 ROPs' },
-        { id: 'uso-medicamentos', icon: 'fa-pills', color: '#e74c3c', title: 'Uso de Medicamentos', subtitle: '5 ROPs' },
-        { id: 'vida-profissional', icon: 'fa-briefcase', color: '#f39c12', title: 'Vida Profissional', subtitle: '5 ROPs' },
-        { id: 'prevencao-infeccoes', icon: 'fa-virus-slash', color: '#1abc9c', title: 'Prevenção de Infecções', subtitle: '4 ROPs' },
-        { id: 'avaliacao-riscos', icon: 'fa-exclamation-triangle', color: '#e67e22', title: 'Avaliação de Riscos', subtitle: '6 ROPs' }
-    ];
-    
-    const grid = macroAreas.map(area => `
-        <div class="icon-card" onclick="renderROPsMacroArea('${area.id}', '${area.title}', '${area.color}')">
-            <div class="icon-card-icon" style="background: ${area.color}">
-                <i class="fas ${area.icon}"></i>
-            </div>
-            <div class="icon-card-title">${area.title}</div>
-            <div class="icon-card-subtitle">${area.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">ROPs Qmentum</h1>
-        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma macroárea</p>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
-}
-
-// Macroárea → mostra Questões + Podcasts
-function renderROPsMacroArea(macroId, macroTitle, macroColor) {
-    const html = `
-        <h1 class="page-title">${macroTitle}</h1>
-        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Escolha entre questões ou podcasts</p>
-        <div class="icon-grid">
-            <div class="icon-card" onclick="navigateToROPsQuestoes('${macroId}', '${macroTitle}')">
-                <div class="icon-card-icon" style="background: ${macroColor}">
-                    <i class="fas fa-question-circle"></i>
-                </div>
-                <div class="icon-card-title">Questões</div>
-                <div class="icon-card-subtitle">Quiz de múltipla escolha</div>
-            </div>
-            <div class="icon-card" onclick="navigateToROPsPodcasts('${macroId}', '${macroTitle}')">
-                <div class="icon-card-icon" style="background: ${macroColor}">
-                    <i class="fas fa-podcast"></i>
-                </div>
-                <div class="icon-card-title">Podcasts</div>
-                <div class="icon-card-subtitle">Conteúdo educativo</div>
-            </div>
-        </div>
-    `;
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
-    pageContent.scrollTop = 0;
-}
-
-// ==================== RESIDÊNCIA ====================
-function renderResidenciaPage() {
-    const items = [
-        { id: 'cronograma', icon: 'fa-calendar-alt', color: '#1a4d2e', title: 'Cronograma de Atividades', subtitle: 'Visualização em calendário' },
-        { id: 'material-estudo', icon: 'fa-book-open', color: '#40916c', title: 'Material de Estudo', subtitle: 'Artigos e diretrizes' },
-        { id: 'avaliacoes', icon: 'fa-edit', color: '#ffc107', title: 'Avaliações', subtitle: 'Acompanhe desempenho' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Residência Médica</h1>
-        <div class="icon-grid">
-            ${grid}
-        </div>
-    `;
-}
-
-// ==================== SUB-PAGES NAVIGATION ====================
-function navigateToSubPage(pageId) {
-    const pageContent = document.getElementById('page-content');
-    
-    let content = '';
-    switch(pageId) {
-        // Painel Principal
-        case 'comunicados':
-            content = renderComunicadosPage();
-            break;
-        case 'notificar-incidente':
-            content = renderNotificarIncidentePage();
-            break;
-        case 'rops-main':
-            content = renderROPsMainPage();
-            break;
-        case 'residencia':
-            content = renderResidenciaPage();
-            break;
-            
-        // Qualidade e Segurança
-        case 'auditorias-conformidade':
-            content = renderAuditoriasConformidadePage();
-            break;
-        case 'capacitacao-treinamento':
-            content = renderCapacitacaoTreinamentoPage();
-            break;
-        case 'indicadores-qualidade':
-            content = renderIndicadoresQualidadePage();
-            break;
-            
-        // Protocolos e POPs
-        case 'biblioteca-documentos':
-            content = renderBibliotecaDocumentosPage();
-            break;
-        case 'seguranca-medicamentos':
-            content = renderSegurancaMedicamentosPage();
-            break;
-            
-        // Ferramentas Clínicas
-        case 'calculadoras-anestesicas':
-            content = renderCalculadorasAnestesicasPage();
-            break;
-        case 'checklist':
-            content = renderChecklistPage();
-            break;
-        case 'conciliacao-medicamentosa':
-            content = renderConciliacaoMedicamentosaPage();
-            break;
-        case 'avaliacao-riscos':
-            content = renderAvaliacaoRiscosPage();
-            break;
-            
-        // Outros
-        case 'cronograma':
-            content = renderCronogramaCalendario();
-            break;
-        case 'podcasts':
-            content = renderPodcastsPage();
-            break;
-        case 'calculadoras':
-            content = renderCalculadorasPage();
-            break;
-            
-        default:
-            content = '<div class="page-title">Em Desenvolvimento</div>';
+    if (listItem) {
+        const targetPage = listItem.dataset.targetPage;
+        if (pages[targetPage]) {
+            navigateTo(targetPage);
+        } else {
+            showToast('Funcionalidade em desenvolvimento', 'info');
+        }
     }
     
-    pageContent.innerHTML = content;
-    pageContent.scrollTop = 0;
+    if (quizOption && !quizOption.classList.contains('answered')) {
+        handleQuizAnswer(quizOption);
+    }
+    
+    if (target.classList.contains('submit-button') && calcForm) {
+        e.preventDefault();
+        handleCalculation(calcForm.dataset.calcId);
+    }
+    
+    // ROPs specific handlers
+    if (target.closest('.rop-macro')) {
+        handleRopMacroClick(e);
+    }
+    if (target.closest('.rop-item')) {
+        handleRopItemClick(e);
+    }
+    if (target.id === 'nextQuestion') {
+        loadNextQuestion();
+    }
 }
 
-// ==================== PODCASTS PAGE ====================
-function renderPodcastsPage() {
-    const podcasts = [
-        // Cultura de Segurança (4)
-        { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de incidentes.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação dos incidentes (Disclosure).m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        
-        // Comunicação (8)
-        { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenfica\u00e7\u00e3o cliente.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abrevia\u00e7\u00f5es perigosas.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Concilia\u00e7\u00e3o medicamentosa Estrat\u00e9gica.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Concilia\u00e7\u00e3o medicamentosa Internado.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Concilia\u00e7\u00e3o medicamentosa ambulatorial.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Concilia\u00e7\u00e3o medicamentosa Emergencia.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transi\u00e7\u00e3o Cuidado.m4a", category: "Comunicação", color: "#3498db" },
-        
-        // Demais categorias
-        { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a", category: "Uso de Medicamentos", color: "#e74c3c" },
-        { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a", category: "Vida Profissional", color: "#f39c12" },
-        { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Preven\u00e7\u00e3o de infec\u00e7\u00f5es/5.1 Preven\u00e7\u00e3o de infec\u00e7\u00f5es.m4a", category: "Prevenção de Infecções", color: "#1abc9c" },
-        { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avalia\u00e7\u00e3o de Riscos/6.1 Avalia\u00e7\u00e3o de Riscos.m4a", category: "Avaliação de Riscos", color: "#e67e22" }
-    ];
+function navigateTo(pageId) {
+    renderPage(pageId, true);
+}
+
+// ==================== CALCULATOR RENDERING ====================
+function renderCalculatorList(category) {
+    const calcs = calculatorDefinitions.filter(c => c.category === category);
+    const itemsHTML = calcs.map(calc => {
+        const color = category === 'qmentum' ? '#e74c3c' : '#003B73';
+        return `<li class="list-item" data-target-page="${calc.id}">
+                    <span class="icon" style="background-color: ${color};"><i class="fas fa-calculator"></i></span>
+                    <div class="text-content">
+                        <div class="title">${calc.title}</div>
+                    </div><i class="chevron fas fa-chevron-right"></i>
+                </li>`;
+    }).join('');
+    return `<h1 class="page-title">${category === 'qmentum' ? 'Calculadoras Qmentum' : 'Anestesiologia Geral'}</h1>
+            <ul class="list-section">${itemsHTML}</ul>`;
+}
+
+function renderCalculatorPage(calcDef) {
+    let formHTML = `<h1 class="page-title">${calcDef.title}</h1>
+                    <div class="content-section">
+                    <form id="calc-form" data-calc-id="${calcDef.id}">`;
     
-    // Group by category
-    const categories = {};
-    podcasts.forEach(p => {
-        if (!categories[p.category]) categories[p.category] = [];
-        categories[p.category].push(p);
+    calcDef.inputs.forEach(input => {
+        const inputId = `calc_${input.id}`;
+        switch (input.type) {
+            case 'bool':
+                formHTML += `<div class="form-group-bool">
+                                <input type="checkbox" id="${inputId}" name="${input.id}">
+                                <label for="${inputId}">${input.label}</label>
+                             </div>`;
+                break;
+            case 'number':
+                formHTML += `<div class="form-group">
+                                <label for="${inputId}">${input.label}</label>
+                                <input type="number" id="${inputId}" name="${input.id}" placeholder="0" 
+                                    ${input.min !== undefined ? `min="${input.min}"` : ''} 
+                                    ${input.max !== undefined ? `max="${input.max}"` : ''}>
+                             </div>`;
+                break;
+            case 'select':
+                const options = input.options.map(opt => {
+                    const value = opt.value !== undefined ? opt.value : opt.label;
+                    const label = opt.label || opt.value;
+                    return `<option value="${value}">${label}</option>`;
+                }).join('');
+                formHTML += `<div class="form-group">
+                                <label for="${inputId}">${input.label}</label>
+                                <select id="${inputId}" name="${input.id}">
+                                    ${options}
+                                </select>
+                             </div>`;
+                break;
+        }
     });
-    
-    let html = '<h1 class="page-title">🎙️ Podcasts Educativos</h1>';
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">16 podcasts sobre as ROPs Qmentum</p>';
-    
-    for (const [category, items] of Object.entries(categories)) {
-        const color = items[0].color;
-        html += `
-            <div class="content-section">
-                <h2 class="section-title" style="color: ${color}">
-                    <i class="fas fa-folder"></i> ${category} (${items.length})
-                </h2>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${items.map(p => `
-                        <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='playPodcast("${p.file}", "${p.title}")'>
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 50px; height: 50px; border-radius: 50%; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <div class="icon-card-title" style="text-align: left; margin-bottom: 5px;">${p.title}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    return html;
+
+    formHTML += `<button type="submit" class="submit-button">Calcular</button>
+                 </form>
+                 <div id="calc-results" style="display:none;"></div>
+                 </div>`;
+    return formHTML;
 }
 
-function playPodcast(file, title) {
-    const audioHTML = `
-        <div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--cor-branco); padding: 20px; border-radius: 12px; box-shadow: var(--sombra-hover); z-index: 999;">
-            <div style="margin-bottom: 15px;">
-                <strong style="color: var(--cor-verde-escuro);">${title}</strong>
-                <button onclick="this.parentElement.parentElement.remove()" style="float: right; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--cor-texto);">
-                    <i class="fas fa-times"></i>
-                </button>
+function handleCalculation(calcId) {
+    const calcDef = calculatorDefinitions.find(c => c.id === calcId);
+    if (!calcDef) return;
+
+    const inputs = {};
+    
+    calcDef.inputs.forEach(input => {
+        const el = document.getElementById(`calc_${input.id}`);
+        if (!el) return;
+        
+        if (input.type === 'bool') {
+            inputs[input.id] = el.checked;
+        } else if (input.type === 'number') {
+            let value = parseFloat(el.value);
+            if (isNaN(value)) value = 0;
+            if (input.min !== undefined && value < input.min) value = input.min;
+            if (input.max !== undefined && value > input.max) value = input.max;
+            inputs[input.id] = value;
+        } else {
+            inputs[input.id] = el.value;
+        }
+    });
+
+    try {
+        const result = calcDef.compute(inputs);
+        
+        const resultDiv = document.getElementById('calc-results');
+        let resultHTML = '<h4>Resultado:</h4>';
+        for (const key in result) {
+            const formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            resultHTML += `<p><strong>${formattedKey}:</strong> ${result[key]}</p>`;
+        }
+        
+        resultDiv.innerHTML = resultHTML;
+        resultDiv.style.display = 'block';
+
+    } catch (error) {
+        console.error("Erro ao calcular:", error);
+        const resultDiv = document.getElementById('calc-results');
+        resultDiv.innerHTML = '<h4>Erro ao calcular.</h4><p>Verifique os valores inseridos.</p>';
+        resultDiv.style.display = 'block';
+    }
+}
+
+// ==================== DOSES PEDIÁTRICAS ====================
+function renderDosesPediatricasPage() {
+    return `
+        <h1 class="page-title">Calculadora de Doses Pediátricas</h1>
+        <div class="content-section">
+            <div class="form-group">
+                <label for="peso_crianca">Peso da Criança (kg)</label>
+                <input type="number" id="peso_crianca" placeholder="Ex: 15" min="0" max="150" step="0.1">
             </div>
-            <audio controls autoplay style="width: 100%;">
-                <source src="${file}" type="audio/mp4">
-                Seu navegador não suporta o elemento de áudio.
-            </audio>
+            <button type="button" class="submit-button" onclick="calcularDosesPediatricas()">Calcular Todas as Doses</button>
+            
+            <div id="doses-results" style="display:none; margin-top: 20px;"></div>
         </div>
+        
+        <style>
+            .dose-category {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 15px;
+                margin: 15px 0;
+                border-left: 4px solid #43e97b;
+            }
+            .dose-category h3 {
+                margin-top: 0;
+                color: #003B73;
+                font-size: 1.1rem;
+                border-bottom: 2px solid #43e97b;
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+            .dose-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .dose-table th {
+                background: #003B73;
+                color: white;
+                padding: 10px 8px;
+                text-align: left;
+                font-size: 0.85rem;
+                font-weight: 600;
+            }
+            .dose-table td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #e9ecef;
+                font-size: 0.9rem;
+            }
+            .dose-table tr:last-child td {
+                border-bottom: none;
+            }
+            .dose-table tr:hover {
+                background: #f8f9fa;
+            }
+            .dose-value {
+                font-weight: 700;
+                color: #e74c3c;
+                font-size: 1rem;
+            }
+            .dose-obs {
+                font-size: 0.8rem;
+                color: #666;
+                font-style: italic;
+            }
+        </style>
     `;
-    
-    // Remove existing player if any
-    const existing = document.querySelector('audio');
-    if (existing) {
-        existing.closest('div[style*="position: fixed"]').remove();
-    }
-    
-    document.body.insertAdjacentHTML('beforeend', audioHTML);
 }
 
-// ==================== TO BE CONTINUED ====================
-// Devido ao limite de tamanho, vou continuar criando o restante do arquivo...
-// Este é apenas a PRIMEIRA PARTE do app-profissional.js
+function calcularDosesPediatricas() {
+    const peso = parseFloat(document.getElementById('peso_crianca').value);
+    const resultsDiv = document.getElementById('doses-results');
+    
+    if (!peso || peso <= 0) {
+        showToast('Por favor, insira um peso válido', 'error');
+        return;
+    }
+    
+    // Verifica se os dados estão disponíveis
+    if (typeof dosesPediatricasData === 'undefined') {
+        resultsDiv.innerHTML = '<div class="dose-category"><h3>Erro</h3><p>Dados de doses pediátricas não carregados. Recarregue a página.</p></div>';
+        resultsDiv.style.display = 'block';
+        return;
+    }
+    
+    let html = `<h2 style="color: #003B73; text-align: center; margin-bottom: 20px;">Resultados para: ${peso} kg</h2>`;
+    
+    // PCR - Parada Cardiorrespiratória
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-heartbeat"></i> PCR - Parada Cardiorrespiratória</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.pcr.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Sedação, Analgesia e Bloqueio Neuromuscular
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-syringe"></i> Sedação, Analgesia e Bloqueio Neuromuscular</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.sedacao.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Anticonvulsivantes
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-brain"></i> Anticonvulsivantes</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.anticonvulsivantes.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Antídotos
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-shield-virus"></i> Antídotos</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.antidotos.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Infusões Contínuas
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-pump-medical"></i> Infusões Contínuas</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Velocidade (ml/h)</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.infusoes.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Desfibrilação
+    const defib = dosesPediatricasData.desfibrilacao.calcularCarga(peso);
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-bolt"></i> Desfibrilação</h3>';
+    html += `<p style="font-size: 1rem; margin: 10px 0;"><strong>Primeira Carga:</strong> <span class="dose-value">${defib.primeiraCarga} J</span></p>`;
+    html += `<p style="font-size: 1rem; margin: 10px 0;"><strong>Cargas Seguintes:</strong> <span class="dose-value">${defib.cargasSeguintes} J</span></p>`;
+    html += `<p class="dose-obs">${defib.obs}</p>`;
+    html += '</div>';
+    
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+    showToast('Doses calculadas com sucesso!', 'success');
+}
 
 // ==================== UTILITY FUNCTIONS ====================
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
-    toast.className = 'toast show ' + type;
-    
+    toast.className = `toast ${type} show`;
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
 
 function getErrorMessage(error) {
-    const messages = {
-        'auth/user-not-found': 'Usuário não encontrado',
-        'auth/wrong-password': 'Senha incorreta',
-        'auth/email-already-in-use': 'E-mail já cadastrado',
+    const errorMessages = {
+        'auth/email-already-in-use': 'Este email já está em uso',
+        'auth/invalid-email': 'Email inválido',
         'auth/weak-password': 'Senha muito fraca',
-        'auth/invalid-email': 'E-mail inválido'
+        'auth/user-not-found': 'Usuário não encontrado',
+        'auth/wrong-password': 'Senha incorreta'
     };
-    return messages[error.code] || error.message;
+    return errorMessages[error.code] || error.message;
 }
 
-// ==================== DOCUMENTOS PAGE ====================
-function renderDocumentosPage() {
-    if (!documentsData) {
-        return '<div class="page-title">Erro ao carregar documentos</div>';
-    }
-    
-    const categoryColors = {
-        'Protocolos': '#1a4d2e',
-        'Políticas': '#40916c',
-        'Política': '#40916c',
-        'Relatórios': '#52b788',
-        'Manuais': '#74c69d',
-        'Processos': '#2d6a4f',
-        'Formulários': '#17a2b8',
-        'Gestão de Riscos': '#dc3545',
-        'Riscos': '#dc3545',
-        'Termos': '#6c757d',
-        'Plano de Segurança': '#e67e22',
-        'Plano': '#e67e22'
-    };
-    
-    const categoryIcons = {
-        'Protocolos': 'fa-file-medical',
-        'Políticas': 'fa-gavel',
-        'Política': 'fa-gavel',
-        'Relatórios': 'fa-chart-bar',
-        'Manuais': 'fa-book',
-        'Processos': 'fa-project-diagram',
-        'Formulários': 'fa-file-alt',
-        'Gestão de Riscos': 'fa-exclamation-triangle',
-        'Riscos': 'fa-exclamation-triangle',
-        'Termos': 'fa-file-signature',
-        'Plano de Segurança': 'fa-shield-alt',
-        'Plano': 'fa-shield-alt'
-    };
-    
-    let html = '<h1 class="page-title">📚 Documentos</h1>';
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma categoria</p>';
-    html += '<div class="icon-grid">';
-    
-    // Show categories as icons
-    for (const [category, docs] of Object.entries(documentsData)) {
-        const color = categoryColors[category] || '#1a4d2e';
-        const icon = categoryIcons[category] || 'fa-folder';
-        
-        html += `
-            <div class="icon-card" onclick='showCategoryDocuments("${category}")'>
-                <div class="icon-card-icon" style="background: ${color}">
-                    <i class="fas ${icon}"></i>
-                </div>
-                <div class="icon-card-title">${category}</div>
-                <div class="icon-card-subtitle">${docs.length} documento${docs.length > 1 ? 's' : ''}</div>
-            </div>
-        `;
-    }
-    
-    html += '</div>';
-    return html;
-}
-
-function showCategoryDocuments(category) {
-    const docs = documentsData[category];
-    if (!docs) {
-        showToast('Categoria não encontrada', 'error');
-        return;
-    }
-    
-    const categoryColors = {
-        'Protocolos': '#1a4d2e',
-        'Políticas': '#40916c',
-        'Política': '#40916c',
-        'Relatórios': '#52b788',
-        'Manuais': '#74c69d',
-        'Processos': '#2d6a4f',
-        'Formulários': '#17a2b8',
-        'Gestão de Riscos': '#dc3545',
-        'Riscos': '#dc3545',
-        'Termos': '#6c757d',
-        'Plano de Segurança': '#e67e22',
-        'Plano': '#e67e22'
-    };
-    
-    const color = categoryColors[category] || '#1a4d2e';
-    
-    let html = `<h1 class="page-title">${category}</h1>`;
-    html += `<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">${docs.length} documento${docs.length > 1 ? 's' : ''} disponível${docs.length > 1 ? 'eis' : ''}</p>`;
-    html += '<div class="content-section">';
-    html += '<div style="display: flex; flex-direction: column; gap: 10px;">';
-    
-    docs.forEach(doc => {
-        html += `
-            <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='openDocument("${doc.file}")'>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 50px; height: 50px; border-radius: 10px; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div class="icon-card-title" style="text-align: left;">${doc.title}</div>
-                    </div>
-                    <i class="fas fa-external-link-alt" style="color: var(--cor-texto-secundario);"></i>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div></div>';
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
-    pageContent.scrollTop = 0;
-}
-
-function openDocument(file) {
-    window.open(file, '_blank');
-}
-
-function renderQuestoesROPsPage() {
+// ==================== ROPS RENDERING ====================
+function renderROPsMainPage() {
     if (!ropsData) {
-        return '<div class="page-title">Erro ao carregar ROPs</div>';
+        return `<div class="content-section">
+                    <h3>Erro ao Carregar ROPs</h3>
+                    <p>Os dados das ROPs não foram carregados. Recarregue a página.</p>
+                </div>`;
     }
+
+    let html = `<h1 class="page-title">ROPs - Desafio</h1>`;
     
-    let html = '<h1 class="page-title">🎯 Quiz de Questões ROPs</h1>';
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">32 ROPs com 640 questões</p>';
-    
-    const macroAreas = [
-        { key: 'cultura-seguranca', title: 'Cultura de Segurança', icon: 'fa-shield-heart', color: '#9b59b6' },
-        { key: 'comunicacao', title: 'Comunicação', icon: 'fa-comments', color: '#3498db' },
-        { key: 'uso-medicamentos', title: 'Uso de Medicamentos', icon: 'fa-pills', color: '#e74c3c' },
-        { key: 'vida-profissional', title: 'Vida Profissional', icon: 'fa-briefcase', color: '#f39c12' },
-        { key: 'prevencao-infeccoes', title: 'Prevenção de Infecções', icon: 'fa-virus-slash', color: '#1abc9c' },
-        { key: 'avaliacao-riscos', title: 'Avaliação de Riscos', icon: 'fa-exclamation-triangle', color: '#e67e22' }
-    ];
-    
-    html += '<div class="icon-grid">';
-    
-    macroAreas.forEach(area => {
-        const areaData = ropsData[area.key];
-        if (areaData) {
-            const ropCount = Object.keys(areaData).length;
-            const totalQuestions = Object.values(areaData).reduce((sum, rop) => sum + (rop.questions?.length || 0), 0);
+    Object.keys(ropsData).forEach(macroKey => {
+        const macro = ropsData[macroKey];
+        const macroTitle = macroKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
+        html += `<div class="content-section">
+                    <h3 style="cursor: pointer;" class="rop-macro" data-macro="${macroKey}">
+                        <i class="fas fa-folder"></i> ${macroTitle}
+                    </h3>
+                    <div class="rop-list" id="rop-list-${macroKey}" style="display: none;">`;
+        
+        Object.keys(macro).forEach(ropKey => {
+            const rop = macro[ropKey];
+            const ropTitle = ropKey.replace(/_/g, ' ').toUpperCase();
+            const questionCount = rop.questions ? rop.questions.length : 0;
             
-            html += `
-                <div class="icon-card" onclick='selectMacroArea("${area.key}", "${area.title}")'>
-                    <div class="icon-card-icon" style="background: ${area.color}">
-                        <i class="fas ${area.icon}"></i>
-                    </div>
-                    <div class="icon-card-title">${area.title}</div>
-                    <div class="icon-card-subtitle">${ropCount} ROPs • ${totalQuestions} questões</div>
-                </div>
-            `;
-        }
+            html += `<div class="list-item rop-item" data-macro="${macroKey}" data-rop="${ropKey}">
+                        <span class="icon" style="background-color: var(--cor-primaria);">
+                            <i class="fas fa-question-circle"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${ropTitle}</div>
+                            <div class="subtitle">${questionCount} questões</div>
+                        </div>
+                        <i class="chevron fas fa-chevron-right"></i>
+                    </div>`;
+        });
+        
+        html += `</div></div>`;
     });
-    
-    html += '</div>';
     
     return html;
 }
 
-function selectMacroArea(macroKey, macroTitle) {
-    const areaData = ropsData[macroKey];
-    if (!areaData) {
-        showToast('ROPs não encontradas', 'error');
-        return;
+function handleRopMacroClick(e) {
+    const macroEl = e.target.closest('.rop-macro');
+    if (!macroEl) return;
+    
+    const macroKey = macroEl.dataset.macro;
+    const listEl = document.getElementById(`rop-list-${macroKey}`);
+    
+    if (listEl) {
+        const isVisible = listEl.style.display !== 'none';
+        listEl.style.display = isVisible ? 'none' : 'block';
     }
+}
+
+function handleRopItemClick(e) {
+    const ropEl = e.target.closest('.rop-item');
+    if (!ropEl) return;
     
-    let html = `<h1 class="page-title">${macroTitle}</h1>`;
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma ROP para iniciar</p>';
-    html += '<div class="icon-grid">';
+    const macroKey = ropEl.dataset.macro;
+    const ropKey = ropEl.dataset.rop;
     
-    for (const [ropKey, ropData] of Object.entries(areaData)) {
-        const questionCount = ropData.questions?.length || 0;
-        
-        html += `
-            <div class="icon-card" onclick='startQuiz("${macroKey}", "${ropKey}")'>
-                <div class="icon-card-icon" style="background: #1a4d2e">
-                    <i class="fas fa-question-circle"></i>
-                </div>
-                <div class="icon-card-title">${ropData.title || ropKey}</div>
-                <div class="icon-card-subtitle">${questionCount} questões</div>
-            </div>
-        `;
-    }
-    
-    html += '</div>';
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
+    startQuiz(macroKey, ropKey);
 }
 
 function startQuiz(macroKey, ropKey) {
-    const ropData = ropsData[macroKey][ropKey];
-    if (!ropData || !ropData.questions || ropData.questions.length === 0) {
-        showToast('Questões não disponíveis', 'error');
+    const rop = ropsData[macroKey][ropKey];
+    if (!rop || !rop.questions || rop.questions.length === 0) {
+        showToast('Nenhuma questão disponível para esta ROP', 'error');
         return;
     }
     
-    currentQuizData = [...ropData.questions];
+    currentQuizData = [...rop.questions];
     currentQuiz = {
-        macroKey: macroKey,
-        ropKey: ropKey,
-        title: ropData.title,
+        macroKey,
+        ropKey,
         currentIndex: 0,
         score: 0,
         answers: []
     };
     
-    renderQuizQuestion();
+    renderQuizPage();
 }
 
-function renderQuizQuestion() {
+function renderQuizPage() {
     const question = currentQuizData[currentQuiz.currentIndex];
     const progress = currentQuiz.currentIndex + 1;
     const total = currentQuizData.length;
     
-    let html = `
-        <div style="max-width: 800px; margin: 0 auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="color: var(--cor-verde-escuro); margin: 0;">${currentQuiz.title}</h2>
-                <div style="font-weight: 600; color: var(--cor-texto-secundario);">
-                    ${progress}/${total}
-                </div>
-            </div>
-            
-            <div style="background: var(--cor-branco); border-radius: 12px; padding: 25px; box-shadow: var(--sombra-card); margin-bottom: 20px;">
-                <div style="font-size: 1.1rem; margin-bottom: 25px; color: var(--cor-texto);">
-                    ${question.question}
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    ${question.options.map((opt, idx) => `
-                        <button onclick="answerQuestion(${idx})" style="
-                            padding: 15px 20px;
-                            background: var(--cor-cinza-claro);
-                            border: 2px solid var(--cor-cinza-medio);
-                            border-radius: 10px;
-                            text-align: left;
-                            cursor: pointer;
-                            transition: var(--transition);
-                            font-size: 1rem;
-                            color: var(--cor-texto);
-                        " onmouseover="this.style.borderColor='var(--cor-verde-medio)'; this.style.background='var(--cor-cinza-muito-claro)'" onmouseout="this.style.borderColor='var(--cor-cinza-medio)'; this.style.background='var(--cor-cinza-claro)'">
-                            <strong>${String.fromCharCode(65 + idx)})</strong> ${opt}
-                        </button>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div style="background: var(--cor-cinza-claro); border-radius: 10px; padding: 15px; height: 10px; overflow: hidden;">
-                <div style="height: 100%; background: var(--cor-verde-escuro); border-radius: 10px; width: ${(progress/total)*100}%; transition: width 0.3s ease;"></div>
-            </div>
-        </div>
-    `;
-    
     const pageContent = document.getElementById('page-content');
+    const headerTitle = document.getElementById('header-title');
+    
+    headerTitle.textContent = `Questão ${progress}/${total}`;
+    
+    let html = `
+        <div class="quiz-container">
+            <div class="quiz-progress" style="background: var(--cor-fundo); height: 8px; border-radius: 4px; margin-bottom: 20px;">
+                <div style="background: var(--cor-primaria); height: 100%; width: ${(progress/total)*100}%; border-radius: 4px;"></div>
+            </div>
+            <div class="quiz-question">${progress}. ${question.question}</div>
+            <div class="quiz-options">`;
+    
+    question.options.forEach((option, index) => {
+        html += `<div class="quiz-option" data-option="${index}">
+                    <strong>${String.fromCharCode(65 + index)})</strong> ${option}
+                 </div>`;
+    });
+    
+    html += `</div></div>`;
+    
+    if (currentQuiz.currentIndex < currentQuizData.length - 1) {
+        html += `<button id="nextQuestion" class="submit-button" style="display: none; margin-top: 20px;">Próxima Questão</button>`;
+    } else {
+        html += `<button id="nextQuestion" class="submit-button" style="display: none; margin-top: 20px;">Ver Resultado</button>`;
+    }
+    
     pageContent.innerHTML = html;
 }
 
-function answerQuestion(selectedIndex) {
+function handleQuizAnswer(optionEl) {
+    const selectedIndex = parseInt(optionEl.dataset.option);
     const question = currentQuizData[currentQuiz.currentIndex];
-    const isCorrect = selectedIndex === question.correct;
+    const isCorrect = selectedIndex === question.correctAnswer;
     
-    currentQuiz.answers.push({
-        questionId: question.id,
-        selected: selectedIndex,
-        correct: question.correct,
-        isCorrect: isCorrect
+    // Mark all options as answered
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.classList.add('answered');
+        const idx = parseInt(opt.dataset.option);
+        if (idx === question.correctAnswer) {
+            opt.classList.add('correct');
+        } else if (idx === selectedIndex && !isCorrect) {
+            opt.classList.add('incorrect');
+        }
     });
     
     if (isCorrect) {
         currentQuiz.score++;
     }
     
-    // Show feedback
-    showAnswerFeedback(isCorrect, question.explanation, selectedIndex, question.correct);
+    currentQuiz.answers.push({
+        questionIndex: currentQuiz.currentIndex,
+        selected: selectedIndex,
+        correct: question.correctAnswer,
+        isCorrect
+    });
+    
+    // Show explanation if available
+    if (question.explanation) {
+        const container = document.querySelector('.quiz-container');
+        const explanationDiv = document.createElement('div');
+        explanationDiv.className = 'content-section';
+        explanationDiv.style.marginTop = '20px';
+        explanationDiv.innerHTML = `<h4>Explicação:</h4><p>${question.explanation}</p>`;
+        container.appendChild(explanationDiv);
+    }
+    
+    document.getElementById('nextQuestion').style.display = 'block';
 }
 
-function showAnswerFeedback(isCorrect, explanation, selectedIndex, correctIndex) {
-    const feedback = `
-        <div style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: ${isCorrect ? 'var(--cor-sucesso)' : 'var(--cor-perigo)'}; color: white; padding: 20px; border-radius: 12px; box-shadow: var(--sombra-hover); z-index: 999;">
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-                <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'}" style="font-size: 2rem;"></i>
-                <div>
-                    <strong style="font-size: 1.2rem;">${isCorrect ? 'Correto!' : 'Incorreto'}</strong>
-                    ${!isCorrect ? `<div style="margin-top: 5px; opacity: 0.9;">Resposta correta: ${String.fromCharCode(65 + correctIndex)}</div>` : ''}
-                </div>
-            </div>
-            ${explanation ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.3); opacity: 0.9;">${explanation}</div>` : ''}
-            <button onclick="nextQuestion()" style="margin-top: 15px; padding: 10px 20px; background: white; color: var(--cor-texto); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">
-                Próxima →
-            </button>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', feedback);
-}
-
-function nextQuestion() {
-    // Remove feedback
-    const feedback = document.querySelector('div[style*="position: fixed"]');
-    if (feedback) feedback.remove();
-    
+function loadNextQuestion() {
     currentQuiz.currentIndex++;
     
-    if (currentQuiz.currentIndex >= currentQuizData.length) {
-        showQuizResults();
+    if (currentQuiz.currentIndex < currentQuizData.length) {
+        renderQuizPage();
     } else {
-        renderQuizQuestion();
+        showQuizResults();
     }
 }
 
-function showQuizResults() {
+async function showQuizResults() {
     const percentage = Math.round((currentQuiz.score / currentQuizData.length) * 100);
     const passed = percentage >= 70;
     
-    let html = `
-        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-            <div style="background: var(--cor-branco); border-radius: 12px; padding: 40px; box-shadow: var(--sombra-card);">
-                <div style="font-size: 4rem; margin-bottom: 20px;">
-                    ${passed ? '🎉' : '📊'}
-                </div>
-                <h1 style="color: ${passed ? 'var(--cor-sucesso)' : 'var(--cor-aviso)'}; margin-bottom: 15px;">
-                    ${passed ? 'Parabéns!' : 'Continue Estudando!'}
-                </h1>
-                <div style="font-size: 3rem; font-weight: 700; color: var(--cor-verde-escuro); margin-bottom: 10px;">
-                    ${percentage}%
-                </div>
-                <div style="font-size: 1.2rem; color: var(--cor-texto-secundario); margin-bottom: 30px;">
-                    ${currentQuiz.score} de ${currentQuizData.length} questões corretas
-                </div>
-                
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="startQuiz('${currentQuiz.macroKey}', '${currentQuiz.ropKey}')" class="btn-primary">
-                        <i class="fas fa-redo"></i> Refazer Quiz
-                    </button>
-                    <button onclick="navigateToSubPage('questoes-rops')" class="btn-primary" style="background: var(--cor-cinza); ">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
+    // Update user progress
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            [`progress.${currentQuiz.macroKey}.${currentQuiz.ropKey}`]: {
+                score: currentQuiz.score,
+                total: currentQuizData.length,
+                percentage,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            },
+            totalPoints: firebase.firestore.FieldValue.increment(currentQuiz.score)
+        });
+    } catch (error) {
+        console.error('Error saving progress:', error);
+    }
     
     const pageContent = document.getElementById('page-content');
+    const headerTitle = document.getElementById('header-title');
+    
+    headerTitle.textContent = 'Resultado';
+    
+    let html = `
+        <div class="quiz-container">
+            <h2 style="text-align: center; color: ${passed ? 'var(--cor-sucesso)' : 'var(--cor-perigo)'};">
+                ${passed ? '🎉 Parabéns!' : '📚 Continue Estudando'}
+            </h2>
+            <div class="content-section" style="text-align: center;">
+                <h1 style="font-size: 3rem; color: var(--cor-primaria); margin: 20px 0;">
+                    ${percentage}%
+                </h1>
+                <p style="font-size: 1.2rem;">
+                    <strong>${currentQuiz.score}</strong> de <strong>${currentQuizData.length}</strong> corretas
+                </p>
+                <p style="color: var(--cor-texto-claro); margin-top: 20px;">
+                    ${passed ? 
+                        'Você demonstrou bom conhecimento sobre este tema!' : 
+                        'Continue estudando para melhorar sua pontuação.'}
+                </p>
+            </div>
+            <button class="submit-button" onclick="window.location.reload();">Voltar ao Início</button>
+        </div>`;
+    
     pageContent.innerHTML = html;
-    
-    // Save progress to Firebase
-    if (currentUser && passed) {
-        saveQuizProgress();
-    }
 }
 
-async function saveQuizProgress() {
-    try {
-        const progressRef = db.collection('users').doc(currentUser.uid);
-        const updateData = {};
-        updateData[`progress.${currentQuiz.macroKey}.${currentQuiz.ropKey}`] = {
-            score: currentQuiz.score,
-            total: currentQuizData.length,
-            percentage: Math.round((currentQuiz.score / currentQuizData.length) * 100),
-            completedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        await progressRef.update(updateData);
-    } catch (error) {
-        console.error('Erro ao salvar progresso:', error);
-    }
-}
-
-function renderCalculadorasPage() {
-    if (!calculatorDefinitions) {
-        return '<div class="page-title">Erro ao carregar calculadoras</div>';
-    }
-    
-    let html = '<h1 class="page-title">🧮 Calculadoras Clínicas</h1>';
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">13 calculadoras para anestesiologia</p>';
-    
-    // Group calculators by category
-    const categories = {
-        'Anestesiologia': ['rcri', 'ariscat', 'apfel', 'stopbang', 'ibw_bsa'],
-        'Risco TEV': ['caprini', 'padua'],
-        'Avaliação de Riscos': ['braden', 'morse'],
-        'Doses e Conversões': ['opioid_convert', 'holliday_segar']
+// ==================== DOCUMENTOS RENDERING ====================
+function renderDocumentosPage() {
+    const documentos = {
+        "Protocolos": [
+            { name: "Avaliação Pré-Anestésica", file: "Documentos/1 - Protocolos/PRO.ANEST.0001-00 avaliação pré anestesica.pdf" },
+            { name: "Manejo da Cefaleia Pós-Punção", file: "Documentos/1 - Protocolos/PRO.ANEST.0002-00 Manejo da cefaleira pós punção dural.pdf" },
+            { name: "Manutenção da Normotermia", file: "Documentos/1 - Protocolos/PRO.CCG.0011-01 Manutenção da normotermia.pdf" },
+            { name: "Profilaxia de Dor Aguda Pós-Op", file: "Documentos/1 - Protocolos/PRO.CCG.0018-00 Profilaxia tratamento e resgate de dor aguda pós operatoria na SRPA..pdf" },
+            { name: "Prevenção de Intoxicação por AL", file: "Documentos/1 - Protocolos/PRO.CCG.0020-00 Prevenção e manejo de intoxicação por anestésicos locais.pdf" },
+            { name: "Prevenção da Broncoaspiração", file: "Documentos/1 - Protocolos/PRO.INSH.0007-16 Protocolo de prevenção da broncoaspiração..pdf" },
+            { name: "Prevenção de Deterioração Clínica (MEWS)", file: "Documentos/1 - Protocolos/PRO.INSH.0008-12 Prevenção de Deterioração Clínica no Adulto - MEWS.pdf" },
+            { name: "Prevenção de Alergia ao Látex", file: "Documentos/1 - Protocolos/PRO.INSH.0009-04 Prevenção de Alergia ao látex(AG. Anest 15.02.24).pdf" },
+            { name: "Prevenção de TEV", file: "Documentos/1 - Protocolos/PRO.INSH.0053-05 Prevenção de TEV (AG. ANALICE 22.04) (2).docx.pdf" },
+            { name: "Gestão de Medicamentos de Alta Vigilância", file: "Documentos/1 - Protocolos/PRO.INSH.0080-13 Gestão de Medicamentos de Alta Vigilância (AG. Iara 30.04.24).docx.pdf" },
+            { name: "Manejo da Glicemia", file: "Documentos/1 - Protocolos/PRO.INSH.0094_00 Manejo glicemia.pdf" },
+            { name: "Abreviação de Jejum Prolongado", file: "Documentos/1 - Protocolos/PRO.NUT.0002-19 Abreviação de jejum prolongado(AG. Anest 15.02.24).pdf" },
+            { name: "Recuperação Pós-Anestésica", file: "Documentos/1 - Protocolos/PRO.RPA.0003-00 Recuperação pós anestésica.pdf" },
+            { name: "Prevenção de NVPO", file: "Documentos/1 - Protocolos/PRO.RPA.0004-00 Prevenção de náusea e vômito no pós-operatório.pdf" },
+            { name: "Antibioticoprofilaxia Cirúrgica", file: "Documentos/1 - Protocolos/PRO.SCI.0007-14 Antibioticoprofilaxia cirúrgica.pdf" },
+            { name: "Identificação do Cliente", file: "Documentos/1 - Protocolos/PT 02 Identificação do cliente.pdf" },
+            { name: "Higiene de Mãos", file: "Documentos/1 - Protocolos/PT 03 Higiene de Mãos.pdf" }
+        ],
+        "Políticas": [
+            { name: "Política de Gestão da Qualidade", file: "Documentos/2 - Politicas/PLI.ANEST.0001-00 Politica de gestão da qualidade.pdf" }
+        ],
+        "Relatórios de Segurança": [
+            { name: "Relatório 3º Trimestre 2024", file: "Documentos/4 - Relatórios de Segurança/RELATÓRIO DE SEGURANÇA 3° TRIMESTRE 2024.pdf" },
+            { name: "Segurança do Paciente - Serviço de Anestesia", file: "Documentos/4 - Relatórios de Segurança/Seguranca-do-Paciente-Servico-de-Anestesia-ANEST-Chapeco.pdf" }
+        ],
+        "Manuais": [
+            { name: "Manual de Gestão Documental", file: "Documentos/4 - Manuais/MAN.NQS.0001.00 Manual de gestão documental^.pdf" }
+        ]
     };
     
-    for (const [category, calcIds] of Object.entries(categories)) {
-        const calcs = calculatorDefinitions.filter(c => calcIds.includes(c.id));
+    let html = `<h1 class="page-title">Biblioteca de Documentos</h1>`;
+    
+    Object.keys(documentos).forEach(category => {
+        html += `<div class="content-section">
+                    <h3><i class="fas fa-folder-open"></i> ${category}</h3>`;
         
-        html += `
-            <div class="content-section">
-                <h2 class="section-title">
-                    <i class="fas fa-calculator"></i> ${category}
-                </h2>
-                <div class="icon-grid">
-                    ${calcs.map(calc => `
-                        <div class="icon-card" onclick='openCalculator("${calc.id}")'>
-                            <div class="icon-card-icon" style="background: #1a4d2e">
-                                <i class="fas fa-calculator"></i>
-                            </div>
-                            <div class="icon-card-title">${calc.title}</div>
+        documentos[category].forEach(doc => {
+            html += `<div class="list-item" onclick="openDocument('${doc.file}')">
+                        <span class="icon" style="background-color: var(--cor-perigo);">
+                            <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${doc.name}</div>
                         </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    return html;
-}
-
-function openCalculator(calcId) {
-    const calc = calculatorDefinitions.find(c => c.id === calcId);
-    if (!calc) {
-        showToast('Calculadora não encontrada', 'error');
-        return;
-    }
-    
-    let html = `
-        <h1 class="page-title">${calc.title}</h1>
-        <div class="content-section" style="max-width: 600px; margin: 0 auto;">
-            <form id="calculatorForm" onsubmit="calculateResult(event, '${calcId}')">
-    `;
-    
-    // Render inputs based on type
-    calc.inputs.forEach(input => {
-        if (input.type === 'bool') {
-            html += `
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px; margin-bottom: 10px;">
-                    <input type="checkbox" id="${input.id}" name="${input.id}" style="width: 20px; height: 20px; margin-right: 12px;">
-                    <label for="${input.id}" style="flex: 1; cursor: pointer;">${input.label}</label>
-                </div>
-            `;
-        } else if (input.type === 'number') {
-            html += `
-                <div class="form-group">
-                    <label for="${input.id}">${input.label}</label>
-                    <input type="number" id="${input.id}" name="${input.id}" step="any" 
-                           ${input.min !== undefined ? `min="${input.min}"` : ''} 
-                           ${input.max !== undefined ? `max="${input.max}"` : ''} 
-                           placeholder="0">
-                </div>
-            `;
-        } else if (input.type === 'select') {
-            html += `
-                <div class="form-group">
-                    <label for="${input.id}">${input.label}</label>
-                    <select id="${input.id}" name="${input.id}">
-                        ${input.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                    </select>
-                </div>
-            `;
-        }
+                        <i class="chevron fas fa-external-link-alt"></i>
+                    </div>`;
+        });
+        
+        html += `</div>`;
     });
     
-    html += `
-                <button type="submit" class="btn-primary" style="margin-top: 20px;">
-                    <i class="fas fa-calculator"></i> Calcular
-                </button>
-            </form>
-            
-            <div id="calcResults" style="display: none; margin-top: 25px; padding: 20px; background: var(--cor-verde-light); border-radius: 10px;">
-                <h3 style="color: var(--cor-verde-escuro); margin-bottom: 15px;">
-                    <i class="fas fa-check-circle"></i> Resultado
-                </h3>
-                <div id="calcResultsContent"></div>
-            </div>
-        </div>
-    `;
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
+    return html;
 }
 
-function calculateResult(event, calcId) {
-    event.preventDefault();
+window.openDocument = function(filePath) {
+    // Open in new window/tab
+    window.open(filePath, '_blank');
+};
+
+// ==================== PODCASTS RENDERING ====================
+function renderPodcastsPage() {
+    const podcastsByCategory = {
+        "Cultura de Segurança": [
+            { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a" },
+            { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de Incidentes sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação de Incidentes (Disclosure).m4a" }
+        ],
+        "Comunicação": [
+            { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenficação cliente.m4a" },
+            { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abreviações perigosas.m4a" },
+            { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Conciliação medicamentosa Estratégica.m4a" },
+            { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Conciliação medicamentosa Internado.m4a" },
+            { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Conciliação medicamentosa ambulatorial.m4a" },
+            { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Conciliação medicamentosa Emergencia.m4a" },
+            { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a" },
+            { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transição Cuidado.m4a" }
+        ],
+        "Uso de Medicamentos": [
+            { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a" }
+        ],
+        "Vida Profissional": [
+            { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a" }
+        ],
+        "Prevenção de Infecções": [
+            { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Prevenção de infecções/5.1 Prevenção de infecções.m4a" }
+        ],
+        "Avaliação de Riscos": [
+            { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avaliação de Riscos/6.1 Avaliação de Riscos.m4a" }
+        ]
+    };
     
-    const calc = calculatorDefinitions.find(c => c.id === calcId);
-    if (!calc) return;
+    let html = `<h1 class="page-title">Podcasts Educativos</h1>
+                <p style="padding: 0 5px 15px; color: var(--cor-texto-claro); font-size: 0.9rem;">
+                    16 podcasts sobre as ROPs Qmentum
+                </p>`;
     
-    // Collect input values
-    const values = {};
-    calc.inputs.forEach(input => {
-        const element = document.getElementById(input.id);
-        if (input.type === 'bool') {
-            values[input.id] = element.checked;
-        } else if (input.type === 'number') {
-            values[input.id] = parseFloat(element.value) || 0;
-        } else {
-            values[input.id] = element.value;
-        }
+    Object.keys(podcastsByCategory).forEach(category => {
+        const podcasts = podcastsByCategory[category];
+        const categoryColor = {
+            "Cultura de Segurança": "#9b59b6",
+            "Comunicação": "#3498db",
+            "Uso de Medicamentos": "#e74c3c",
+            "Vida Profissional": "#f39c12",
+            "Prevenção de Infecções": "#1abc9c",
+            "Avaliação de Riscos": "#e67e22"
+        }[category] || "#9b59b6";
+        
+        html += `<div class="content-section">
+                    <h3><i class="fas fa-podcast"></i> ${category}</h3>`;
+        
+        podcasts.forEach(podcast => {
+            html += `<div class="list-item" onclick="playPodcast('${podcast.file}', '${podcast.title}')">
+                        <span class="icon" style="background-color: ${categoryColor};">
+                            <i class="fas fa-play-circle"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${podcast.title}</div>
+                        </div>
+                    </div>`;
+        });
+        
+        html += `</div>`;
     });
     
-    try {
-        // Create function from compute code
-        const params = calc.inputs.map(i => i.id);
-        const computeFunc = new Function(...params, calc.compute.code);
-        
-        // Execute calculation
-        const paramValues = params.map(p => values[p]);
-        const result = computeFunc(...paramValues);
-        
-        // Display results
-        let resultsHtml = '';
-        for (const [key, value] of Object.entries(result)) {
-            const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-            resultsHtml += `
-                <div style="padding: 12px; background: white; border-radius: 8px; margin-bottom: 10px;">
-                    <div style="font-weight: 600; color: var(--cor-texto-secundario); font-size: 0.9rem; margin-bottom: 5px;">
-                        ${label}
-                    </div>
-                    <div style="font-size: 1.3rem; font-weight: 700; color: var(--cor-verde-escuro);">
-                        ${value}
-                    </div>
-                </div>
-            `;
-        }
-        
-        document.getElementById('calcResultsContent').innerHTML = resultsHtml;
-        document.getElementById('calcResults').style.display = 'block';
-        
-        // Scroll to results
-        document.getElementById('calcResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } catch (error) {
-        console.error('Erro ao calcular:', error);
-        showToast('Erro ao calcular. Verifique os valores inseridos.', 'error');
-    }
-}
-
-function renderChecklistPage() {
-    let html = `
-        <h1 class="page-title">✅ Checklist de Cirurgia Segura</h1>
-        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Protocolo da Organização Mundial da Saúde (OMS)</p>
-        
-        <div class="content-section">
-            <h2 class="section-title" style="color: #1a4d2e;">
-                <i class="fas fa-sign-in-alt"></i> SIGN IN (Antes da Indução Anestésica)
-            </h2>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin1" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin1" style="flex: 1; cursor: pointer;">Paciente confirmou identidade, sítio cirúrgico, procedimento e consentimento</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin2" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin2" style="flex: 1; cursor: pointer;">Demarcação do sítio cirúrgico realizada (quando aplicável)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin3" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin3" style="flex: 1; cursor: pointer;">Verificação de segurança anestésica completa</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin4" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin4" style="flex: 1; cursor: pointer;">Oxímetro de pulso no paciente funcionando</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin5" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin5" style="flex: 1; cursor: pointer;">Alergias conhecidas? (Sim/Não)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin6" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin6" style="flex: 1; cursor: pointer;">Via aérea difícil ou risco de aspiração? Equipamento e assistência disponíveis</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signin7" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signin7" style="flex: 1; cursor: pointer;">Risco de perda sanguínea > 500ml (7ml/kg para crianças)? Acesso venoso adequado e fluidos planejados</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title" style="color: #40916c;">
-                <i class="fas fa-pause-circle"></i> TIME OUT (Antes da Incisão Cirúrgica)
-            </h2>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout1" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout1" style="flex: 1; cursor: pointer;">Todos os membros da equipe se apresentaram pelo nome e função</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout2" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout2" style="flex: 1; cursor: pointer;">Cirurgião, anestesiologista e enfermagem confirmam verbalmente: identidade do paciente, sítio cirúrgico e procedimento</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout3" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout3" style="flex: 1; cursor: pointer;">Profilaxia antimicrobiana foi administrada nos últimos 60 minutos (quando indicada)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout4" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout4" style="flex: 1; cursor: pointer;">Etapas críticas previstas pelo cirurgião</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout5" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout5" style="flex: 1; cursor: pointer;">Etapas críticas previstas pelo anestesiologista</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout6" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout6" style="flex: 1; cursor: pointer;">Verificação de esterilidade (incluindo resultados dos indicadores)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout7" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout7" style="flex: 1; cursor: pointer;">Há questões relacionadas a equipamentos ou outras preocupações?</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="timeout8" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="timeout8" style="flex: 1; cursor: pointer;">Imagens essenciais estão disponíveis?</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title" style="color: #52b788;">
-                <i class="fas fa-sign-out-alt"></i> SIGN OUT (Antes do Paciente Sair da Sala Cirúrgica)
-            </h2>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signout1" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signout1" style="flex: 1; cursor: pointer;">Enfermagem confirma verbalmente: nome do procedimento</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signout2" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signout2" style="flex: 1; cursor: pointer;">Contagem de instrumentos, compressas e agulhas está correta (ou não aplicável)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signout3" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signout3" style="flex: 1; cursor: pointer;">Identificação de amostras (leitura em voz alta, incluindo nome do paciente)</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signout4" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signout4" style="flex: 1; cursor: pointer;">Há problemas com equipamentos a serem resolvidos?</label>
-                </div>
-                <div style="display: flex; align-items: center; padding: 12px; background: var(--cor-cinza-claro); border-radius: 8px;">
-                    <input type="checkbox" id="signout5" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-verde-escuro);">
-                    <label for="signout5" style="flex: 1; cursor: pointer;">Cirurgião, anestesiologista e enfermagem revisam as principais preocupações para recuperação e manejo do paciente</label>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-            <button onclick="checkAllItems()" class="btn-primary">
-                <i class="fas fa-check-double"></i> Marcar Todos
-            </button>
-            <button onclick="clearAllItems()" class="btn-primary" style="background: var(--cor-cinza);">
-                <i class="fas fa-times"></i> Limpar
-            </button>
-            <button onclick="printChecklist()" class="btn-primary" style="background: var(--cor-info);">
-                <i class="fas fa-print"></i> Imprimir
-            </button>
-        </div>
-    `;
-    
     return html;
 }
 
-function checkAllItems() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
-    showToast('Todos os itens marcados', 'success');
-}
-
-function clearAllItems() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    showToast('Checklist limpo', 'info');
-}
-
-function printChecklist() {
-    window.print();
-}
-
-function renderCronogramaCalendario() {
-    const googleSheetsUrl = 'https://docs.google.com/spreadsheets/d/1RvxlGeQN6xZN6vPp9zhkWHbEbFiK6o3EGJm5eh9iR6s/edit?gid=833599381#gid=833599381';
-    
-    let html = `
-        <h1 class="page-title">📅 Cronograma de Residência</h1>
-        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Acompanhe plantões, estágios e férias</p>
-        
-        <div class="content-section">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <p style="color: var(--cor-texto-secundario); margin-bottom: 15px;">
-                    Visualize o cronograma completo integrado com Google Sheets
-                </p>
-                <button onclick="window.open('${googleSheetsUrl}', '_blank')" class="btn-primary">
-                    <i class="fab fa-google"></i> Abrir no Google Sheets
-                </button>
-            </div>
-            
-            <div style="position: relative; padding-bottom: 75%; height: 0; overflow: hidden;">
-                <iframe 
-                    src="${googleSheetsUrl.replace('/edit', '/preview')}" 
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 12px;"
-                    allowfullscreen>
-                </iframe>
-            </div>
-        </div>
-        
-        <div class="content-section" style="margin-top: 20px;">
-            <h3 class="section-title">
-                <i class="fas fa-info-circle"></i> Informações
-            </h3>
-            <ul style="list-style: none; padding: 0;">
-                <li style="padding: 10px; border-bottom: 1px solid var(--cor-cinza-medio);">
-                    📅 <strong>Plantões:</strong> Confira a escala mensal de plantões
-                </li>
-                <li style="padding: 10px; border-bottom: 1px solid var(--cor-cinza-medio);">
-                    🏥 <strong>Estágios:</strong> Acompanhe os rodízios e rotações
-                </li>
-                <li style="padding: 10px; border-bottom: 1px solid var(--cor-cinza-medio);">
-                    🏖️ <strong>Férias:</strong> Visualize períodos de folga programados
-                </li>
-                <li style="padding: 10px;">
-                    📱 <strong>Atualizações:</strong> Sincronizado em tempo real
-                </li>
-            </ul>
-        </div>
-    `;
-    
-    return html;
-}
-
-async function showAdminPanel() {
-    if (!hasPermission(userProfile, 'admin-panel')) {
-        showToast('Acesso negado', 'error');
-        return;
-    }
-    
-    try {
-        showLoading();
-        const users = await listAllUsers();
-        hideLoading();
-        
-        renderAdminPanel(users);
-    } catch (error) {
-        hideLoading();
-        showToast('Erro ao carregar painel admin: ' + error.message, 'error');
-    }
-}
-
-function renderAdminPanel(users) {
-    let html = `
-        <h1 class="page-title">👤 Painel Administrativo</h1>
-        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Gerenciamento de usuários e permissões</p>
-        
-        <div class="content-section">
-            <h2 class="section-title">
-                <i class="fas fa-users"></i> Usuários Cadastrados (${users.length})
-            </h2>
-            
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background: var(--cor-cinza-claro); text-align: left;">
-                            <th style="padding: 12px; border-bottom: 2px solid var(--cor-cinza-medio);">Nome</th>
-                            <th style="padding: 12px; border-bottom: 2px solid var(--cor-cinza-medio);">E-mail</th>
-                            <th style="padding: 12px; border-bottom: 2px solid var(--cor-cinza-medio);">Perfil</th>
-                            <th style="padding: 12px; border-bottom: 2px solid var(--cor-cinza-medio);">Status</th>
-                            <th style="padding: 12px; border-bottom: 2px solid var(--cor-cinza-medio);">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${users.map(user => {
-                            const roleInfo = ROLES_TEMPLATES[user.role] || ROLES_TEMPLATES['visitante'];
-                            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Sem nome';
-                            const statusColor = user.active ? 'var(--cor-sucesso)' : 'var(--cor-cinza)';
-                            const statusText = user.active ? 'Ativo' : 'Inativo';
-                            
-                            return `
-                                <tr style="border-bottom: 1px solid var(--cor-cinza-medio);">
-                                    <td style="padding: 12px;">
-                                        <strong>${fullName}</strong>
-                                    </td>
-                                    <td style="padding: 12px;">
-                                        <small style="color: var(--cor-texto-secundario);">${user.email}</small>
-                                    </td>
-                                    <td style="padding: 12px;">
-                                        <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; background: ${roleInfo.color}; color: white;">
-                                            ${roleInfo.name}
-                                        </span>
-                                    </td>
-                                    <td style="padding: 12px;">
-                                        <span style="color: ${statusColor}; font-weight: 600;">
-                                            ${statusText}
-                                        </span>
-                                    </td>
-                                    <td style="padding: 12px;">
-                                        <button onclick='editUser("${user.uid}")' style="padding: 6px 12px; background: var(--cor-verde-medio); color: white; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px;">
-                                            <i class="fas fa-edit"></i> Editar
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div class="content-section">
-            <h2 class="section-title">
-                <i class="fas fa-chart-pie"></i> Estatísticas
-            </h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div style="background: linear-gradient(135deg, #1a4d2e, #2d6a4f); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 5px;">${users.length}</div>
-                    <div style="opacity: 0.9;">Total de Usuários</div>
-                </div>
-                <div style="background: linear-gradient(135deg, #40916c, #52b788); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 5px;">${users.filter(u => u.active).length}</div>
-                    <div style="opacity: 0.9;">Ativos</div>
-                </div>
-                <div style="background: linear-gradient(135deg, #52b788, #74c69d); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 5px;">${users.filter(u => u.role === 'admin').length}</div>
-                    <div style="opacity: 0.9;">Administradores</div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
-}
-
-async function editUser(userId) {
-    try {
-        showLoading();
-        const userDoc = await db.collection('users').doc(userId).get();
-        hideLoading();
-        
-        if (!userDoc.exists) {
-            showToast('Usuário não encontrado', 'error');
-            return;
-        }
-        
-        const userData = userDoc.data();
-        showEditUserModal(userId, userData);
-    } catch (error) {
-        hideLoading();
-        showToast('Erro ao carregar usuário: ' + error.message, 'error');
-    }
-}
-
-function showEditUserModal(userId, userData) {
+window.playPodcast = function(filePath, title) {
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.innerHTML = `
-        <div class="modal-content" style="max-width: 500px;">
-            <h2>Editar Usuário</h2>
-            <form id="editUserForm" style="margin-top: 20px;">
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" id="editFirstName" value="${userData.firstName || ''}" required>
-                </div>
-                <div class="form-group">
-                    <label>Sobrenome</label>
-                    <input type="text" id="editLastName" value="${userData.lastName || ''}" required>
-                </div>
-                <div class="form-group">
-                    <label>E-mail (apenas visualização)</label>
-                    <input type="email" value="${userData.email}" disabled>
-                </div>
-                <div class="form-group">
-                    <label>Perfil</label>
-                    <select id="editRole">
-                        ${Object.entries(ROLES_TEMPLATES).map(([key, role]) => 
-                            `<option value="${key}" ${userData.role === key ? 'selected' : ''}>${role.name}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" id="editActive" ${userData.active ? 'checked' : ''} style="margin-right: 10px;">
-                        <span>Usuário ativo</span>
-                    </label>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Salvar
-                    </button>
-                    <button type="button" onclick="this.closest('.modal').remove()" class="btn-primary" style="background: var(--cor-cinza);">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
-            </form>
+        <div class="modal-content">
+            <h2><i class="fas fa-podcast"></i> ${title}</h2>
+            <audio controls style="width: 100%; margin: 20px 0;">
+                <source src="${filePath}" type="audio/mp4">
+                Seu navegador não suporta o elemento de áudio.
+            </audio>
+            <button class="btn-primary" onclick="this.closest('.modal').remove()">Fechar</button>
         </div>
     `;
-    
     document.body.appendChild(modal);
-    
-    document.getElementById('editUserForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const newData = {
-            firstName: document.getElementById('editFirstName').value.trim(),
-            lastName: document.getElementById('editLastName').value.trim(),
-            role: document.getElementById('editRole').value,
-            active: document.getElementById('editActive').checked
-        };
-        
-        try {
-            showLoading();
-            await db.collection('users').doc(userId).update(newData);
-            modal.remove();
-            hideLoading();
-            showToast('Usuário atualizado com sucesso!', 'success');
-            showAdminPanel(); // Reload admin panel
-        } catch (error) {
-            hideLoading();
-            showToast('Erro ao atualizar: ' + error.message, 'error');
-        }
-    });
-}
+};
 
-// ==================== NOVAS PÁGINAS - ESTRUTURA ATUALIZADA ====================
-
-// PAINEL PRINCIPAL
-function renderComunicadosPage() {
-    return `
-        <h1 class="page-title">📢 Últimos Comunicados</h1>
+// ==================== CHECKLIST RENDERING ====================
+function renderChecklistPage() {
+    return `<h1 class="page-title">Checklist de Cirurgia Segura</h1>
         <div class="content-section">
-            <p>Aqui serão exibidos os comunicados oficiais da diretoria.</p>
-            <p style="color: var(--cor-texto-secundario); margin-top: 15px;">
-                Esta funcionalidade será integrada com um sistema de notícias em breve.
-            </p>
+            <h3><i class="fas fa-sign-in-alt"></i> Sign In (Antes da Anestesia)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Identidade, Sítio, Procedimento confirmados</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Consentimento Informado assinado</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Checagem de Equipamentos de Anestesia</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Alergias Conhecidas verificadas</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Via aérea difícil avaliada</label>
+            </div>
         </div>
-    `;
+        <div class="content-section">
+            <h3><i class="fas fa-pause-circle"></i> Time Out (Antes da Incisão)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Apresentação da Equipe</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Confirmação Cirúrgica (paciente, procedimento, sítio)</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Profilaxia Antimicrobiana realizada</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Eventos Críticos Antecipados revisados</label>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3><i class="fas fa-sign-out-alt"></i> Sign Out (Antes da Saída)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Contagem de Instrumentos correta</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Identificação de Amostras realizada</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Plano de Cuidados Pós-Operatórios definido</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Preocupações da Equipe sobre Recuperação discutidas</label>
+            </div>
+        </div>`;
 }
 
-function renderNotificarIncidentePage() {
-    return `
-        <h1 class="page-title">⚠️ Notificação de Incidentes</h1>
-        <div class="content-section">
-            <form id="incident-form">
-                <div class="form-group">
-                    <label for="incident-type">Tipo de Incidente *</label>
-                    <select id="incident-type" required>
-                        <option value="">Selecione...</option>
-                        <option>Evento Adverso</option>
-                        <option>Quase Erro (Near Miss)</option>
-                        <option>Evento Sem Dano</option>
-                        <option>Incidente com Dano</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="incident-date">Data e Hora *</label>
-                    <input type="datetime-local" id="incident-date" required>
-                </div>
-                <div class="form-group">
-                    <label for="incident-location">Local *</label>
-                    <input type="text" id="incident-location" placeholder="Ex: Centro Cirúrgico, Sala 3" required>
-                </div>
-                <div class="form-group">
-                    <label for="incident-description">Descrição Detalhada *</label>
-                    <textarea id="incident-description" rows="6" placeholder="Descreva o ocorrido de forma objetiva e completa..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="incident-actions">Ações Imediatas Tomadas</label>
-                    <textarea id="incident-actions" rows="3" placeholder="Descreva as ações tomadas imediatamente após o incidente..."></textarea>
-                </div>
-                <button type="submit" class="btn-primary" onclick="submitIncident(event)">
-                    <i class="fas fa-paper-plane"></i> Enviar Notificação
+// ==================== RESIDÊNCIA RENDERING ====================
+function renderResidenciaSheets() {
+    const sheetsUrl = "https://docs.google.com/spreadsheets/d/1RvxlGeQN6xZN6vPp9zhkWHbEbFiK6o3EGJm5eh9iR6s/edit?gid=833599381#gid=833599381";
+    
+    return `<h1 class="page-title">Escalas e Cronogramas</h1>
+            <div class="content-section">
+                <h3><i class="fas fa-calendar-alt"></i> Acesse a Planilha</h3>
+                <p style="margin-bottom: 20px;">
+                    Consulte as escalas de plantões, estágios e férias na planilha do Google Sheets.
+                </p>
+                <button class="btn-primary" onclick="window.open('${sheetsUrl}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Abrir Planilha
                 </button>
-            </form>
-        </div>
-    `;
-}
-
-function submitIncident(e) {
-    e.preventDefault();
-    const type = document.getElementById('incident-type').value;
-    const date = document.getElementById('incident-date').value;
-    const location = document.getElementById('incident-location').value;
-    const description = document.getElementById('incident-description').value;
-    const actions = document.getElementById('incident-actions').value;
-    
-    if (!type || !date || !location || !description) {
-        showToast('Por favor, preencha todos os campos obrigatórios', 'error');
-        return;
-    }
-    
-    // Aqui você pode adicionar a lógica para salvar no Firebase
-    showToast('Notificação enviada com sucesso! A equipe de qualidade foi notificada.', 'success');
-    
-    // Limpar formulário
-    document.getElementById('incident-form').reset();
-}
-
-// QUALIDADE E SEGURANÇA
-function renderAuditoriasConformidadePage() {
-    const items = [
-        { id: 'auditoria-higiene-maos', icon: 'fa-hands-wash', color: '#1abc9c', title: 'Higiene das Mãos', subtitle: 'Observação direta' },
-        { id: 'auditoria-medicamentos', icon: 'fa-pills', color: '#e74c3c', title: 'Uso de Medicamentos', subtitle: 'Armazenamento e preparo' },
-        { id: 'auditoria-abreviacoes', icon: 'fa-file-medical', color: '#f39c12', title: 'Abreviações Perigosas', subtitle: 'Auditoria de prontuários' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="showToast('Auditoria em desenvolvimento', 'info')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
             </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Auditorias e Conformidade</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
+            <div class="content-section">
+                <h3><i class="fas fa-info-circle"></i> Informações</h3>
+                <p style="font-size: 0.9rem; color: var(--cor-texto-claro);">
+                    A planilha contém informações sobre:
+                </p>
+                <ul style="margin-left: 20px; color: var(--cor-texto-claro); font-size: 0.9rem;">
+                    <li>Escalas de plantões</li>
+                    <li>Cronograma de estágios</li>
+                    <li>Calendário de férias</li>
+                    <li>Atividades programadas</li>
+                </ul>
+            </div>`;
 }
 
-function renderCapacitacaoTreinamentoPage() {
-    const items = [
-        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos' },
-        { id: 'auditorias-conformidade', icon: 'fa-clipboard-check', color: '#52b788', title: 'Auditorias e Conformidade', subtitle: 'Processos de verificação' },
-        { id: 'materiais-treinamento', icon: 'fa-book-open', color: '#1a4d2e', title: 'Materiais de Treinamento', subtitle: 'Recursos educativos' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Capacitação e Treinamento</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
-}
-
-function renderIndicadoresQualidadePage() {
-    return `
-        <h1 class="page-title">📊 Indicadores de Qualidade</h1>
-        <div class="content-section">
-            <h3 class="section-title">Indicadores Principais</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
-                <div style="background: linear-gradient(135deg, #1a4d2e, #2d6a4f); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700;">95%</div>
-                    <div>Adesão Higiene das Mãos</div>
-                </div>
-                <div style="background: linear-gradient(135deg, #40916c, #52b788); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700;">12</div>
-                    <div>Notificações Este Mês</div>
-                </div>
-                <div style="background: linear-gradient(135deg, #52b788, #74c69d); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                    <div style="font-size: 2.5rem; font-weight: 700;">4.8</div>
-                    <div>Satisfação do Paciente</div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// PROTOCOLOS E POPs
-function renderBibliotecaDocumentosPage() {
-    return renderDocumentosPage(); // Usa a função de documentos existente
-}
-
-function renderSegurancaMedicamentosPage() {
-    const items = [
-        { id: 'mavs', icon: 'fa-exclamation-circle', color: '#dc3545', title: 'Medicamentos de Alta Vigilância', subtitle: 'MAVs' },
-        { id: 'eletrolitos', icon: 'fa-vial', color: '#e74c3c', title: 'Eletrólitos Concentrados', subtitle: 'Segurança no preparo' },
-        { id: 'heparina', icon: 'fa-syringe', color: '#c0392b', title: 'Segurança no Uso da Heparina', subtitle: 'Protocolos específicos' },
-        { id: 'narcoticos', icon: 'fa-lock', color: '#8e44ad', title: 'Segurança dos Narcóticos', subtitle: 'Controle e armazenamento' },
-        { id: 'abreviacoes', icon: 'fa-ban', color: '#f39c12', title: 'Lista de Abreviações Perigosas', subtitle: 'Evitar erros' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="showToast('Protocolo em desenvolvimento', 'info')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Segurança de Medicamentos</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
-}
-
-// FERRAMENTAS CLÍNICAS
-function renderCalculadorasAnestesicasPage() {
-    const items = [
-        { id: 'calc-qmentum', icon: 'fa-award', color: '#1a4d2e', title: 'Calculadoras Qmentum', subtitle: 'Específicas para acreditação' },
-        { id: 'calc-geral', icon: 'fa-calculator', color: '#40916c', title: 'Calculadoras Anestesiologia Geral', subtitle: 'Ferramentas clínicas gerais' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('calculadoras')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Calculadoras Anestésicas</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
-}
-
-function renderConciliacaoMedicamentosaPage() {
-    const items = [
-        { id: 'conc-admissao', icon: 'fa-file-import', color: '#1a4d2e', title: 'Protocolo de Admissão', subtitle: 'Entrada do paciente' },
-        { id: 'conc-transferencia', icon: 'fa-right-left', color: '#40916c', title: 'Protocolo de Transferência', subtitle: 'Transição de cuidados' },
-        { id: 'conc-alta', icon: 'fa-file-export', color: '#52b788', title: 'Protocolo de Alta', subtitle: 'Saída do paciente' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="showToast('Protocolo em desenvolvimento', 'info')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Conciliação Medicamentosa</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
-}
-
-function renderAvaliacaoRiscosPage() {
-    const items = [
-        { id: 'risco-quedas', icon: 'fa-user-injured', color: '#e74c3c', title: 'Risco de Quedas', subtitle: 'Escala de Morse + Protocolo' },
-        { id: 'risco-ulceras', icon: 'fa-bed', color: '#f39c12', title: 'Úlceras de Pressão', subtitle: 'Escala de Braden + Protocolo' },
-        { id: 'risco-tev', icon: 'fa-heart-pulse', color: '#c0392b', title: 'Risco de TEV', subtitle: 'Caprini/Padua + Protocolo' }
-    ];
-    
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToRiskAssessment('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
-        </div>
-    `).join('');
-    
-    return `
-        <h1 class="page-title">Avaliação de Riscos</h1>
-        <div class="icon-grid">${grid}</div>
-    `;
-}
-
-function navigateToRiskAssessment(riskId) {
-    // Direciona para as calculadoras específicas
-    if (riskId === 'risco-quedas') {
-        openCalculator('morse');
-    } else if (riskId === 'risco-ulceras') {
-        openCalculator('braden');
-    } else if (riskId === 'risco-tev') {
-        // Mostra opções Caprini ou Padua
-        const html = `
-            <h1 class="page-title">Risco de TEV</h1>
-            <div class="icon-grid">
-                <div class="icon-card" onclick="openCalculator('caprini')">
-                    <div class="icon-card-icon" style="background: #c0392b">
-                        <i class="fas fa-calculator"></i>
-                    </div>
-                    <div class="icon-card-title">Caprini</div>
-                    <div class="icon-card-subtitle">Pacientes cirúrgicos</div>
-                </div>
-                <div class="icon-card" onclick="openCalculator('padua')">
-                    <div class="icon-card-icon" style="background: #c0392b">
-                        <i class="fas fa-calculator"></i>
-                    </div>
-                    <div class="icon-card-title">Padua</div>
-                    <div class="icon-card-subtitle">Pacientes clínicos</div>
-                </div>
-            </div>
-        `;
-        document.getElementById('page-content').innerHTML = html;
-    }
-}
-
-// ROPs - Navegação para Questões e Podcasts
-function navigateToROPsQuestoes(macroId, macroTitle) {
-    // Renderiza a lista de ROPs da macroárea selecionada
-    const areaData = ropsData[macroId];
-    if (!areaData) {
-        showToast('ROPs não encontradas para esta macroárea', 'error');
-        return;
-    }
-    
-    let html = `<h1 class="page-title">${macroTitle} - Questões</h1>`;
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma ROP para iniciar o quiz</p>';
-    html += '<div class="icon-grid">';
-    
-    for (const [ropKey, ropData] of Object.entries(areaData)) {
-        const questionCount = ropData.questions?.length || 0;
-        
-        html += `
-            <div class="icon-card" onclick='startQuiz("${macroId}", "${ropKey}")'>
-                <div class="icon-card-icon" style="background: #1a4d2e">
-                    <i class="fas fa-question-circle"></i>
-                </div>
-                <div class="icon-card-title">${ropData.title || ropKey}</div>
-                <div class="icon-card-subtitle">${questionCount} questões</div>
-            </div>
-        `;
-    }
-    
-    html += '</div>';
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
-    pageContent.scrollTop = 0;
-}
-
-function navigateToROPsPodcasts(macroId, macroTitle) {
-    // Filtra os podcasts da macroárea específica
-    const macroAreaMap = {
-        'cultura-seguranca': 'Cultura de Segurança',
-        'comunicacao': 'Comunicação',
-        'uso-medicamentos': 'Uso de Medicamentos',
-        'vida-profissional': 'Vida Profissional',
-        'prevencao-infeccoes': 'Prevenção de Infecções',
-        'avaliacao-riscos': 'Avaliação de Riscos'
-    };
-    
-    const categoryName = macroAreaMap[macroId];
-    
-    // Renderiza a lista de podcasts filtrados
-    const allPodcasts = [
-        // Cultura de Segurança (4)
-        { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de incidentes.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação dos incidentes (Disclosure).m4a", category: "Cultura de Segurança", color: "#9b59b6" },
-        
-        // Comunicação (8)
-        { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenfica\u00e7\u00e3o cliente.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abrevia\u00e7\u00f5es perigosas.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Concilia\u00e7\u00e3o medicamentosa Estrat\u00e9gica.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Concilia\u00e7\u00e3o medicamentosa Internado.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Concilia\u00e7\u00e3o medicamentosa ambulatorial.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Concilia\u00e7\u00e3o medicamentosa Emergencia.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a", category: "Comunicação", color: "#3498db" },
-        { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transi\u00e7\u00e3o Cuidado.m4a", category: "Comunicação", color: "#3498db" },
-        
-        // Demais categorias
-        { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a", category: "Uso de Medicamentos", color: "#e74c3c" },
-        { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a", category: "Vida Profissional", color: "#f39c12" },
-        { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Preven\u00e7\u00e3o de infec\u00e7\u00f5es/5.1 Preven\u00e7\u00e3o de infec\u00e7\u00f5es.m4a", category: "Prevenção de Infecções", color: "#1abc9c" },
-        { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avalia\u00e7\u00e3o de Riscos/6.1 Avalia\u00e7\u00e3o de Riscos.m4a", category: "Avaliação de Riscos", color: "#e67e22" }
-    ];
-    
-    const filteredPodcasts = allPodcasts.filter(p => p.category === categoryName);
-    const color = filteredPodcasts[0]?.color || '#1a4d2e';
-    
-    let html = `<h1 class="page-title">${macroTitle} - Podcasts</h1>`;
-    html += `<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">${filteredPodcasts.length} episódios disponíveis</p>`;
-    html += '<div class="content-section">';
-    html += '<div style="display: flex; flex-direction: column; gap: 10px;">';
-    
-    filteredPodcasts.forEach(p => {
-        html += `
-            <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='playPodcast("${p.file}", "${p.title}")'>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                        <i class="fas fa-play"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div class="icon-card-title" style="text-align: left; margin-bottom: 5px;">${p.title}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div></div>';
-    
-    const pageContent = document.getElementById('page-content');
-    pageContent.innerHTML = html;
-    pageContent.scrollTop = 0;
-}
-
-console.log('✅ ANEST-App Profissional carregado!');
+console.log('✅ Aplicativo inicializado!');
 

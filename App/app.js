@@ -366,7 +366,8 @@ const pages = {
         type: 'list',
         items: [
             { id: 'calc_qmentum', icon: 'fa-certificate', color: '#e74c3c', title: 'Calculadoras Qmentum', subtitle: 'Escalas para acreditação' },
-            { id: 'calc_anestesiologia', icon: 'fa-kit-medical', color: '#003B73', title: 'Anestesiologia Geral', subtitle: 'Calculadoras gerais' }
+            { id: 'calc_anestesiologia', icon: 'fa-kit-medical', color: '#003B73', title: 'Anestesiologia Geral', subtitle: 'Calculadoras gerais' },
+            { id: 'calc_doses_pediatricas', icon: 'fa-baby', color: '#9b59b6', title: 'Doses Pediátricas', subtitle: 'Calculadora automática de doses por peso' }
         ]
     },
     calc_qmentum: {
@@ -378,6 +379,11 @@ const pages = {
         title: "Anestesiologia Geral",
         type: 'custom',
         render: () => renderCalculatorList('anestesiologia')
+    },
+    calc_doses_pediatricas: {
+        title: "Doses Pediátricas",
+        type: 'custom',
+        render: renderDosesPediatricasPage
     },
     checklist: {
         title: "Cirurgia Segura (OMS)",
@@ -605,6 +611,215 @@ function handleCalculation(calcId) {
         resultDiv.innerHTML = '<h4>Erro ao calcular.</h4><p>Verifique os valores inseridos.</p>';
         resultDiv.style.display = 'block';
     }
+}
+
+// ==================== DOSES PEDIÁTRICAS ====================
+function renderDosesPediatricasPage() {
+    return `
+        <h1 class="page-title">Calculadora de Doses Pediátricas</h1>
+        <div class="content-section">
+            <div class="form-group">
+                <label for="peso_crianca">Peso da Criança (kg)</label>
+                <input type="number" id="peso_crianca" placeholder="Ex: 15" min="0" max="150" step="0.1">
+            </div>
+            <button type="button" class="submit-button" onclick="calcularDosesPediatricas()">Calcular Todas as Doses</button>
+            
+            <div id="doses-results" style="display:none; margin-top: 20px;"></div>
+        </div>
+        
+        <style>
+            .dose-category {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 15px;
+                margin: 15px 0;
+                border-left: 4px solid #43e97b;
+            }
+            .dose-category h3 {
+                margin-top: 0;
+                color: #003B73;
+                font-size: 1.1rem;
+                border-bottom: 2px solid #43e97b;
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+            .dose-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .dose-table th {
+                background: #003B73;
+                color: white;
+                padding: 10px 8px;
+                text-align: left;
+                font-size: 0.85rem;
+                font-weight: 600;
+            }
+            .dose-table td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #e9ecef;
+                font-size: 0.9rem;
+            }
+            .dose-table tr:last-child td {
+                border-bottom: none;
+            }
+            .dose-table tr:hover {
+                background: #f8f9fa;
+            }
+            .dose-value {
+                font-weight: 700;
+                color: #e74c3c;
+                font-size: 1rem;
+            }
+            .dose-obs {
+                font-size: 0.8rem;
+                color: #666;
+                font-style: italic;
+            }
+        </style>
+    `;
+}
+
+function calcularDosesPediatricas() {
+    const peso = parseFloat(document.getElementById('peso_crianca').value);
+    const resultsDiv = document.getElementById('doses-results');
+    
+    if (!peso || peso <= 0) {
+        showToast('Por favor, insira um peso válido', 'error');
+        return;
+    }
+    
+    // Verifica se os dados estão disponíveis
+    if (typeof dosesPediatricasData === 'undefined') {
+        resultsDiv.innerHTML = '<div class="dose-category"><h3>Erro</h3><p>Dados de doses pediátricas não carregados. Recarregue a página.</p></div>';
+        resultsDiv.style.display = 'block';
+        return;
+    }
+    
+    let html = `<h2 style="color: #003B73; text-align: center; margin-bottom: 20px;">Resultados para: ${peso} kg</h2>`;
+    
+    // PCR - Parada Cardiorrespiratória
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-heartbeat"></i> PCR - Parada Cardiorrespiratória</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.pcr.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Sedação, Analgesia e Bloqueio Neuromuscular
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-syringe"></i> Sedação, Analgesia e Bloqueio Neuromuscular</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.sedacao.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Anticonvulsivantes
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-brain"></i> Anticonvulsivantes</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.anticonvulsivantes.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Antídotos
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-shield-virus"></i> Antídotos</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Dose Final</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.antidotos.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Infusões Contínuas
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-pump-medical"></i> Infusões Contínuas</h3>';
+    html += '<table class="dose-table">';
+    html += '<thead><tr><th>Droga</th><th>Apresentação</th><th>Dose Padrão</th><th>Diluição</th><th class="dose-value">Velocidade (ml/h)</th></tr></thead><tbody>';
+    
+    dosesPediatricasData.infusoes.forEach(item => {
+        const resultado = item.calcularDose(peso);
+        html += `<tr>
+            <td><strong>${item.droga}</strong></td>
+            <td>${item.apresentacao}</td>
+            <td>${item.dosePadrao}</td>
+            <td>${item.diluicao}</td>
+            <td class="dose-value">${resultado.dose} ${resultado.unidade}</td>
+        </tr>`;
+        if (resultado.obs) {
+            html += `<tr><td colspan="5" class="dose-obs">${resultado.obs}</td></tr>`;
+        }
+    });
+    html += '</tbody></table></div>';
+    
+    // Desfibrilação
+    const defib = dosesPediatricasData.desfibrilacao.calcularCarga(peso);
+    html += '<div class="dose-category">';
+    html += '<h3><i class="fas fa-bolt"></i> Desfibrilação</h3>';
+    html += `<p style="font-size: 1rem; margin: 10px 0;"><strong>Primeira Carga:</strong> <span class="dose-value">${defib.primeiraCarga} J</span></p>`;
+    html += `<p style="font-size: 1rem; margin: 10px 0;"><strong>Cargas Seguintes:</strong> <span class="dose-value">${defib.cargasSeguintes} J</span></p>`;
+    html += `<p class="dose-obs">${defib.obs}</p>`;
+    html += '</div>';
+    
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+    showToast('Doses calculadas com sucesso!', 'success');
 }
 
 // ==================== UTILITY FUNCTIONS ====================

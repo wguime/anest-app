@@ -8,7 +8,7 @@
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1a4d2e">
+    <meta name="theme-color" content="#43e97b">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
@@ -22,9 +22,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="novo-styles.css">
 </head>
-<body class="light-mode">
+<body>
     
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-overlay">
@@ -48,153 +48,100 @@
             </div>
 
             <!-- Login Form -->
-            <div id="loginTab" class="auth-tab-content active">
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="loginEmail">E-mail</label>
-                        <input type="email" id="loginEmail" required placeholder="seu@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Entrar
-                    </button>
-                </form>
-                
-                <div class="auth-divider">ou</div>
-                
-                <button id="googleLoginBtn" class="btn-google">
-                    <i class="fab fa-google"></i> Entrar com Google
-                </button>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerTab" class="auth-tab-content">
-                <form id="registerForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="registerFirstName">Nome *</label>
-                        <input type="text" id="registerFirstName" required placeholder="Seu nome">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerLastName">Sobrenome *</label>
-                        <input type="text" id="registerLastName" required placeholder="Seu sobrenome">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">E-mail</label>
-                        <input type="email" id="registerEmail" required placeholder="seu@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Senha</label>
-                        <input type="password" id="registerPassword" required placeholder="••••••••" minlength="6">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPasswordConfirm">Confirmar Senha</label>
-                        <input type="password" id="registerPasswordConfirm" required placeholder="••••••••" minlength="6">
-                    </div>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-user-plus"></i> Criar Conta
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App Container -->
-    <div id="appContainer" class="app-container" style="display: none;">
-        <!-- Header -->
-        <header id="appHeader" class="app-header">
-            <div class="header-content">
-                <img src="logo-anest.png" alt="ANEST Logo" class="header-logo">
-                <div class="header-actions">
-                    <button id="darkModeToggle" class="header-btn" title="Alternar modo escuro">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <button id="adminBtn" class="header-btn admin-btn" style="display: none;" title="Painel Admin">
-                        <i class="fas fa-user-shield"></i>
-                    </button>
-                    <button id="profileBtn" class="header-btn" title="Perfil">
-                        <i class="fas fa-user-circle"></i>
-                    </button>
-                    <button id="logoutBtn" class="header-btn" title="Sair">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Page Content -->
-        <main id="page-content" class="page-content">
-            <!-- Dynamic content will be loaded here -->
-        </main>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <button class="nav-button active" data-page="painel">
-                <i class="fas fa-home"></i>
-                <span>Painel</span>
-            </button>
-            <button class="nav-button" data-page="qualidade">
-                <i class="fas fa-shield-alt"></i>
-                <span>Qualidade</span>
-            </button>
-            <button class="nav-button" data-page="protocolos">
-                <i class="fas fa-book-medical"></i>
-                <span>Protocolos</span>
-            </button>
-            <button class="nav-button" data-page="ferramentas">
-                <i class="fas fa-toolbox"></i>
-                <span>Ferramentas</span>
-            </button>
-            <button class="nav-button" data-page="documentos">
-                <i class="fas fa-folder-open"></i>
-                <span>Documentos</span>
-            </button>
-        </nav>
-    </div>
-
-    <!-- Profile Modal -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <h2>Complete seu Perfil</h2>
-            <p>Por favor, preencha seus dados para continuar:</p>
-            <form id="profileForm" class="modal-form">
+            <form id="loginForm" class="auth-form">
                 <div class="form-group">
-                    <label for="profileFirstName">Nome *</label>
-                    <input type="text" id="profileFirstName" required placeholder="Seu nome">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileLastName">Sobrenome *</label>
-                    <input type="text" id="profileLastName" required placeholder="Seu sobrenome">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="loginPassword" required>
                 </div>
                 <button type="submit" class="btn-primary">
-                    <i class="fas fa-check"></i> Salvar
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                <a href="#" class="forgot-password" id="forgotPasswordLink">Esqueceu a senha?</a>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome</label>
+                    <input type="text" id="registerFirstName" required placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome</label>
+                    <input type="text" id="registerLastName" required placeholder="Sobrenome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirmar Senha</label>
+                    <input type="password" id="registerPasswordConfirm" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Registrar
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Profile Menu (Dropdown) -->
-    <div id="profileMenu" class="profile-menu" style="display: none;">
-        <div class="profile-menu-header">
-            <div class="profile-avatar">
-                <i class="fas fa-user-circle"></i>
-            </div>
-            <div class="profile-info">
-                <strong id="profileName">Nome do Usuário</strong>
-                <small id="profileEmail">email@exemplo.com</small>
-                <span id="profileRole" class="role-badge">Visitante</span>
-            </div>
+    <!-- Profile Completion Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>Complete seu Perfil</h2>
+            <p>Para continuar, precisamos de algumas informações:</p>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome *</label>
+                    <input type="text" id="profileFirstName" required placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome *</label>
+                    <input type="text" id="profileLastName" required placeholder="Sobrenome">
+                </div>
+                <button type="submit" class="btn-primary">Salvar e Continuar</button>
+            </form>
         </div>
-        <div class="profile-menu-actions">
-            <button id="editProfileBtn" class="profile-menu-btn">
-                <i class="fas fa-edit"></i> Editar Perfil
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <header id="appHeader">
+            <button id="back-button"><i class="fas fa-chevron-left"></i></button>
+            <img src="logo-anest.png" alt="ANEST" class="header-logo">
+            <span id="header-title">Painel Principal</span>
+            <button id="profileButton" class="header-btn"><i class="fas fa-user-circle"></i></button>
+        </header>
+        
+        <main id="page-content"></main>
+        
+        <nav class="bottom-nav">
+            <button class="nav-button active" data-page="painel">
+                <i class="fas fa-home"></i><span>Painel</span>
             </button>
-            <button id="closeProfileMenuBtn" class="profile-menu-btn">
-                <i class="fas fa-times"></i> Fechar
+            <button class="nav-button" data-page="qualidade">
+                <i class="fas fa-shield-alt"></i><span>Qualidade</span>
             </button>
-        </div>
+            <button class="nav-button" data-page="protocolos">
+                <i class="fas fa-book-medical"></i><span>Protocolos</span>
+            </button>
+            <button class="nav-button" data-page="ferramentas">
+                <i class="fas fa-toolbox"></i><span>Ferramentas</span>
+            </button>
+            <button class="nav-button" data-page="rops">
+                <i class="fas fa-award"></i><span>ROPs</span>
+            </button>
+            <button class="nav-button" data-page="residencia">
+                <i class="fas fa-user-md"></i><span>Residência</span>
+            </button>
+        </nav>
     </div>
 
     <!-- Toast Notification -->
@@ -202,11 +149,10 @@
 
     <!-- Firebase Config & Core Scripts -->
     <script src="firebase-config.js"></script>
-    <script src="permissions-system.js"></script>
     <script src="rops-data-from-banco.js"></script>
+    <script src="../doses-pediatricas-data.js"></script>
     <script src="calculadoras-definitions.js"></script>
-    <script src="documents-data.js"></script>
-    <script src="app.js"></script>
+    <script src="novo-app.js"></script>
     
     <!-- Service Worker Registration -->
     <script>

@@ -1,7 +1,7 @@
 // ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
 // Versão Profissional
 
-const CACHE_VERSION = 'v6.0.0-profissional';
+const CACHE_VERSION = 'v6.1.0-doses-pediatricas';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Essential files to cache
@@ -13,6 +13,7 @@ const ESSENTIAL_FILES = [
     '/firebase-config.js',
     '/permissions-system.js',
     '/rops-data-from-banco.js',
+    '/doses-pediatricas-data.js',
     '/calculadoras-definitions.js',
     '/documents-data.js',
     '/logo-anest.png',
