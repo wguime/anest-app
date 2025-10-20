@@ -1,82 +1,50 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANEST - Sistema de Gestão e Treinamento</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Anest-App Qmentum</title>
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="permissions-styles.css">
-    <link rel="stylesheet" href="google-sheets-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- PWA Theme Color -->
-    <meta name="theme-color" content="#1a4d2e">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#1a4d2e">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a202c">
-    
-    <!-- iOS Meta Tags -->
+    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ANEST">
-    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="96x96" href="icons/icon-96x96.png">
-    <link rel="apple-touch-icon" sizes="128x128" href="icons/icon-128x128.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="384x384" href="icons/icon-384x384.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512x512.png">
+    <meta name="theme-color" content="#43e97b">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
-    <!-- iOS Splash Screens -->
-    <link rel="apple-touch-startup-image" href="icons/icon-512x512.png">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
-    <!-- Standard Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- Android/Chrome -->
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileColor" content="#1a4d2e">
-    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+    <!-- Styles -->
+    <link rel="stylesheet" href="novo-styles.css">
 </head>
 <body>
+    
     <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen">
+    <div id="loadingScreen" class="loading-overlay">
         <div class="loading-content">
-            <img src="./NovoLogoAnest.png" alt="ANEST" class="loading-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div class="loading-fallback" style="display: none;">
-                <i class="fas fa-heartbeat"></i>
-                <h2>ANEST</h2>
-            </div>
             <div class="loader"></div>
-            <p>Carregando Sistema...</p>
+            <p>Carregando...</p>
         </div>
     </div>
 
     <!-- Login Screen -->
-    <div id="loginScreen" class="login-screen">
-        <div class="login-container">
-            <div class="login-header">
-                <img src="./LogoANEST.png" alt="ANEST" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <div class="login-logo-fallback" style="display: none;">
-                    <i class="fas fa-heartbeat"></i>
-                    <h1>ANEST</h1>
-                </div>
-                <p style="margin-top: 20px;">Sistema de Gestão e Treinamento</p>
+    <div id="loginScreen" class="screen auth-screen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <img src="logo-anest.png" alt="ANEST Logo" class="auth-logo">
+                <p class="auth-subtitle">Sistema de Gestão Qmentum</p>
             </div>
             
-            <div class="login-tabs">
-                <button class="tab-btn active" onclick="showTab('login')">Login</button>
-                <button class="tab-btn" onclick="showTab('register')">Registrar</button>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-tab="login">Login</button>
+                <button class="auth-tab-btn" data-tab="register">Registrar</button>
             </div>
 
             <!-- Login Form -->
@@ -92,14 +60,18 @@
                 <button type="submit" class="btn-primary">
                     <i class="fas fa-sign-in-alt"></i> Entrar
                 </button>
-                <a href="#" class="forgot-password" onclick="resetPassword()">Esqueceu a senha?</a>
+                <a href="#" class="forgot-password" id="forgotPasswordLink">Esqueceu a senha?</a>
             </form>
 
             <!-- Register Form -->
             <form id="registerForm" class="auth-form" style="display: none;">
                 <div class="form-group">
-                    <label><i class="fas fa-user"></i> Nome Completo</label>
-                    <input type="text" id="registerName" required>
+                    <label><i class="fas fa-user"></i> Nome</label>
+                    <input type="text" id="registerFirstName" required placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome</label>
+                    <input type="text" id="registerLastName" required placeholder="Sobrenome">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
@@ -107,248 +79,90 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Senha</label>
-                    <input type="password" id="registerPassword" required minlength="6">
+                    <input type="password" id="registerPassword" required>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Confirmar Senha</label>
-                    <input type="password" id="registerPasswordConfirm" required minlength="6">
+                    <input type="password" id="registerPasswordConfirm" required>
                 </div>
                 <button type="submit" class="btn-primary">
-                    <i class="fas fa-user-plus"></i> Criar Conta
+                    <i class="fas fa-user-plus"></i> Registrar
                 </button>
             </form>
-
-            <div class="divider">
-                <span>ou</span>
-            </div>
-
-            <button class="btn-google" onclick="loginWithGoogle()">
-                <i class="fab fa-google"></i> Continuar com Google
-            </button>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="mainApp" style="display: none;">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="./NovoLogoAnest.png" alt="ANEST" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                    <div class="logo-fallback" style="display: none;">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>ANEST</span>
-                    </div>
+    <!-- Profile Completion Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>Complete seu Perfil</h2>
+            <p>Para continuar, precisamos de algumas informações:</p>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome *</label>
+                    <input type="text" id="profileFirstName" required placeholder="Nome">
                 </div>
-                <div class="user-menu">
-                    <button class="btn-icon dark-mode-toggle-header" onclick="toggleDarkMode()" title="Alternar modo escuro">
-                        <i class="fas fa-moon" id="darkModeIcon"></i>
-                    </button>
-                    <button id="adminHeaderBtn" class="btn-icon" onclick="showAdminPermissionsPanel()" title="Painel Admin" style="display: none; background: linear-gradient(135deg, #dc3545, #c82333); color: white;">
-                        <i class="fas fa-user-shield"></i>
-                    </button>
-                    <button class="btn-icon" onclick="showProfile()" title="Perfil">
-                        <i class="fas fa-user-circle"></i>
-                    </button>
-                    <button class="btn-icon" onclick="logout()" title="Sair">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome *</label>
+                    <input type="text" id="profileLastName" required placeholder="Sobrenome">
                 </div>
-            </div>
+                <button type="submit" class="btn-primary">Salvar e Continuar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <header id="appHeader">
+            <button id="back-button"><i class="fas fa-chevron-left"></i></button>
+            <img src="logo-anest.png" alt="ANEST" class="header-logo">
+            <span id="header-title">Painel Principal</span>
+            <button id="profileButton" class="header-btn"><i class="fas fa-user-circle"></i></button>
         </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Home Screen -->
-            <div id="homeScreen" class="screen active">
-                <h2 class="screen-title" id="welcomeMessage">Bem-vindo ao Sistema ANEST</h2>
-                
-                <div class="menu-grid">
-                    <!-- ROPs - Desafio (DESTAQUE) -->
-                    <div class="menu-card menu-card-highlight" onclick="showROPs()">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h3>ROPs - Desafio</h3>
-                        <p>Quiz, podcasts e ranking</p>
-                    </div>
-
-                    <!-- Documentos (NOVO GRUPO) -->
-                    <div class="menu-card menu-card-highlight" onclick="showDocumentosGroup()">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #4f7942 0%, #7fb069 100%)">
-                            <i class="fas fa-folder-open"></i>
-                        </div>
-                        <h3>Documentos</h3>
-                        <p>Protocolos, políticas e mais</p>
-                    </div>
-
-                    <!-- Notificações (NOVO) -->
-                    <div class="menu-card" onclick="abrirNotificacoes()">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #f5a623 0%, #f76b1c 100%)">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <h3>Notificações</h3>
-                        <p>Avisos e comunicados</p>
-                    </div>
-
-                    <!-- Residência Médica -->
-                    <div class="menu-card" onclick="showResidencia()">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%)">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <h3>Residência Médica</h3>
-                        <p>Aulas, artigos e escalas</p>
-                    </div>
-
-                    <!-- Admin Panel (só aparece para admins) -->
-                    <div id="adminMenuCard" class="menu-card" onclick="showAdminPermissionsPanel()" style="display: none;">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <h3>Admin</h3>
-                        <p>Gerenciar permissões</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ROPs Screen (will be populated dynamically) -->
-            <div id="ropsScreen" class="screen"></div>
-
-            <!-- Quiz Screen -->
-            <div id="quizScreen" class="screen"></div>
-
-            <!-- Results Screen -->
-            <div id="resultsScreen" class="screen"></div>
-
-            <!-- Ranking Screen -->
-            <div id="rankingScreen" class="screen"></div>
-
-            <!-- Other Screens -->
-            <div id="documentosScreen" class="screen"></div>
-            <div id="notificacoesScreen" class="screen"></div>
-            <div id="podcastsScreen" class="screen"></div>
-            <div id="residenciaScreen" class="screen"></div>
-            <div id="protocolosScreen" class="screen"></div>
-            <div id="politicasScreen" class="screen"></div>
-            <div id="formulariosScreen" class="screen"></div>
-            <div id="manuaisScreen" class="screen"></div>
-            <div id="relatoriosScreen" class="screen"></div>
-            <div id="processosScreen" class="screen"></div>
-            <div id="riscosScreen" class="screen"></div>
-            <div id="termosScreen" class="screen"></div>
-            <div id="climaScreen" class="screen"></div>
-            <div id="planoSegurancaScreen" class="screen"></div>
-        </main>
+        
+        <main id="page-content"></main>
+        
+        <nav class="bottom-nav">
+            <button class="nav-button active" data-page="painel">
+                <i class="fas fa-home"></i><span>Painel</span>
+            </button>
+            <button class="nav-button" data-page="qualidade">
+                <i class="fas fa-shield-alt"></i><span>Qualidade</span>
+            </button>
+            <button class="nav-button" data-page="protocolos">
+                <i class="fas fa-book-medical"></i><span>Protocolos</span>
+            </button>
+            <button class="nav-button" data-page="ferramentas">
+                <i class="fas fa-toolbox"></i><span>Ferramentas</span>
+            </button>
+            <button class="nav-button" data-page="rops">
+                <i class="fas fa-award"></i><span>ROPs</span>
+            </button>
+            <button class="nav-button" data-page="residencia">
+                <i class="fas fa-user-md"></i><span>Residência</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- Admin Screen -->
-    <div id="adminScreen" class="screen"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
-    <!-- Custom Content Screen (Google Sheets) -->
-    <div id="custom" class="screen" style="display: none;">
-        <div id="customContent"></div>
-    </div>
-
-    <!-- Toast Notifications -->
-    <div id="toastContainer" class="toast-container"></div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    
-    <!-- Chart.js for graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-    
-    <!-- Supabase (Banco de Dados) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- App Scripts -->
+    <!-- Firebase Config & Core Scripts -->
     <script src="firebase-config.js"></script>
-    <script src="permissions-system.js"></script>
     <script src="rops-data-from-banco.js"></script>
-    <script src="documents-data.js"></script>
-    <script src="residencia-config.js"></script>
-    <script src="residencia-app.js"></script>
-    <script src="google-sheets-integration.js"></script>
-    <script src="app.js"></script>
+    <script src="calculadoras-definitions.js"></script>
+    <script src="novo-app.js"></script>
     
-    <!-- PWA Service Worker Registration -->
+    <!-- Service Worker Registration -->
     <script>
-        // Registrar Service Worker para PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then((registration) => {
-                        console.log('✅ Service Worker registrado com sucesso:', registration.scope);
-                        
-                        // Checar atualizações a cada 1 hora
-                        setInterval(() => {
-                            registration.update();
-                        }, 3600000);
-                        
-                        // Detectar quando há uma nova versão disponível
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // Nova versão disponível!
-                                    showUpdateNotification();
-                                }
-                            });
-                        });
-                    })
-                    .catch((error) => {
-                        console.log('❌ Erro ao registrar Service Worker:', error);
-                    });
-                
-                // Escutar mensagens do Service Worker
-                navigator.serviceWorker.addEventListener('message', (event) => {
-                    if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-                        showUpdateNotification();
-                    }
-                });
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registrado!'))
+                    .catch(err => console.error('Erro ao registrar Service Worker:', err));
             });
-        }
-        
-        // Mostrar notificação de atualização disponível
-        function showUpdateNotification() {
-            if (typeof showToast === 'function') {
-                const toast = document.createElement('div');
-                toast.className = 'toast info';
-                toast.innerHTML = `
-                    <i class="fas fa-info-circle"></i>
-                    <span class="toast-message">
-                        Nova versão disponível!
-                        <button onclick="window.location.reload()" style="margin-left: 10px; padding: 5px 10px; background: white; color: #007bff; border: none; border-radius: 4px; cursor: pointer;">
-                            Atualizar Agora
-                        </button>
-                    </span>
-                `;
-                document.getElementById('toastContainer').appendChild(toast);
-                
-                // Remover após 10 segundos (mais tempo para dar chance de clicar)
-                setTimeout(() => {
-                    toast.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => toast.remove(), 300);
-                }, 10000);
-            }
-        }
-        
-        // Detectar quando está instalado como PWA
-        window.addEventListener('appinstalled', (event) => {
-            console.log('🎉 App instalado com sucesso!');
-            if (typeof showToast === 'function') {
-                showToast('App ANEST instalado com sucesso!', 'success');
-            }
-        });
-        
-        // Detectar modo standalone (app instalado)
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            console.log('📱 App rodando em modo instalado (PWA)');
-            document.body.classList.add('pwa-mode');
         }
     </script>
 </body>
 </html>
+

@@ -1,26 +1,19 @@
-// ==================== SERVICE WORKER - ANEST PWA ====================
+// ==================== SERVICE WORKER - ANEST PWA (NOVO LAYOUT) ====================
 // Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v4.2.0';
+const CACHE_VERSION = 'v5.2.0-podcasts';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache (funcionamento offline)
 const ESSENTIAL_FILES = [
-    '/anest-app/',
-    '/anest-app/index.html',
-    '/anest-app/styles.css',
-    '/anest-app/permissions-styles.css',
-    '/anest-app/app.js',
-    '/anest-app/permissions-system.js',
-    '/anest-app/firebase-config.js',
-    '/anest-app/rops-data.js',
-    '/anest-app/documents-data.js',
-    '/anest-app/residencia-config.js',
-    '/anest-app/residencia-app.js',
-    '/anest-app/google-sheets-integration.js',
-    '/anest-app/google-sheets-styles.css',
-    '/anest-app/LogoANEST.png',
-    '/anest-app/NovoLogoAnest.png',
-    '/anest-app/manifest.json'
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
+    './calculadoras-definitions.js',
+    './firebase-config.js',
+    './rops-data-from-banco.js',
+    './logo-anest.png',
+    './manifest.json'
 ];
 
 // Arquivos que podem ser cacheados dinamicamente
@@ -32,9 +25,7 @@ const EXTERNAL_URLS = [
     'https://fonts.googleapis.com',
     'https://fonts.gstatic.com',
     'https://cdnjs.cloudflare.com',
-    'https://cdn.jsdelivr.net',
-    'https://api.z-api.io',
-    'https://luizeuzebio.com.br'
+    'https://cdn.jsdelivr.net'
 ];
 
 // ==================== INSTALAÇÃO ====================
@@ -115,7 +106,7 @@ async function cacheFirst(request) {
         const cachedResponse = await caches.match(request);
         if (cachedResponse) {
             // Atualiza cache em background se for um arquivo essencial
-            if (ESSENTIAL_FILES.some(file => request.url.endsWith(file))) {
+            if (ESSENTIAL_FILES.some(file => request.url.includes(file))) {
                 updateCache(request);
             }
             return cachedResponse;
@@ -133,12 +124,6 @@ async function cacheFirst(request) {
         return networkResponse;
     } catch (error) {
         console.error('[Service Worker] Erro no cache first:', error);
-        
-        // Fallback para página offline se disponível
-        const offlinePage = await caches.match('/anest-app/offline.html');
-        if (offlinePage) {
-            return offlinePage;
-        }
         
         // Retorna resposta de erro
         return new Response('Offline - Não foi possível carregar o recurso', {
@@ -171,12 +156,6 @@ async function networkFirst(request) {
         const cachedResponse = await caches.match(request);
         if (cachedResponse) {
             return cachedResponse;
-        }
-        
-        // Fallback para página offline
-        const offlinePage = await caches.match('/anest-app/offline.html');
-        if (offlinePage) {
-            return offlinePage;
         }
         
         return new Response('Offline', {
@@ -223,45 +202,6 @@ self.addEventListener('message', (event) => {
         );
     }
 });
-
-// ==================== NOTIFICAÇÕES PUSH ====================
-self.addEventListener('push', (event) => {
-    const options = {
-        body: event.data ? event.data.text() : 'Nova notificação do ANEST',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png',
-        vibrate: [200, 100, 200],
-        tag: 'anest-notification',
-        requireInteraction: false,
-        data: {
-            url: '/anest-app/'
-        }
-    };
-    
-    event.waitUntil(
-        self.registration.showNotification('ANEST', options)
-    );
-});
-
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close();
-    
-    event.waitUntil(
-        clients.openWindow(event.notification.data.url || '/anest-app/')
-    );
-});
-
-// ==================== SINCRONIZAÇÃO EM BACKGROUND ====================
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'sync-data') {
-        event.waitUntil(syncData());
-    }
-});
-
-async function syncData() {
-    console.log('[Service Worker] Sincronizando dados...');
-    // Implementar sincronização de dados offline quando necessário
-}
 
 console.log('[Service Worker] Carregado - Versão:', CACHE_VERSION);
 

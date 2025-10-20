@@ -1,183 +1,293 @@
 // ==================== GLOBAL STATE ====================
 let currentUser = null;
-let currentScreen = 'home';
+let userProfile = null;
+let navigationStack = [];
 let currentQuiz = null;
-let userProgress = {
-    scores: {},
-    completedTopics: [],
-    totalPoints: 0,
-    achievements: []
-};
+let currentQuizData = [];
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
+    setupEventListeners();
 });
 
 function initializeApp() {
-    // Hide loading screen after a maximum of 2 seconds
-    setTimeout(() => {
-        hideLoading();
-    }, 2000);
-    
-    // Check if Firebase is loaded
-    if (typeof firebase === 'undefined' || typeof auth === 'undefined') {
-        console.warn('Firebase not loaded, showing login screen');
-        hideLoading();
-        showLoginScreen();
-        return;
-    }
-    
     // Check authentication state
-    try {
-        auth.onAuthStateChanged(async (user) => {
-            hideLoading();
-            if (user) {
-                // Carregar dados completos do usuário (com permissões)
-                await loadCurrentUserData();
-                loadUserProgress();
-                showMainApp();
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            await loadUserProfile();
+            
+            // Check if profile is complete
+            if (!userProfile || !userProfile.firstName || !userProfile.lastName) {
+                showProfileModal();
             } else {
-                showLoginScreen();
+                showMainApp();
             }
-        });
-    } catch (error) {
-        console.error('Error initializing auth:', error);
-        hideLoading();
-        showLoginScreen();
-    }
+        } else {
+            showLoginScreen();
+        }
+    });
 }
 
-// ==================== AUTHENTICATION ====================
-function showTab(tab) {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const tabs = document.querySelectorAll('.tab-btn');
-    
-    tabs.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    if (tab === 'login') {
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    } else {
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'block';
-    }
-}
-
-// Login with email/password
-document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    try {
-        showLoading();
-        await auth.signInWithEmailAndPassword(email, password);
-        hideLoading();
-    } catch (error) {
-        hideLoading();
-        handleAuthError(error);
-    }
-});
-
-// Register new user
-document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('registerPasswordConfirm').value;
-    
-    if (password !== confirmPassword) {
-        showToast('As senhas não coincidem!', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showToast('A senha deve ter pelo menos 6 caracteres!', 'error');
-        return;
-    }
-    
-    try {
-        showLoading();
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        
-        // Update profile with name
-        await userCredential.user.updateProfile({
-            displayName: name
+function setupEventListeners() {
+    // Auth tabs
+    document.querySelectorAll('.auth-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
         });
-        
-        // Initialize user data in Firestore
-        await db.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            progress: {},
-            totalPoints: 0
-        });
-        
-        hideLoading();
-        showToast('Conta criada com sucesso!', 'success');
-    } catch (error) {
-        hideLoading();
-        handleAuthError(error);
-    }
-});
+    });
 
-// Login with Google
-async function loginWithGoogle() {
-    try {
-        showLoading();
-        const result = await auth.signInWithPopup(googleProvider);
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
         
-        // Check if user exists in Firestore, if not create
-        const userDoc = await db.collection('users').doc(result.user.uid).get();
-        if (!userDoc.exists) {
-            await db.collection('users').doc(result.user.uid).set({
-                name: result.user.displayName,
-                email: result.user.email,
+        try {
+            showLoading();
+            await auth.signInWithEmailAndPassword(email, password);
+            hideLoading();
+            showToast('Login realizado com sucesso!', 'success');
+        } catch (error) {
+            hideLoading();
+            showToast(getErrorMessage(error), 'error');
+        }
+    });
+
+    // Register form
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const firstName = document.getElementById('registerFirstName').value.trim();
+        const lastName = document.getElementById('registerLastName').value.trim();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+        
+        if (password !== confirmPassword) {
+            showToast('As senhas não coincidem!', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showToast('A senha deve ter pelo menos 6 caracteres!', 'error');
+            return;
+        }
+
+        if (!firstName || !lastName) {
+            showToast('Nome e sobrenome são obrigatórios!', 'error');
+            return;
+        }
+        
+        try {
+            showLoading();
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            // Create user profile with mandatory fields
+            await db.collection('users').doc(userCredential.user.uid).set({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                profileComplete: true,
                 progress: {},
                 totalPoints: 0
             });
+            
+            hideLoading();
+            showToast('Conta criada com sucesso!', 'success');
+        } catch (error) {
+            hideLoading();
+            showToast(getErrorMessage(error), 'error');
+        }
+    });
+
+    // Profile form
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const firstName = document.getElementById('profileFirstName').value.trim();
+        const lastName = document.getElementById('profileLastName').value.trim();
+        
+        if (!firstName || !lastName) {
+            showToast('Nome e sobrenome são obrigatórios!', 'error');
+            return;
         }
         
-        hideLoading();
-    } catch (error) {
-        hideLoading();
-        handleAuthError(error);
-    }
-}
-
-// Reset password
-async function resetPassword() {
-    const email = prompt('Digite seu email para recuperação de senha:');
-    if (!email) return;
-    
-    try {
-        await auth.sendPasswordResetEmail(email);
-        showToast('Email de recuperação enviado! Verifique sua caixa de entrada.', 'success');
-    } catch (error) {
-        handleAuthError(error);
-    }
-}
-
-// Logout
-async function logout() {
-    if (confirm('Deseja realmente sair?')) {
         try {
-            await auth.signOut();
-            showToast('Logout realizado com sucesso!', 'success');
-            showLoginScreen();
+            showLoading();
+            await db.collection('users').doc(currentUser.uid).update({
+                firstName: firstName,
+                lastName: lastName,
+                profileComplete: true,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            userProfile.firstName = firstName;
+            userProfile.lastName = lastName;
+            userProfile.profileComplete = true;
+            
+            hideLoading();
+            hideProfileModal();
+            showMainApp();
+            showToast('Perfil atualizado com sucesso!', 'success');
         } catch (error) {
-            showToast('Erro ao fazer logout: ' + error.message, 'error');
+            hideLoading();
+            showToast('Erro ao atualizar perfil: ' + error.message, 'error');
         }
+    });
+
+    // Forgot password
+    document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        
+        if (!email) {
+            showToast('Digite seu email no campo acima', 'info');
+            return;
+        }
+        
+        try {
+            await auth.sendPasswordResetEmail(email);
+            showToast('Email de recuperação enviado!', 'success');
+        } catch (error) {
+            showToast('Erro ao enviar email: ' + error.message, 'error');
+        }
+    });
+
+    // Navigation buttons
+    document.querySelectorAll('.nav-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pageName = btn.dataset.page;
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            navigationStack = [];
+            renderPage(pageName);
+        });
+    });
+
+    // Back button
+    document.getElementById('back-button').addEventListener('click', () => {
+        if (navigationStack.length > 0) {
+            const previousPageId = navigationStack.pop();
+            renderPage(previousPageId, false);
+        }
+    });
+
+    // Profile button
+    document.getElementById('profileButton').addEventListener('click', () => {
+        showProfileMenu();
+    });
+
+    // Page content click delegation
+    document.getElementById('page-content').addEventListener('click', handlePageClick);
+}
+
+// ==================== USER PROFILE ====================
+async function loadUserProfile() {
+    try {
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+            userProfile = doc.data();
+        } else {
+            // Create initial profile
+            userProfile = {
+                email: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                profileComplete: false,
+                progress: {},
+                totalPoints: 0
+            };
+            await db.collection('users').doc(currentUser.uid).set(userProfile);
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
     }
 }
 
-// ==================== UI MANAGEMENT ====================
+function showProfileModal() {
+    const modal = document.getElementById('profileModal');
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+    
+    // Pre-fill if data exists
+    if (userProfile.firstName) {
+        document.getElementById('profileFirstName').value = userProfile.firstName;
+    }
+    if (userProfile.lastName) {
+        document.getElementById('profileLastName').value = userProfile.lastName;
+    }
+}
+
+function hideProfileModal() {
+    const modal = document.getElementById('profileModal');
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+}
+
+function showProfileMenu() {
+    const userName = userProfile.firstName && userProfile.lastName ?
+        `${userProfile.firstName} ${userProfile.lastName}` :
+        currentUser.email;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>Perfil</h2>
+            <div class="content-section">
+                <p><strong>Nome:</strong> ${userProfile.firstName || 'Não informado'}</p>
+                <p><strong>Sobrenome:</strong> ${userProfile.lastName || 'Não informado'}</p>
+                <p><strong>Email:</strong> ${currentUser.email}</p>
+                <p><strong>Pontos:</strong> ${userProfile.totalPoints || 0}</p>
+            </div>
+            <button class="btn-primary" onclick="editProfile()">Editar Perfil</button>
+            <button class="btn-primary" style="background: var(--cor-perigo); margin-top: 10px;" onclick="logout()">Sair</button>
+            <button class="btn-primary" style="background: var(--cor-texto-claro); margin-top: 10px;" onclick="closeModal(this)">Fechar</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+window.editProfile = function() {
+    closeModal();
+    showProfileModal();
+};
+
+window.closeModal = function(btn) {
+    const modal = btn ? btn.closest('.modal') : document.querySelector('.modal');
+    if (modal && !modal.id) {
+        modal.remove();
+    }
+};
+
+window.logout = async function() {
+    try {
+        await auth.signOut();
+        showToast('Logout realizado!', 'success');
+    } catch (error) {
+        showToast('Erro ao sair: ' + error.message, 'error');
+    }
+};
+
+// ==================== SCREEN MANAGEMENT ====================
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appContainer').style.display = 'none';
+    document.getElementById('loadingScreen').style.display = 'none';
+}
+
+function showMainApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'flex';
+    document.getElementById('loadingScreen').style.display = 'none';
+    renderPage('painel');
+}
+
 function showLoading() {
     document.getElementById('loadingScreen').style.display = 'flex';
 }
@@ -186,1525 +296,798 @@ function hideLoading() {
     document.getElementById('loadingScreen').style.display = 'none';
 }
 
-function showLoginScreen() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('mainApp').style.display = 'none';
-    hideLoading();
-}
+// ==================== PAGE DATABASE ====================
+const pages = {
+    // NÍVEL 1: PRINCIPAL
+    painel: {
+        title: "Painel Principal",
+        type: 'list',
+        items: [
+            { id: 'comunicados', icon: 'fa-bullhorn', color: 'var(--cor-perigo)', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias da diretoria' },
+            { id: 'podcasts', icon: 'fa-podcast', color: '#9b59b6', title: 'Podcasts Educativos', subtitle: 'Cultura de segurança e qualidade' },
+            { id: 'kpis', icon: 'fa-chart-line', color: 'var(--cor-sucesso)', title: 'Indicadores de Qualidade', subtitle: 'Acompanhe as métricas' }
+        ]
+    },
+    qualidade: {
+        title: "Qualidade e Segurança",
+        type: 'list',
+        items: [
+            { id: 'incidentes', icon: 'fa-exclamation-triangle', color: 'var(--cor-perigo)', title: 'Gestão de Incidentes', subtitle: 'Notificar eventos adversos' },
+            { id: 'auditorias', icon: 'fa-clipboard-check', color: 'var(--cor-info)', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
+            { id: 'relatorios', icon: 'fa-file-alt', color: 'var(--cor-texto-claro)', title: 'Relatórios de Segurança', subtitle: 'Consulte os relatórios trimestrais' },
+            { id: 'capacitacao', icon: 'fa-graduation-cap', color: 'var(--cor-secundaria)', title: 'Capacitação e Treinamento', subtitle: 'Acesse os materiais de estudo' }
+        ]
+    },
+    protocolos: {
+        title: "Protocolos e Documentos",
+        type: 'list',
+        items: [
+            { id: 'documentos', icon: 'fa-folder-open', color: 'var(--cor-primaria)', title: 'Biblioteca de Documentos', subtitle: 'Todos os POPs, políticas e protocolos' },
+            { id: 'protocolos_anest', icon: 'fa-file-medical', color: '#e74c3c', title: 'Protocolos de Anestesia', subtitle: 'Protocolos específicos do serviço' },
+            { id: 'segMedicamentos', icon: 'fa-pills', color: 'var(--cor-perigo)', title: 'Segurança de Medicamentos', subtitle: 'Medicações de alto risco' }
+        ]
+    },
+    ferramentas: {
+        title: "Ferramentas Clínicas",
+        type: 'list',
+        items: [
+            { id: 'calculadoras', icon: 'fa-calculator', color: '#6f42c1', title: 'Calculadoras Anestésicas', subtitle: 'Calculadoras clínicas completas' },
+            { id: 'checklist', icon: 'fa-check-double', color: 'var(--cor-sucesso)', title: 'Checklist de Cirurgia Segura', subtitle: 'Ferramenta interativa da OMS' },
+            { id: 'avaliacaoRiscos', icon: 'fa-user-shield', color: 'var(--cor-secundaria)', title: 'Avaliação de Riscos', subtitle: 'Escalas de risco' }
+        ]
+    },
+    rops: {
+        title: "ROPs - Desafio",
+        type: 'custom',
+        render: renderROPsMainPage
+    },
+    residencia: {
+        title: "Residência Médica",
+        type: 'list',
+        items: [
+            { id: 'residencia_sheets', icon: 'fa-calendar-alt', color: 'var(--cor-info)', title: 'Escalas e Cronogramas', subtitle: 'Plantões, estágios e férias' },
+            { id: 'materialEstudo', icon: 'fa-book-open', color: 'var(--cor-primaria)', title: 'Material de Estudo', subtitle: 'Artigos e diretrizes' }
+        ]
+    },
 
-function showMainApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
+    // NÍVEL 2: SUBPÁGINAS
+    podcasts: {
+        title: "Podcasts Educativos",
+        type: 'custom',
+        render: renderPodcastsPage
+    },
+    documentos: {
+        title: "Biblioteca de Documentos",
+        type: 'custom',
+        render: renderDocumentosPage
+    },
+    calculadoras: {
+        title: "Calculadoras Anestésicas",
+        type: 'list',
+        items: [
+            { id: 'calc_qmentum', icon: 'fa-certificate', color: '#e74c3c', title: 'Calculadoras Qmentum', subtitle: 'Escalas para acreditação' },
+            { id: 'calc_anestesiologia', icon: 'fa-kit-medical', color: '#003B73', title: 'Anestesiologia Geral', subtitle: 'Calculadoras gerais' }
+        ]
+    },
+    calc_qmentum: {
+        title: "Calculadoras Qmentum",
+        type: 'custom',
+        render: () => renderCalculatorList('qmentum')
+    },
+    calc_anestesiologia: {
+        title: "Anestesiologia Geral",
+        type: 'custom',
+        render: () => renderCalculatorList('anestesiologia')
+    },
+    checklist: {
+        title: "Cirurgia Segura (OMS)",
+        type: 'custom',
+        render: renderChecklistPage
+    },
+    residencia_sheets: {
+        title: "Escalas e Cronogramas",
+        type: 'custom',
+        render: renderResidenciaSheets
+    }
+};
+
+// Add calculator pages dynamically
+calculatorDefinitions.forEach(calc => {
+    pages[calc.id] = {
+        title: calc.title,
+        type: 'calculator',
+        calcData: calc
+    };
+});
+
+// ==================== PAGE RENDERING ====================
+function renderPage(pageId, addToStack = true) {
+    const pageData = pages[pageId];
+    const pageContent = document.getElementById('page-content');
+    const headerTitle = document.getElementById('header-title');
+    const backButton = document.getElementById('back-button');
     
-    // Update welcome message with first name
-    if (currentUser) {
-        const fullName = currentUser.displayName || currentUser.email;
-        const firstName = fullName.split(' ')[0].split('@')[0];
-        document.getElementById('welcomeMessage').textContent = `Olá, ${firstName}`;
-        
-        // Mostrar ícone Admin no header e no menu principal se tiver permissão
-        if (typeof hasPermission === 'function' && hasPermission(currentUser, 'admin-panel')) {
-            document.getElementById('adminHeaderBtn').style.display = 'block';
-            document.getElementById('adminMenuCard').style.display = 'block';
+    // Add current page to stack before navigating
+    if (addToStack && navigationStack.length === 0) {
+        const currentActive = document.querySelector('.nav-button.active');
+        if (currentActive && currentActive.dataset.page !== pageId) {
+            navigationStack.push(currentActive.dataset.page);
+        }
+    } else if (addToStack) {
+        const lastPage = navigationStack[navigationStack.length - 1];
+        if (lastPage !== pageId) {
+            navigationStack.push(lastPage);
         }
     }
     
-    showScreen('home');
-    hideLoading();
+    pageContent.style.opacity = 0;
+    setTimeout(() => {
+        if (!pageData) {
+            pageContent.innerHTML = `<h1 class="page-title">Página em Construção</h1>`;
+            headerTitle.textContent = "Erro";
+        } else {
+            headerTitle.textContent = pageData.title;
+            let contentHTML = '';
+            
+            if (pageData.type === 'list') {
+                contentHTML = renderListPage(pageData);
+            } else if (pageData.type === 'custom') {
+                contentHTML = pageData.render();
+            } else if (pageData.type === 'calculator') {
+                contentHTML = renderCalculatorPage(pageData.calcData);
+            } else {
+                contentHTML = `<h1 class="page-title">Página em Construção</h1>`;
+            }
+            
+            pageContent.innerHTML = contentHTML;
+        }
+        
+        pageContent.scrollTop = 0;
+        backButton.style.display = navigationStack.length > 0 ? 'block' : 'none';
+        pageContent.style.opacity = 1;
+    }, 100);
 }
 
-// Atualizar badge de perfil do usuário no header
-function updateUserRoleBadge() {
-    if (!currentUser || typeof ROLES_TEMPLATES === 'undefined') return;
-    
-    const badge = document.getElementById('userRoleBadge');
-    const roleConfig = ROLES_TEMPLATES[currentUser.role] || ROLES_TEMPLATES['visitante'];
-    
-    badge.innerHTML = `
-        <i class="${roleConfig.icon}"></i>
-        ${roleConfig.name}
-    `;
-    badge.style.background = roleConfig.color;
-    badge.style.display = 'inline-flex';
+function renderListPage(pageData) {
+    let itemsHTML = pageData.items.map(item => {
+        const subtitleHTML = item.subtitle ? `<div class="subtitle">${item.subtitle}</div>` : '';
+        return `<li class="list-item" data-target-page="${item.id}">
+                    <span class="icon" style="background-color: ${item.color};"><i class="fas ${item.icon}"></i></span>
+                    <div class="text-content">
+                        <div class="title">${item.title}</div>${subtitleHTML}
+                    </div><i class="chevron fas fa-chevron-right"></i>
+                </li>`;
+    }).join('');
+    return `<h1 class="page-title">${pageData.title}</h1><ul class="list-section">${itemsHTML}</ul>`;
 }
 
-function showScreen(screenName) {
-    // Hide all screens
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
+// ==================== PAGE CLICK HANDLER ====================
+function handlePageClick(e) {
+    const target = e.target;
+    const listItem = target.closest('.list-item');
+    const quizOption = target.closest('.quiz-option');
+    const calcForm = target.closest('#calc-form');
+    
+    if (listItem) {
+        const targetPage = listItem.dataset.targetPage;
+        if (pages[targetPage]) {
+            navigateTo(targetPage);
+        } else {
+            showToast('Funcionalidade em desenvolvimento', 'info');
+        }
+    }
+    
+    if (quizOption && !quizOption.classList.contains('answered')) {
+        handleQuizAnswer(quizOption);
+    }
+    
+    if (target.classList.contains('submit-button') && calcForm) {
+        e.preventDefault();
+        handleCalculation(calcForm.dataset.calcId);
+    }
+    
+    // ROPs specific handlers
+    if (target.closest('.rop-macro')) {
+        handleRopMacroClick(e);
+    }
+    if (target.closest('.rop-item')) {
+        handleRopItemClick(e);
+    }
+    if (target.id === 'nextQuestion') {
+        loadNextQuestion();
+    }
+}
+
+function navigateTo(pageId) {
+    renderPage(pageId, true);
+}
+
+// ==================== CALCULATOR RENDERING ====================
+function renderCalculatorList(category) {
+    const calcs = calculatorDefinitions.filter(c => c.category === category);
+    const itemsHTML = calcs.map(calc => {
+        const color = category === 'qmentum' ? '#e74c3c' : '#003B73';
+        return `<li class="list-item" data-target-page="${calc.id}">
+                    <span class="icon" style="background-color: ${color};"><i class="fas fa-calculator"></i></span>
+                    <div class="text-content">
+                        <div class="title">${calc.title}</div>
+                    </div><i class="chevron fas fa-chevron-right"></i>
+                </li>`;
+    }).join('');
+    return `<h1 class="page-title">${category === 'qmentum' ? 'Calculadoras Qmentum' : 'Anestesiologia Geral'}</h1>
+            <ul class="list-section">${itemsHTML}</ul>`;
+}
+
+function renderCalculatorPage(calcDef) {
+    let formHTML = `<h1 class="page-title">${calcDef.title}</h1>
+                    <div class="content-section">
+                    <form id="calc-form" data-calc-id="${calcDef.id}">`;
+    
+    calcDef.inputs.forEach(input => {
+        const inputId = `calc_${input.id}`;
+        switch (input.type) {
+            case 'bool':
+                formHTML += `<div class="form-group-bool">
+                                <input type="checkbox" id="${inputId}" name="${input.id}">
+                                <label for="${inputId}">${input.label}</label>
+                             </div>`;
+                break;
+            case 'number':
+                formHTML += `<div class="form-group">
+                                <label for="${inputId}">${input.label}</label>
+                                <input type="number" id="${inputId}" name="${input.id}" placeholder="0" 
+                                    ${input.min !== undefined ? `min="${input.min}"` : ''} 
+                                    ${input.max !== undefined ? `max="${input.max}"` : ''}>
+                             </div>`;
+                break;
+            case 'select':
+                const options = input.options.map(opt => {
+                    const value = opt.value !== undefined ? opt.value : opt.label;
+                    const label = opt.label || opt.value;
+                    return `<option value="${value}">${label}</option>`;
+                }).join('');
+                formHTML += `<div class="form-group">
+                                <label for="${inputId}">${input.label}</label>
+                                <select id="${inputId}" name="${input.id}">
+                                    ${options}
+                                </select>
+                             </div>`;
+                break;
+        }
+    });
+
+    formHTML += `<button type="submit" class="submit-button">Calcular</button>
+                 </form>
+                 <div id="calc-results" style="display:none;"></div>
+                 </div>`;
+    return formHTML;
+}
+
+function handleCalculation(calcId) {
+    const calcDef = calculatorDefinitions.find(c => c.id === calcId);
+    if (!calcDef) return;
+
+    const inputs = {};
+    
+    calcDef.inputs.forEach(input => {
+        const el = document.getElementById(`calc_${input.id}`);
+        if (!el) return;
+        
+        if (input.type === 'bool') {
+            inputs[input.id] = el.checked;
+        } else if (input.type === 'number') {
+            let value = parseFloat(el.value);
+            if (isNaN(value)) value = 0;
+            if (input.min !== undefined && value < input.min) value = input.min;
+            if (input.max !== undefined && value > input.max) value = input.max;
+            inputs[input.id] = value;
+        } else {
+            inputs[input.id] = el.value;
+        }
+    });
+
+    try {
+        const result = calcDef.compute(inputs);
+        
+        const resultDiv = document.getElementById('calc-results');
+        let resultHTML = '<h4>Resultado:</h4>';
+        for (const key in result) {
+            const formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            resultHTML += `<p><strong>${formattedKey}:</strong> ${result[key]}</p>`;
+        }
+        
+        resultDiv.innerHTML = resultHTML;
+        resultDiv.style.display = 'block';
+
+    } catch (error) {
+        console.error("Erro ao calcular:", error);
+        const resultDiv = document.getElementById('calc-results');
+        resultDiv.innerHTML = '<h4>Erro ao calcular.</h4><p>Verifique os valores inseridos.</p>';
+        resultDiv.style.display = 'block';
+    }
+}
+
+// ==================== UTILITY FUNCTIONS ====================
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+function getErrorMessage(error) {
+    const errorMessages = {
+        'auth/email-already-in-use': 'Este email já está em uso',
+        'auth/invalid-email': 'Email inválido',
+        'auth/weak-password': 'Senha muito fraca',
+        'auth/user-not-found': 'Usuário não encontrado',
+        'auth/wrong-password': 'Senha incorreta'
+    };
+    return errorMessages[error.code] || error.message;
+}
+
+// ==================== ROPS RENDERING ====================
+function renderROPsMainPage() {
+    if (!ropsData) {
+        return `<div class="content-section">
+                    <h3>Erro ao Carregar ROPs</h3>
+                    <p>Os dados das ROPs não foram carregados. Recarregue a página.</p>
+                </div>`;
+    }
+
+    let html = `<h1 class="page-title">ROPs - Desafio</h1>`;
+    
+    Object.keys(ropsData).forEach(macroKey => {
+        const macro = ropsData[macroKey];
+        const macroTitle = macroKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
+        html += `<div class="content-section">
+                    <h3 style="cursor: pointer;" class="rop-macro" data-macro="${macroKey}">
+                        <i class="fas fa-folder"></i> ${macroTitle}
+                    </h3>
+                    <div class="rop-list" id="rop-list-${macroKey}" style="display: none;">`;
+        
+        Object.keys(macro).forEach(ropKey => {
+            const rop = macro[ropKey];
+            const ropTitle = ropKey.replace(/_/g, ' ').toUpperCase();
+            const questionCount = rop.questions ? rop.questions.length : 0;
+            
+            html += `<div class="list-item rop-item" data-macro="${macroKey}" data-rop="${ropKey}">
+                        <span class="icon" style="background-color: var(--cor-primaria);">
+                            <i class="fas fa-question-circle"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${ropTitle}</div>
+                            <div class="subtitle">${questionCount} questões</div>
+                        </div>
+                        <i class="chevron fas fa-chevron-right"></i>
+                    </div>`;
+        });
+        
+        html += `</div></div>`;
     });
     
-    // Show selected screen
-    const screen = document.getElementById(screenName + 'Screen');
-    if (screen) {
-        screen.classList.add('active');
-        currentScreen = screenName;
+    return html;
+}
+
+function handleRopMacroClick(e) {
+    const macroEl = e.target.closest('.rop-macro');
+    if (!macroEl) return;
+    
+    const macroKey = macroEl.dataset.macro;
+    const listEl = document.getElementById(`rop-list-${macroKey}`);
+    
+    if (listEl) {
+        const isVisible = listEl.style.display !== 'none';
+        listEl.style.display = isVisible ? 'none' : 'block';
     }
 }
 
-function goHome() {
-    showScreen('home');
+function handleRopItemClick(e) {
+    const ropEl = e.target.closest('.rop-item');
+    if (!ropEl) return;
+    
+    const macroKey = ropEl.dataset.macro;
+    const ropKey = ropEl.dataset.rop;
+    
+    startQuiz(macroKey, ropKey);
 }
 
-// ==================== TOAST NOTIFICATIONS ====================
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    const icon = type === 'success' ? 'fa-check-circle' : 
-                 type === 'error' ? 'fa-exclamation-circle' : 
-                 'fa-info-circle';
-    
-    toast.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span class="toast-message">${message}</span>
-    `;
-    
-    container.appendChild(toast);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
-}
-
-function handleAuthError(error) {
-    let message = 'Erro ao processar solicitação.';
-    
-    switch (error.code) {
-        case 'auth/user-not-found':
-            message = 'Usuário não encontrado.';
-            break;
-        case 'auth/wrong-password':
-            message = 'Senha incorreta.';
-            break;
-        case 'auth/email-already-in-use':
-            message = 'Este email já está em uso.';
-            break;
-        case 'auth/weak-password':
-            message = 'A senha é muito fraca.';
-            break;
-        case 'auth/invalid-email':
-            message = 'Email inválido.';
-            break;
-        case 'auth/popup-closed-by-user':
-            message = 'Login cancelado pelo usuário.';
-            break;
-        default:
-            message = error.message;
+function startQuiz(macroKey, ropKey) {
+    const rop = ropsData[macroKey][ropKey];
+    if (!rop || !rop.questions || rop.questions.length === 0) {
+        showToast('Nenhuma questão disponível para esta ROP', 'error');
+        return;
     }
     
-    showToast(message, 'error');
-}
-
-// ==================== USER PROGRESS ====================
-async function loadUserProgress() {
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists) {
-            const data = userDoc.data();
-            userProgress = {
-                scores: data.progress || {},
-                completedTopics: data.completedTopics || [],
-                totalPoints: data.totalPoints || 0,
-                achievements: data.achievements || []
-            };
-        }
-    } catch (error) {
-        console.error('Erro ao carregar progresso:', error);
-    }
-}
-
-async function saveUserProgress() {
-    try {
-        await db.collection('users').doc(currentUser.uid).update({
-            progress: userProgress.scores,
-            completedTopics: userProgress.completedTopics,
-            totalPoints: userProgress.totalPoints,
-            achievements: userProgress.achievements,
-            lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    } catch (error) {
-        console.error('Erro ao salvar progresso:', error);
-    }
-}
-
-// ==================== ROPS SECTION ====================
-function showROPs() {
-    console.log('🔍 showROPs() chamada!');
-    
-    try {
-        const screen = document.getElementById('ropsScreen');
-        console.log('🔍 Screen encontrado:', screen);
-        
-        if (!screen) {
-            console.error('❌ ropsScreen não encontrado!');
-            return;
-        }
-        
-        // Verificar se ropsData existe
-        if (typeof ropsData === 'undefined') {
-            console.error('❌ ropsData não carregado!');
-            screen.innerHTML = `
-                <button class="back-btn" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </button>
-                <div class="error-message">
-                    <h2>Erro de Carregamento</h2>
-                    <p>Dados das ROPs não foram carregados. Recarregue a página.</p>
-                </div>
-            `;
-            showScreen('rops');
-            return;
-        }
-        
-        console.log('🔍 ropsData carregado:', Object.keys(ropsData));
-        
-        // Simplificar - mostrar todas as ROPs sem filtro de permissão
-        const availableROPs = Object.entries(ropsData);
-        console.log('🔍 ROPs disponíveis:', availableROPs.length);
-        
-        screen.innerHTML = `
-            <button class="back-btn" onclick="goHome()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">ROPs - Desafio de Conhecimento</h2>
-            
-            <div class="menu-grid">
-                ${availableROPs.map(([key, macroArea]) => `
-                    <div class="menu-card" onclick="showMacroArea('${key}')">
-                        <div class="card-icon" style="background: ${macroArea.color}">
-                            <i class="${macroArea.icon}"></i>
-                        </div>
-                        <h3>${macroArea.title}</h3>
-                        <p>${Object.keys(macroArea.subdivisoes).length} subdivisões</p>
-                    </div>
-                `).join('')}
-                
-                <div class="menu-card" onclick="showSimulado()">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3>Simulado Geral</h3>
-                    <p>Quiz com todas as questões</p>
-                </div>
-                
-                <div class="menu-card" onclick="showRanking()">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%)">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h3>Ranking</h3>
-                    <p>Classificação dos usuários</p>
-                </div>
-            </div>
-        `;
-        
-        console.log('🔍 HTML inserido, chamando showScreen...');
-        showScreen('rops');
-        console.log('✅ showROPs() concluída!');
-        
-    } catch (error) {
-        console.error('❌ Erro em showROPs():', error);
-        alert('Erro ao carregar ROPs: ' + error.message);
-    }
-}
-
-function getUserMacroProgress(macroKey) {
-    const macroArea = ropsData[macroKey];
-    const subdivisoes = Object.keys(macroArea.subdivisoes);
-    const completed = subdivisoes.filter(sub => 
-        userProgress.completedTopics.includes(sub)
-    ).length;
-    
-    const percentage = subdivisoes.length > 0 ? Math.round((completed / subdivisoes.length) * 100) : 0;
-    
-    return `
-        <div class="progress-container" style="margin-top: 10px;">
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${percentage}%"></div>
-            </div>
-            <small style="color: var(--text-secondary); font-weight: 600; margin-top: 4px; display: block;">
-                ${percentage}% completo
-            </small>
-        </div>
-    `;
-}
-
-function showMacroArea(macroKey) {
-    const macroArea = ropsData[macroKey];
-    const screen = document.getElementById('ropsScreen');
-    
-    // Conta áudios disponíveis
-    const podcastMacroArea = podcastsData[macroKey];
-    const audioCount = podcastMacroArea ? podcastMacroArea.audios.length : 0;
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="showROPs()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">${macroArea.title}</h2>
-        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
-            Escolha como deseja estudar esta macroárea
-        </p>
-        
-        <div class="menu-grid" style="max-width: 800px; margin: 0 auto;">
-            <!-- Ícone Questões -->
-            <div class="menu-card menu-card-highlight" onclick="showMacroAreaQuestions('${macroKey}')">
-                <div class="card-icon" style="background: ${macroArea.color}">
-                    <i class="fas fa-clipboard-question"></i>
-                </div>
-                <h3>Questões</h3>
-                <p>${Object.keys(macroArea.subdivisoes).length} subdivisões disponíveis</p>
-                ${getUserMacroProgress(macroKey)}
-            </div>
-            
-            <!-- Ícone Podcasts -->
-            <div class="menu-card menu-card-highlight" onclick="showMacroAreaPodcasts('${macroKey}')">
-                <div class="card-icon" style="background: ${macroArea.color}">
-                    <i class="fas fa-podcast"></i>
-                </div>
-                <h3>Podcasts</h3>
-                <p>${audioCount} áudio${audioCount !== 1 ? 's' : ''} disponível${audioCount !== 1 ? 'is' : ''}</p>
-            </div>
-        </div>
-    `;
-    
-    showScreen('rops');
-}
-
-function showMacroAreaQuestions(macroKey) {
-    const macroArea = ropsData[macroKey];
-    const screen = document.getElementById('ropsScreen');
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="showMacroArea('${macroKey}')">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">${macroArea.title} - Questões</h2>
-        
-        <div class="menu-grid">
-            ${Object.entries(macroArea.subdivisoes).map(([key, subdivisao]) => `
-                <div class="menu-card" onclick="startQuiz('${macroKey}', '${key}')">
-                    <div class="card-icon" style="background: ${macroArea.color}">
-                        <i class="fas fa-clipboard-question"></i>
-                    </div>
-                    <h3>${subdivisao.title}</h3>
-                    ${getSubdivisaoProgress(key)}
-                </div>
-            `).join('')}
-            
-            <div class="menu-card" onclick="startQuiz('${macroKey}', 'all')">
-                <div class="card-icon" style="background: ${macroArea.color}">
-                    <i class="fas fa-random"></i>
-                </div>
-                <h3>Todas Embaralhadas</h3>
-            </div>
-        </div>
-    `;
-    
-    showScreen('rops');
-}
-
-function showMacroAreaPodcasts(macroKey) {
-    const macroArea = podcastsData[macroKey];
-    const ropsData_macro = ropsData[macroKey];
-    const screen = document.getElementById('ropsScreen');
-    
-    if (!macroArea || !macroArea.audios || macroArea.audios.length === 0) {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showMacroArea('${macroKey}')">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">${ropsData_macro.title} - Podcasts</h2>
-            
-            <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center;">
-                <i class="fas fa-microphone-slash" style="font-size: 64px; color: var(--text-light); margin-bottom: 20px;"></i>
-                <h3 style="color: var(--text-dark); margin-bottom: 10px;">Nenhuma áudio aula disponível ainda</h3>
-                <p style="color: var(--text-light);">
-                    As áudio aulas desta macroárea serão adicionadas em breve.
-                </p>
-            </div>
-        `;
-    } else {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showMacroArea('${macroKey}')">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">${macroArea.title} - Podcasts</h2>
-            
-            <div class="documents-container">
-                ${macroArea.audios.map((audio, index) => `
-                    <div class="document-card audio-card">
-                        <div class="document-icon">
-                            <i class="fas fa-microphone-alt"></i>
-                        </div>
-                        <div class="document-info">
-                            <h3>${audio.title}</h3>
-                            ${audio.descricao ? `<p style="color: var(--text-light); margin-top: 5px;">${audio.descricao}</p>` : ''}
-                            ${audio.duracao ? `<small style="color: var(--text-light);"><i class="fas fa-clock"></i> ${audio.duracao}</small>` : ''}
-                            
-                            <audio controls style="width: 100%; margin-top: 15px;">
-                                <source src="${audio.file}" type="audio/mpeg">
-                                Seu navegador não suporta o elemento de áudio.
-                            </audio>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-}
-
-function getSubdivisaoProgress(subdivKey) {
-    const score = userProgress.scores[subdivKey];
-    if (!score) {
-        return '<small style="color: var(--text-light);">Não iniciado</small>';
-    }
-    
-    const percentage = Math.round((score.correct / score.total) * 100);
-    const color = percentage >= 70 ? 'var(--success-color)' : 
-                  percentage >= 50 ? 'var(--warning-color)' : 'var(--danger-color)';
-    
-    return `
-        <div style="margin-top: 10px; padding: 5px 10px; background: rgba(102, 126, 234, 0.1); border-radius: 5px;">
-            <small style="color: ${color}; font-weight: 600;">
-                Melhor: ${percentage}% (${score.correct}/${score.total})
-            </small>
-        </div>
-    `;
-}
-
-// ==================== QUIZ SYSTEM ====================
-function startQuiz(macroKey, subdivKey) {
-    const macroArea = ropsData[macroKey];
-    let questions = [];
-    
-    if (subdivKey === 'all') {
-        // Get all questions from all subdivisions
-        Object.values(macroArea.subdivisoes).forEach(subdiv => {
-            questions = questions.concat(subdiv.questions);
-        });
-    } else {
-        questions = macroArea.subdivisoes[subdivKey].questions;
-    }
-    
-    // Shuffle questions
-    questions = shuffleArray([...questions]);
-    
-    // RANDOMIZE answer options for each question
-    questions = questions.map(q => randomizeQuestionOptions(q));
-    
+    currentQuizData = [...rop.questions];
     currentQuiz = {
         macroKey,
-        subdivKey,
-        questions,
+        ropKey,
         currentIndex: 0,
         score: 0,
-        answers: [],
-        startTime: Date.now()
+        answers: []
     };
     
-    showQuestion();
+    renderQuizPage();
 }
 
-// Function to randomize answer options while tracking correct answer
-function randomizeQuestionOptions(question) {
-    const originalCorrect = question.correctAnswer;
-    const options = [...question.options];
+function renderQuizPage() {
+    const question = currentQuizData[currentQuiz.currentIndex];
+    const progress = currentQuiz.currentIndex + 1;
+    const total = currentQuizData.length;
     
-    // Create array of indices
-    const indices = options.map((_, i) => i);
+    const pageContent = document.getElementById('page-content');
+    const headerTitle = document.getElementById('header-title');
     
-    // Shuffle indices
-    const shuffledIndices = shuffleArray(indices);
+    headerTitle.textContent = `Questão ${progress}/${total}`;
     
-    // Create new shuffled options
-    const shuffledOptions = shuffledIndices.map(i => options[i]);
-    
-    // Find new position of correct answer
-    const newCorrectIndex = shuffledIndices.indexOf(originalCorrect);
-    
-    return {
-        ...question,
-        options: shuffledOptions,
-        correctAnswer: newCorrectIndex,
-        originalOrder: shuffledIndices // For debugging if needed
-    };
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-function showQuestion() {
-    const screen = document.getElementById('quizScreen');
-    const question = currentQuiz.questions[currentQuiz.currentIndex];
-    
-    const macroKey = currentQuiz.macroKey;
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="showMacroAreaQuestions('${macroKey}')">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
+    let html = `
         <div class="quiz-container">
-            <div class="quiz-header">
-                <div class="quiz-progress">
-                    Questão ${currentQuiz.currentIndex + 1} de ${currentQuiz.questions.length}
-                </div>
-                <div class="quiz-score">
-                    <i class="fas fa-star"></i> ${currentQuiz.score} pontos
-                </div>
+            <div class="quiz-progress" style="background: var(--cor-fundo); height: 8px; border-radius: 4px; margin-bottom: 20px;">
+                <div style="background: var(--cor-primaria); height: 100%; width: ${(progress/total)*100}%; border-radius: 4px;"></div>
             </div>
-            
-            <div class="question-container">
-                <div class="question-text">
-                    ${question.question}
-                </div>
-                
-                <div class="options-container" id="optionsContainer">
-                    ${question.options.map((option, index) => `
-                        <button class="option-btn" onclick="selectAnswer(${index})">
-                            <span class="option-letter">${String.fromCharCode(65 + index)}</span>
-                            <span>${option}</span>
-                        </button>
-                    `).join('')}
-                </div>
-                
-                <div id="explanationContainer"></div>
-            </div>
-            
-            <div class="quiz-controls" id="quizControls">
-                <button class="btn-quiz btn-show-explanation" onclick="showExplanation()" style="display: none;" id="btnExplanation">
-                    <i class="fas fa-lightbulb"></i> Ver Explicação
-                </button>
-                <button class="btn-quiz btn-next" onclick="nextQuestion()" style="display: none;" id="btnNext">
-                    Próxima <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    `;
+            <div class="quiz-question">${progress}. ${question.question}</div>
+            <div class="quiz-options">`;
     
-    showScreen('quiz');
+    question.options.forEach((option, index) => {
+        html += `<div class="quiz-option" data-option="${index}">
+                    <strong>${String.fromCharCode(65 + index)})</strong> ${option}
+                 </div>`;
+    });
+    
+    html += `</div></div>`;
+    
+    if (currentQuiz.currentIndex < currentQuizData.length - 1) {
+        html += `<button id="nextQuestion" class="submit-button" style="display: none; margin-top: 20px;">Próxima Questão</button>`;
+    } else {
+        html += `<button id="nextQuestion" class="submit-button" style="display: none; margin-top: 20px;">Ver Resultado</button>`;
+    }
+    
+    pageContent.innerHTML = html;
 }
 
-function selectAnswer(selectedIndex) {
-    const question = currentQuiz.questions[currentQuiz.currentIndex];
-    const options = document.querySelectorAll('.option-btn');
+function handleQuizAnswer(optionEl) {
+    const selectedIndex = parseInt(optionEl.dataset.option);
+    const question = currentQuizData[currentQuiz.currentIndex];
     const isCorrect = selectedIndex === question.correctAnswer;
     
-    // Disable all options
-    options.forEach((btn, index) => {
-        btn.classList.add('disabled');
-        btn.onclick = null;
-        
-        if (index === question.correctAnswer) {
-            btn.classList.add('correct');
-        } else if (index === selectedIndex && !isCorrect) {
-            btn.classList.add('wrong');
+    // Mark all options as answered
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.classList.add('answered');
+        const idx = parseInt(opt.dataset.option);
+        if (idx === question.correctAnswer) {
+            opt.classList.add('correct');
+        } else if (idx === selectedIndex && !isCorrect) {
+            opt.classList.add('incorrect');
         }
     });
     
-    // Update score
     if (isCorrect) {
-        currentQuiz.score += 10;
-        currentQuiz.answers.push({ questionIndex: currentQuiz.currentIndex, correct: true });
-        showToast('Resposta correta! +10 pontos', 'success');
-    } else {
-        currentQuiz.answers.push({ questionIndex: currentQuiz.currentIndex, correct: false });
-        showToast('Resposta incorreta. Veja a explicação.', 'error');
+        currentQuiz.score++;
     }
     
-    // Show controls
-    document.getElementById('btnExplanation').style.display = 'flex';
-    document.getElementById('btnNext').style.display = 'flex';
+    currentQuiz.answers.push({
+        questionIndex: currentQuiz.currentIndex,
+        selected: selectedIndex,
+        correct: question.correctAnswer,
+        isCorrect
+    });
     
-    // Update score display
-    document.querySelector('.quiz-score').innerHTML = `
-        <i class="fas fa-star"></i> ${currentQuiz.score} pontos
-    `;
+    // Show explanation if available
+    if (question.explanation) {
+        const container = document.querySelector('.quiz-container');
+        const explanationDiv = document.createElement('div');
+        explanationDiv.className = 'content-section';
+        explanationDiv.style.marginTop = '20px';
+        explanationDiv.innerHTML = `<h4>Explicação:</h4><p>${question.explanation}</p>`;
+        container.appendChild(explanationDiv);
+    }
+    
+    document.getElementById('nextQuestion').style.display = 'block';
 }
 
-function showExplanation() {
-    const question = currentQuiz.questions[currentQuiz.currentIndex];
-    const container = document.getElementById('explanationContainer');
-    
-    container.innerHTML = `
-        <div class="explanation-container">
-            <h4><i class="fas fa-lightbulb"></i> Explicação</h4>
-            <p>${question.explanation}</p>
-        </div>
-    `;
-    
-    document.getElementById('btnExplanation').style.display = 'none';
-}
-
-function nextQuestion() {
+function loadNextQuestion() {
     currentQuiz.currentIndex++;
     
-    if (currentQuiz.currentIndex < currentQuiz.questions.length) {
-        showQuestion();
+    if (currentQuiz.currentIndex < currentQuizData.length) {
+        renderQuizPage();
     } else {
-        finishQuiz();
+        showQuizResults();
     }
 }
 
-function confirmQuitQuiz() {
-    if (confirm('Deseja realmente sair do quiz? Seu progresso será perdido.')) {
-        showROPs();
-    }
-}
-
-async function finishQuiz() {
-    const totalQuestions = currentQuiz.questions.length;
-    const correctAnswers = currentQuiz.answers.filter(a => a.correct).length;
-    const percentage = Math.round((correctAnswers / totalQuestions) * 100);
-    const timeSpent = Math.round((Date.now() - currentQuiz.startTime) / 1000);
+async function showQuizResults() {
+    const percentage = Math.round((currentQuiz.score / currentQuizData.length) * 100);
+    const passed = percentage >= 70;
     
     // Update user progress
-    if (!userProgress.scores[currentQuiz.subdivKey] || 
-        percentage > (userProgress.scores[currentQuiz.subdivKey].percentage || 0)) {
-        userProgress.scores[currentQuiz.subdivKey] = {
-            correct: correctAnswers,
-            total: totalQuestions,
-            percentage: percentage,
-            date: new Date().toISOString()
-        };
-    }
-    
-    if (percentage >= 70 && !userProgress.completedTopics.includes(currentQuiz.subdivKey)) {
-        userProgress.completedTopics.push(currentQuiz.subdivKey);
-    }
-    
-    userProgress.totalPoints += currentQuiz.score;
-    
-    // Save to Firestore
-    await saveUserProgress();
-    await saveQuizResult(correctAnswers, totalQuestions, percentage, timeSpent);
-    
-    // Show results
-    showResults(correctAnswers, totalQuestions, percentage, timeSpent);
-}
-
-async function saveQuizResult(correct, total, percentage, timeSpent) {
     try {
-        await db.collection('quiz_results').add({
-            userId: currentUser.uid,
-            userName: currentUser.displayName || currentUser.email,
-            macroKey: currentQuiz.macroKey,
-            subdivKey: currentQuiz.subdivKey,
-            correct: correct,
-            total: total,
-            percentage: percentage,
-            score: currentQuiz.score,
-            timeSpent: timeSpent,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        await db.collection('users').doc(currentUser.uid).update({
+            [`progress.${currentQuiz.macroKey}.${currentQuiz.ropKey}`]: {
+                score: currentQuiz.score,
+                total: currentQuizData.length,
+                percentage,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            },
+            totalPoints: firebase.firestore.FieldValue.increment(currentQuiz.score)
         });
     } catch (error) {
-        console.error('Erro ao salvar resultado:', error);
+        console.error('Error saving progress:', error);
     }
-}
-
-function showResults(correct, total, percentage, timeSpent) {
-    const screen = document.getElementById('resultsScreen');
     
-    const resultClass = percentage >= 80 ? 'excellent' : 
-                        percentage >= 60 ? 'good' : 'needs-improvement';
+    const pageContent = document.getElementById('page-content');
+    const headerTitle = document.getElementById('header-title');
     
-    const resultIcon = percentage >= 80 ? 'fa-trophy' : 
-                       percentage >= 60 ? 'fa-smile' : 'fa-book';
+    headerTitle.textContent = 'Resultado';
     
-    const resultMessage = percentage >= 80 ? 'Excelente desempenho!' : 
-                          percentage >= 60 ? 'Bom trabalho!' : 'Continue estudando!';
-    
-    const minutes = Math.floor(timeSpent / 60);
-    const seconds = timeSpent % 60;
-    
-    screen.innerHTML = `
-        <div class="results-container">
-            <div class="results-icon ${resultClass}">
-                <i class="fas ${resultIcon}"></i>
-            </div>
-            
-            <div class="results-score">${percentage}%</div>
-            <div class="results-message">${resultMessage}</div>
-            
-            <div class="results-stats">
-                <div class="stat-item">
-                    <span class="stat-value">${correct}</span>
-                    <span class="stat-label">Acertos</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">${total - correct}</span>
-                    <span class="stat-label">Erros</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">${currentQuiz.score}</span>
-                    <span class="stat-label">Pontos</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
-                    <span class="stat-label">Tempo</span>
-                </div>
-            </div>
-            
-            <div class="quiz-controls">
-                <button class="btn-quiz btn-next" onclick="showROPs()">
-                    <i class="fas fa-home"></i> Voltar
-                </button>
-                <button class="btn-quiz btn-next" onclick="startQuiz('${currentQuiz.macroKey}', '${currentQuiz.subdivKey}')">
-                    <i class="fas fa-redo"></i> Refazer
-                </button>
-            </div>
-            
-            <button class="btn-primary" onclick="showRanking()" style="margin-top: 20px;">
-                <i class="fas fa-trophy"></i> Ver Ranking
-            </button>
-        </div>
-    `;
-    
-    showScreen('results');
-}
-
-// ==================== RANKING ====================
-async function showRanking() {
-    const screen = document.getElementById('rankingScreen');
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="showROPs()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
-        <div class="ranking-container">
-            <h2 style="text-align: center; color: var(--text-dark); margin-bottom: 30px;">
-                <i class="fas fa-trophy" style="color: #FFD700;"></i> Ranking Geral
+    let html = `
+        <div class="quiz-container">
+            <h2 style="text-align: center; color: ${passed ? 'var(--cor-sucesso)' : 'var(--cor-perigo)'};">
+                ${passed ? '🎉 Parabéns!' : '📚 Continue Estudando'}
             </h2>
-            
-            <div class="ranking-tabs">
-                <button class="tab-btn active" onclick="loadRanking('geral')">
-                    Geral
-                </button>
-                <button class="tab-btn" onclick="loadRanking('mensal')">
-                    Mensal
-                </button>
-                <button class="tab-btn" onclick="loadRanking('semanal')">
-                    Semanal
-                </button>
+            <div class="content-section" style="text-align: center;">
+                <h1 style="font-size: 3rem; color: var(--cor-primaria); margin: 20px 0;">
+                    ${percentage}%
+                </h1>
+                <p style="font-size: 1.2rem;">
+                    <strong>${currentQuiz.score}</strong> de <strong>${currentQuizData.length}</strong> corretas
+                </p>
+                <p style="color: var(--cor-texto-claro); margin-top: 20px;">
+                    ${passed ? 
+                        'Você demonstrou bom conhecimento sobre este tema!' : 
+                        'Continue estudando para melhorar sua pontuação.'}
+                </p>
             </div>
-            
-            <div id="rankingContent">
-                <div style="text-align: center; padding: 40px;">
-                    <div class="loader" style="margin: 0 auto;"></div>
-                </div>
-            </div>
-        </div>
-    `;
+            <button class="submit-button" onclick="window.location.reload();">Voltar ao Início</button>
+        </div>`;
     
-    showScreen('ranking');
-    loadRanking('geral');
+    pageContent.innerHTML = html;
 }
 
-async function loadRanking(period) {
-    const content = document.getElementById('rankingContent');
-    content.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="loader" style="margin: 0 auto;"></div></div>';
+// ==================== DOCUMENTOS RENDERING ====================
+function renderDocumentosPage() {
+    const documentos = {
+        "Protocolos": [
+            { name: "Avaliação Pré-Anestésica", file: "Documentos/1 - Protocolos/PRO.ANEST.0001-00 avaliação pré anestesica.pdf" },
+            { name: "Manejo da Cefaleia Pós-Punção", file: "Documentos/1 - Protocolos/PRO.ANEST.0002-00 Manejo da cefaleira pós punção dural.pdf" },
+            { name: "Manutenção da Normotermia", file: "Documentos/1 - Protocolos/PRO.CCG.0011-01 Manutenção da normotermia.pdf" },
+            { name: "Profilaxia de Dor Aguda Pós-Op", file: "Documentos/1 - Protocolos/PRO.CCG.0018-00 Profilaxia tratamento e resgate de dor aguda pós operatoria na SRPA..pdf" },
+            { name: "Prevenção de Intoxicação por AL", file: "Documentos/1 - Protocolos/PRO.CCG.0020-00 Prevenção e manejo de intoxicação por anestésicos locais.pdf" },
+            { name: "Prevenção da Broncoaspiração", file: "Documentos/1 - Protocolos/PRO.INSH.0007-16 Protocolo de prevenção da broncoaspiração..pdf" },
+            { name: "Prevenção de Deterioração Clínica (MEWS)", file: "Documentos/1 - Protocolos/PRO.INSH.0008-12 Prevenção de Deterioração Clínica no Adulto - MEWS.pdf" },
+            { name: "Prevenção de Alergia ao Látex", file: "Documentos/1 - Protocolos/PRO.INSH.0009-04 Prevenção de Alergia ao látex(AG. Anest 15.02.24).pdf" },
+            { name: "Prevenção de TEV", file: "Documentos/1 - Protocolos/PRO.INSH.0053-05 Prevenção de TEV (AG. ANALICE 22.04) (2).docx.pdf" },
+            { name: "Gestão de Medicamentos de Alta Vigilância", file: "Documentos/1 - Protocolos/PRO.INSH.0080-13 Gestão de Medicamentos de Alta Vigilância (AG. Iara 30.04.24).docx.pdf" },
+            { name: "Manejo da Glicemia", file: "Documentos/1 - Protocolos/PRO.INSH.0094_00 Manejo glicemia.pdf" },
+            { name: "Abreviação de Jejum Prolongado", file: "Documentos/1 - Protocolos/PRO.NUT.0002-19 Abreviação de jejum prolongado(AG. Anest 15.02.24).pdf" },
+            { name: "Recuperação Pós-Anestésica", file: "Documentos/1 - Protocolos/PRO.RPA.0003-00 Recuperação pós anestésica.pdf" },
+            { name: "Prevenção de NVPO", file: "Documentos/1 - Protocolos/PRO.RPA.0004-00 Prevenção de náusea e vômito no pós-operatório.pdf" },
+            { name: "Antibioticoprofilaxia Cirúrgica", file: "Documentos/1 - Protocolos/PRO.SCI.0007-14 Antibioticoprofilaxia cirúrgica.pdf" },
+            { name: "Identificação do Cliente", file: "Documentos/1 - Protocolos/PT 02 Identificação do cliente.pdf" },
+            { name: "Higiene de Mãos", file: "Documentos/1 - Protocolos/PT 03 Higiene de Mãos.pdf" }
+        ],
+        "Políticas": [
+            { name: "Política de Gestão da Qualidade", file: "Documentos/2 - Politicas/PLI.ANEST.0001-00 Politica de gestão da qualidade.pdf" }
+        ],
+        "Relatórios de Segurança": [
+            { name: "Relatório 3º Trimestre 2024", file: "Documentos/4 - Relatórios de Segurança/RELATÓRIO DE SEGURANÇA 3° TRIMESTRE 2024.pdf" },
+            { name: "Segurança do Paciente - Serviço de Anestesia", file: "Documentos/4 - Relatórios de Segurança/Seguranca-do-Paciente-Servico-de-Anestesia-ANEST-Chapeco.pdf" }
+        ],
+        "Manuais": [
+            { name: "Manual de Gestão Documental", file: "Documentos/4 - Manuais/MAN.NQS.0001.00 Manual de gestão documental^.pdf" }
+        ]
+    };
     
-    try {
-        // Get top users
-        let query = db.collection('users')
-            .orderBy('totalPoints', 'desc')
-            .limit(50);
+    let html = `<h1 class="page-title">Biblioteca de Documentos</h1>`;
+    
+    Object.keys(documentos).forEach(category => {
+        html += `<div class="content-section">
+                    <h3><i class="fas fa-folder-open"></i> ${category}</h3>`;
         
-        if (period !== 'geral') {
-            const date = new Date();
-            if (period === 'mensal') {
-                date.setMonth(date.getMonth() - 1);
-            } else {
-                date.setDate(date.getDate() - 7);
-            }
-            query = query.where('lastUpdate', '>=', date);
-        }
-        
-        const snapshot = await query.get();
-        const users = [];
-        snapshot.forEach(doc => {
-            users.push({ id: doc.id, ...doc.data() });
+        documentos[category].forEach(doc => {
+            html += `<div class="list-item" onclick="openDocument('${doc.file}')">
+                        <span class="icon" style="background-color: var(--cor-perigo);">
+                            <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${doc.name}</div>
+                        </div>
+                        <i class="chevron fas fa-external-link-alt"></i>
+                    </div>`;
         });
         
-        if (users.length === 0) {
-            content.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 40px;">Nenhum usuário encontrado.</p>';
-            return;
-        }
-        
-        content.innerHTML = `
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th>Posição</th>
-                        <th>Nome</th>
-                        <th>Pontos</th>
-                        <th>Tópicos Completos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${users.map((user, index) => {
-                        const isCurrentUser = user.id === currentUser.uid;
-                        const positionClass = index === 0 ? 'gold' : 
-                                             index === 1 ? 'silver' : 
-                                             index === 2 ? 'bronze' : 'regular';
-                        
-                        return `
-                            <tr style="${isCurrentUser ? 'background: rgba(102, 126, 234, 0.1); font-weight: 600;' : ''}">
-                                <td>
-                                    <div class="ranking-position ${positionClass}">
-                                        ${index < 3 ? '<i class="fas fa-trophy"></i>' : (index + 1)}
-                                    </div>
-                                </td>
-                                <td>
-                                    ${user.name || user.email}
-                                    ${isCurrentUser ? '<i class="fas fa-user" style="color: var(--primary-color); margin-left: 10px;"></i>' : ''}
-                                </td>
-                                <td>
-                                    <strong style="color: var(--primary-color);">${user.totalPoints || 0}</strong>
-                                </td>
-                                <td>${(user.completedTopics || []).length}</td>
-                            </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            </table>
-        `;
-    } catch (error) {
-        console.error('Erro ao carregar ranking:', error);
-        content.innerHTML = '<p style="text-align: center; color: var(--danger-color); padding: 40px;">Erro ao carregar ranking.</p>';
-    }
-}
-
-// ==================== SIMULADO ====================
-function showSimulado() {
-    const allQuestions = [];
-    
-    // Collect 50 random questions from all ROPs
-    Object.values(ropsData).forEach(macroArea => {
-        Object.values(macroArea.subdivisoes).forEach(subdiv => {
-            allQuestions.push(...subdiv.questions);
-        });
+        html += `</div>`;
     });
     
-    // Shuffle and take 50
-    const selectedQuestions = shuffleArray(allQuestions).slice(0, Math.min(50, allQuestions.length));
-    
-    currentQuiz = {
-        macroKey: 'simulado',
-        subdivKey: 'simulado',
-        questions: selectedQuestions,
-        currentIndex: 0,
-        score: 0,
-        answers: [],
-        startTime: Date.now()
+    return html;
+}
+
+window.openDocument = function(filePath) {
+    // Open in new window/tab
+    window.open(filePath, '_blank');
+};
+
+// ==================== PODCASTS RENDERING ====================
+function renderPodcastsPage() {
+    const podcastsByCategory = {
+        "Cultura de Segurança": [
+            { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a" },
+            { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de Incidentes sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação de Incidentes (Disclosure).m4a" }
+        ],
+        "Comunicação": [
+            { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenficação cliente.m4a" },
+            { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abreviações perigosas.m4a" },
+            { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Conciliação medicamentosa Estratégica.m4a" },
+            { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Conciliação medicamentosa Internado.m4a" },
+            { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Conciliação medicamentosa ambulatorial.m4a" },
+            { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Conciliação medicamentosa Emergencia.m4a" },
+            { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a" },
+            { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transição Cuidado.m4a" }
+        ],
+        "Uso de Medicamentos": [
+            { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a" }
+        ],
+        "Vida Profissional": [
+            { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a" }
+        ],
+        "Prevenção de Infecções": [
+            { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Prevenção de infecções/5.1 Prevenção de infecções.m4a" }
+        ],
+        "Avaliação de Riscos": [
+            { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avaliação de Riscos/6.1 Avaliação de Riscos.m4a" }
+        ]
     };
     
-    showQuestion();
-}
-
-// ==================== OTHER SECTIONS ====================
-// ==================== DARK MODE ====================
-function toggleDarkMode() {
-    const body = document.body;
-    const icon = document.getElementById('darkModeIcon');
+    let html = `<h1 class="page-title">Podcasts Educativos</h1>
+                <p style="padding: 0 5px 15px; color: var(--cor-texto-claro); font-size: 0.9rem;">
+                    16 podcasts sobre as ROPs Qmentum
+                </p>`;
     
-    if (body.getAttribute('data-theme') === 'dark') {
-        body.removeAttribute('data-theme');
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
-        localStorage.setItem('theme', 'light');
-    } else {
-        body.setAttribute('data-theme', 'dark');
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
-        localStorage.setItem('theme', 'dark');
-    }
-}
-
-// Check saved theme on load
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.setAttribute('data-theme', 'dark');
-    const icon = document.getElementById('darkModeIcon');
-    if (icon) {
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
-    }
-}
-
-// ==================== DOCUMENTOS GROUP ====================
-function showDocumentosGroup() {
-    const screen = document.getElementById('documentosScreen');
-    
-    // Helper function para renderizar card se tiver permissão
-    const renderCardIfAllowed = (sectionKey, title, desc, icon, gradient, onClick) => {
-        if (typeof canAccessModule === 'function' && !canAccessModule(currentUser, sectionKey)) {
-            return ''; // Não renderiza se não tiver permissão
-        }
-        return `
-            <div class="menu-card" onclick="${onClick}()">
-                <div class="card-icon" style="background: ${gradient}">
-                    <i class="fas fa-${icon}"></i>
-                </div>
-                <h3>${title}</h3>
-                <p>${desc}</p>
-            </div>
-        `;
-    };
-    
-    const cardsHTML = renderCardIfAllowed('protocolos', 'Protocolos', 'Protocolos assistenciais', 'file-medical', 'linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)', 'showProtocolos') +
-                      renderCardIfAllowed('politicas', 'Políticas', 'Políticas institucionais', 'shield-alt', 'linear-gradient(135deg, #4f7942 0%, #a8d5a5 100%)', 'showPoliticas') +
-                      renderCardIfAllowed('formularios', 'Formulários', 'Documentos e formulários', 'clipboard-list', 'linear-gradient(135deg, #2d6a3f 0%, #87c68d 100%)', 'showFormularios') +
-                      renderCardIfAllowed('manuais', 'Manuais', 'Manuais técnicos', 'book', 'linear-gradient(135deg, #1a4d2e 0%, #5a8f66 100%)', 'showManuais') +
-                      renderCardIfAllowed('relatorios', 'Relatórios', 'Segurança do paciente', 'chart-line', 'linear-gradient(135deg, #3b7a54 0%, #9bcaa8 100%)', 'showRelatorios') +
-                      renderCardIfAllowed('processos', 'Processos', 'Mapeamento de processos', 'project-diagram', 'linear-gradient(135deg, #1f6638 0%, #76b583 100%)', 'showProcessos') +
-                      renderCardIfAllowed('riscos', 'Riscos', 'Mapeamento de riscos', 'exclamation-triangle', 'linear-gradient(135deg, #2a5c3f 0%, #82c491 100%)', 'showRiscos') +
-                      renderCardIfAllowed('termos', 'Termos', 'Termos e documentos', 'file-contract', 'linear-gradient(135deg, #1a4d2e 0%, #6fa378 100%)', 'showTermos') +
-                      renderCardIfAllowed('clima', 'Clima de Segurança', 'Relatórios de clima', 'cloud-sun', 'linear-gradient(135deg, #357054 0%, #91cc9c 100%)', 'showClima') +
-                      renderCardIfAllowed('plano', 'Plano de Segurança', 'Segurança do paciente', 'clipboard-check', 'linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)', 'showPlanoSeguranca');
-    
-    if (!cardsHTML.trim()) {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="goHome()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <div class="access-denied">
-                <i class="fas fa-ban"></i>
-                <h2>Sem Acesso</h2>
-                <p>Você não tem permissão para acessar nenhuma seção de documentos.</p>
-                <p>Entre em contato com o administrador.</p>
-            </div>
-        `;
-        showScreen('documentos');
-        return;
-    }
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">
-            <i class="fas fa-folder-open"></i> Documentos
-        </h2>
-        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
-            Acesse todos os documentos técnicos e institucionais
-        </p>
+    Object.keys(podcastsByCategory).forEach(category => {
+        const podcasts = podcastsByCategory[category];
+        const categoryColor = {
+            "Cultura de Segurança": "#9b59b6",
+            "Comunicação": "#3498db",
+            "Uso de Medicamentos": "#e74c3c",
+            "Vida Profissional": "#f39c12",
+            "Prevenção de Infecções": "#1abc9c",
+            "Avaliação de Riscos": "#e67e22"
+        }[category] || "#9b59b6";
         
-        <div class="menu-grid">
-            ${cardsHTML}
-        </div>
-    `;
-    showScreen('documentos');
-}
-
-// Mantém a estrutura antiga dos cards por compatibilidade
-function __oldDocumentosGroup__BACKUP() {
-    const screen = document.getElementById('documentosScreen');
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">
-            <i class="fas fa-folder-open"></i> Documentos
-        </h2>
-        <p style="text-align: center; color: white; opacity: 0.9; margin-bottom: 30px;">
-            Acesse todos os documentos técnicos e institucionais
-        </p>
+        html += `<div class="content-section">
+                    <h3><i class="fas fa-podcast"></i> ${category}</h3>`;
         
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showProtocolos()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)">
-                    <i class="fas fa-file-medical"></i>
-                </div>
-                <h3>Protocolos</h3>
-                <p>Protocolos assistenciais</p>
-            </div>
-
-            <div class="menu-card" onclick="showPoliticas()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #4f7942 0%, #a8d5a5 100%)">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Políticas</h3>
-                <p>Políticas institucionais</p>
-            </div>
-
-            <div class="menu-card" onclick="showFormularios()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #2d6a3f 0%, #87c68d 100%)">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3>Formulários</h3>
-                <p>Documentos e formulários</p>
-            </div>
-
-            <div class="menu-card" onclick="showManuais()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #5a8f66 100%)">
-                    <i class="fas fa-book"></i>
-                </div>
-                <h3>Manuais</h3>
-                <p>Manuais técnicos</p>
-            </div>
-
-            <div class="menu-card" onclick="showRelatorios()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #3b7a54 0%, #9bcaa8 100%)">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>Relatórios</h3>
-                <p>Segurança do paciente</p>
-            </div>
-
-            <div class="menu-card" onclick="showProcessos()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #1f6638 0%, #76b583 100%)">
-                    <i class="fas fa-project-diagram"></i>
-                </div>
-                <h3>Processos</h3>
-                <p>Mapeamento de processos</p>
-            </div>
-
-            <div class="menu-card" onclick="showRiscos()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #2a5c3f 0%, #82c491 100%)">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3>Riscos</h3>
-                <p>Mapeamento de riscos</p>
-            </div>
-
-            <div class="menu-card" onclick="showTermos()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #6fa378 100%)">
-                    <i class="fas fa-file-contract"></i>
-                </div>
-                <h3>Termos</h3>
-                <p>Termos e documentos</p>
-            </div>
-
-            <div class="menu-card" onclick="showClima()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #357054 0%, #91cc9c 100%)">
-                    <i class="fas fa-cloud-sun"></i>
-                </div>
-                <h3>Clima de Segurança</h3>
-                <p>Relatórios de clima</p>
-            </div>
-
-            <div class="menu-card" onclick="showPlanoSeguranca()">
-                <div class="card-icon" style="background: linear-gradient(135deg, #1a4d2e 0%, #7fb069 100%)">
-                    <i class="fas fa-clipboard-check"></i>
-                </div>
-                <h3>Plano de Segurança</h3>
-                <p>Segurança do paciente</p>
-            </div>
-        </div>
-    `;
-    showScreen('documentos');
-}
-
-// ==================== NOTIFICAÇÕES ====================
-function abrirNotificacoes() {
-    // Sistema externo - abre diretamente sem auto-login
-    // O auto-login não é possível devido às restrições de segurança cross-origin
-    const loginUrl = 'https://luizeuzebio.com.br/anest/index.php';
-    
-    // Abre em nova aba
-    window.open(loginUrl, '_blank');
-    
-    // Mostra instruções de login
-    showToast('Sistema de Notificações aberto. Use: anest@anest.com.br / 123456', 'info');
-}
-
-function showResidencia() {
-    const screen = document.getElementById('residenciaScreen');
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">Residência Médica</h2>
-        
-        <div class="menu-grid">
-            <div class="menu-card">
-                <div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <h3>Aulas</h3>
-                <p>Material didático e apresentações</p>
-            </div>
-            
-            <div class="menu-card">
-                <div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
-                    <i class="fas fa-newspaper"></i>
-                </div>
-                <h3>Artigos</h3>
-                <p>Artigos científicos relevantes</p>
-            </div>
-            
-            <div class="menu-card">
-                <div class="card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <h3>Escalas</h3>
-                <p>Escalas de plantão e atividades</p>
-            </div>
-            
-            <div class="menu-card">
-                <div class="card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
-                    <i class="fas fa-hospital"></i>
-                </div>
-                <h3>Estágios</h3>
-                <p>Informações sobre estágios</p>
-            </div>
-            
-            <div class="menu-card">
-                <div class="card-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)">
-                    <i class="fas fa-umbrella-beach"></i>
-                </div>
-                <h3>Férias</h3>
-                <p>Programação de férias</p>
-            </div>
-        </div>
-        
-        <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center;">
-            <i class="fas fa-info-circle" style="font-size: 48px; color: var(--primary-color); margin-bottom: 20px;"></i>
-            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Seção em Desenvolvimento</h3>
-            <p style="color: var(--text-light);">
-                O conteúdo desta seção será adicionado em breve. Entre em contato com a administração para mais informações.
-            </p>
-        </div>
-    `;
-    showScreen('residencia');
-}
-
-function showProtocolos() {
-    showDocumentsSection('protocolos', 'Protocolos', 'file-medical', documentsData.protocolos);
-}
-
-function showPoliticas() {
-    showDocumentsSection('politicas', 'Políticas', 'shield-alt', documentsData.politicas);
-}
-
-function showFormularios() {
-    showDocumentsSection('formularios', 'Formulários', 'clipboard-list', documentsData.formularios);
-}
-
-function showManuais() {
-    showDocumentsSection('manuais', 'Manuais', 'book', documentsData.manuais);
-}
-
-function showRelatorios() {
-    showDocumentsSection('relatorios', 'Relatórios de Segurança', 'chart-line', documentsData.relatorios);
-}
-
-function showProcessos() {
-    showDocumentsSection('processos', 'Mapeamento de Processos', 'project-diagram', documentsData.processos);
-}
-
-function showRiscos() {
-    showDocumentsSection('riscos', 'Mapeamento de Riscos', 'exclamation-triangle', documentsData.riscos);
-}
-
-function showTermos() {
-    showGenericSection('termos', 'Termos', 'file-contract', 'Termos de consentimento e documentos legais.');
-}
-
-function showClima() {
-    showGenericSection('clima', 'Clima de Segurança', 'temperature-high', 'Relatórios de clima organizacional de segurança.');
-}
-
-function showPlanoSeguranca() {
-    showDocumentsSection('planoSeguranca', 'Plano de Segurança do Paciente', 'clipboard-check', documentsData.planoSeguranca);
-}
-
-function showGenericSection(sectionKey, title, icon, description) {
-    const screen = document.getElementById(sectionKey + 'Screen');
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">${title}</h2>
-        
-        <div style="background: white; border-radius: 20px; padding: 40px; text-align: center; max-width: 600px; margin: 0 auto;">
-            <i class="fas fa-${icon}" style="font-size: 64px; color: var(--primary-color); margin-bottom: 20px;"></i>
-            <h3 style="color: var(--text-dark); margin-bottom: 15px;">${title}</h3>
-            <p style="color: var(--text-light); margin-bottom: 30px;">
-                ${description}
-            </p>
-            <div style="background: var(--bg-light); border-radius: 10px; padding: 20px;">
-                <i class="fas fa-folder-open" style="font-size: 48px; color: var(--text-light); margin-bottom: 10px;"></i>
-                <p style="color: var(--text-light);">
-                    Nenhum documento disponível no momento.<br>
-                    Os arquivos serão carregados em breve.
-                </p>
-            </div>
-        </div>
-    `;
-    showScreen(sectionKey);
-}
-
-function showProfile() {
-    if (currentUser) {
-        const fullName = currentUser.displayName || currentUser.email;
-        const email = currentUser.email;
-        
-        alert(`Perfil do Usuário\n\nNome: ${fullName}\nEmail: ${email}\n\nFuncionalidade completa em desenvolvimento.`);
-    }
-}
-
-// ==================== DOCUMENTS SECTION ====================
-function showDocumentsSection(sectionKey, title, icon, documents) {
-    const screen = document.getElementById(sectionKey + 'Screen');
-    
-    // Verificar permissão de acesso
-    if (typeof canAccessModule === 'function' && !canAccessModule(currentUser, sectionKey)) {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showDocumentosGroup()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <div class="access-denied">
-                <i class="fas fa-ban"></i>
-                <h2>Acesso Restrito</h2>
-                <p>Você não tem permissão para acessar esta seção de documentos.</p>
-                <p>Entre em contato com o administrador se precisar de acesso.</p>
-            </div>
-        `;
-        showScreen(sectionKey);
-        return;
-    }
-    
-    if (!documents || documents.length === 0) {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showDocumentosGroup()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">${title}</h2>
-            
-            <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center;">
-                <i class="fas fa-${icon}" style="font-size: 64px; color: var(--text-light); margin-bottom: 20px;"></i>
-                <h3 style="color: var(--text-dark); margin-bottom: 10px;">Nenhum documento disponível</h3>
-                <p style="color: var(--text-light);">
-                    Os arquivos serão adicionados em breve.
-                </p>
-            </div>
-        `;
-    } else {
-        // Get unique categories
-        const categories = [...new Set(documents.map(d => d.categoria || d.tipo).filter(Boolean))];
-        
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showDocumentosGroup()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">
-                <i class="fas fa-${icon}"></i> ${title}
-            </h2>
-            
-            ${categories.length > 1 ? `
-                <div class="category-filter">
-                    <button class="filter-btn active" onclick="filterDocuments('${sectionKey}', 'all')">
-                        Todos (${documents.length})
-                    </button>
-                    ${categories.map(cat => `
-                        <button class="filter-btn" onclick="filterDocuments('${sectionKey}', '${cat}')">
-                            ${cat} (${documents.filter(d => (d.categoria || d.tipo) === cat).length})
-                        </button>
-                    `).join('')}
-                </div>
-            ` : ''}
-            
-            <div class="menu-grid" id="${sectionKey}DocumentsGrid">
-                ${documents.map(doc => {
-                    const fileExtension = doc.file.split('.').pop().toUpperCase();
-                    const isPDF = fileExtension === 'PDF';
-                    const iconClass = isPDF ? 'fa-file-pdf' : 
-                                    fileExtension === 'DOCX' ? 'fa-file-word' : 
-                                    fileExtension === 'ODT' ? 'fa-file-alt' : 'fa-file';
-                    const colorGradient = isPDF ? 'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)' :
-                                         fileExtension === 'DOCX' ? 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)' :
-                                         'linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%)';
-                    
-                    return `
-                        <div class="menu-card" onclick="openDocument('${doc.file.replace(/'/g, "\\'")}', '${doc.title.replace(/'/g, "\\'")}', ${isPDF})">
-                            <div class="card-icon" style="background: ${colorGradient}">
-                                <i class="fas ${iconClass}"></i>
-                            </div>
-                            <h3>${doc.title}</h3>
+        podcasts.forEach(podcast => {
+            html += `<div class="list-item" onclick="playPodcast('${podcast.file}', '${podcast.title}')">
+                        <span class="icon" style="background-color: ${categoryColor};">
+                            <i class="fas fa-play-circle"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${podcast.title}</div>
                         </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
-    
-    showScreen(sectionKey);
-}
-
-function filterDocuments(sectionKey, category) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    const documents = documentsData[sectionKey];
-    const grid = document.getElementById(sectionKey + 'DocumentsGrid');
-    
-    const filtered = category === 'all' ? documents : 
-                     documents.filter(d => (d.categoria || d.tipo) === category);
-    
-    grid.innerHTML = filtered.map(doc => {
-        const fileExtension = doc.file.split('.').pop().toUpperCase();
-        const iconClass = fileExtension === 'PDF' ? 'fa-file-pdf' : 
-                        fileExtension === 'DOCX' ? 'fa-file-word' : 
-                        fileExtension === 'ODT' ? 'fa-file-alt' : 'fa-file';
+                    </div>`;
+        });
         
-        return `
-            <div class="document-item" onclick="openDocument('${doc.file.replace(/'/g, "\\'")}', '${doc.title.replace(/'/g, "\\'")}')">
-                <div class="document-icon">
-                    <i class="fas ${iconClass}"></i>
-                </div>
-                <div class="document-info">
-                    <div class="document-title">${doc.title}</div>
-                </div>
-                <i class="fas fa-external-link-alt" style="color: var(--primary-color);"></i>
-            </div>
-        `;
-    }).join('');
+        html += `</div>`;
+    });
+    
+    return html;
 }
 
-function openDocument(filePath, title, isPDF = true) {
-    if (isPDF) {
-        // Abre PDF inline em modal
-        openPDFViewer(filePath, title);
-    } else {
-        // Outros formatos (DOCX, ODT) também abrem inline usando Google Docs Viewer
-        openDocumentViewer(filePath, title);
-    }
-}
-
-function openPDFViewer(filePath, title) {
-    // Cria modal para visualização de PDF
+window.playPodcast = function(filePath, title) {
     const modal = document.createElement('div');
-    modal.id = 'pdfModal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-        animation: fadeIn 0.3s ease;
-    `;
-    
+    modal.className = 'modal active';
     modal.innerHTML = `
-        <div style="position: absolute; top: 10px; right: 10px; z-index: 10001;">
-            <button onclick="closePDFViewer()" 
-                style="background: rgba(0,0,0,0.7); color: white; border: none; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"
-                title="Fechar"
-                onmouseover="this.style.background='rgba(0,0,0,0.9)'" 
-                onmouseout="this.style.background='rgba(0,0,0,0.7)'">
-                <i class="fas fa-times"></i>
-            </button>
+        <div class="modal-content">
+            <h2><i class="fas fa-podcast"></i> ${title}</h2>
+            <audio controls style="width: 100%; margin: 20px 0;">
+                <source src="${filePath}" type="audio/mp4">
+                Seu navegador não suporta o elemento de áudio.
+            </audio>
+            <button class="btn-primary" onclick="this.closest('.modal').remove()">Fechar</button>
         </div>
-        <iframe 
-            id="documentFrame"
-            src="${filePath}#toolbar=0&navpanes=0&scrollbar=1&view=Fit" 
-            style="width: 100%; height: 100%; border: none; background: white;"
-            title="${title}">
-        </iframe>
     `;
-    
     document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-}
+};
 
-function openDocumentViewer(filePath, title) {
-    // Cria modal para visualização de documentos Word/ODT usando Google Docs Viewer
-    const modal = document.createElement('div');
-    modal.id = 'pdfModal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-        animation: fadeIn 0.3s ease;
-    `;
-    
-    const fileExtension = filePath.split('.').pop().toUpperCase();
-    const iconClass = fileExtension === 'DOCX' ? 'fa-file-word' : 'fa-file-alt';
-    
-    // URL completa do arquivo para o Google Docs Viewer
-    const fullUrl = window.location.origin + window.location.pathname.replace('/index.html', '') + '/' + filePath;
-    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fullUrl)}&embedded=true`;
-    
-    modal.innerHTML = `
-        <div style="position: absolute; top: 10px; right: 10px; z-index: 10001;">
-            <button onclick="closePDFViewer()" 
-                style="background: rgba(0,0,0,0.7); color: white; border: none; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"
-                title="Fechar"
-                onmouseover="this.style.background='rgba(0,0,0,0.9)'" 
-                onmouseout="this.style.background='rgba(0,0,0,0.7)'">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <iframe 
-            id="documentFrame"
-            src="${viewerUrl}" 
-            style="width: 100%; height: 100%; border: none; background: white;"
-            title="${title}">
-        </iframe>
-    `;
-    
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-}
-
-let currentZoom = 100;
-
-function zoomDocument(action) {
-    const frame = document.getElementById('documentFrame');
-    if (!frame) return;
-    
-    if (action === 'in') {
-        currentZoom += 25;
-    } else if (action === 'out') {
-        currentZoom = Math.max(50, currentZoom - 25);
-    } else if (action === 'fit') {
-        currentZoom = 100;
-    }
-    
-    frame.style.transform = `scale(${currentZoom / 100})`;
-    frame.style.transformOrigin = 'top center';
-}
-
-function closePDFViewer() {
-    const modal = document.getElementById('pdfModal');
-    if (modal) {
-        modal.style.animation = 'fadeOut 0.3s ease';
-        setTimeout(() => {
-            modal.remove();
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }
-}
-
-function downloadPDF(filePath, title) {
-    const link = document.createElement('a');
-    link.href = filePath;
-    link.download = title;
-    link.click();
-    showToast(`Baixando: ${title}`, 'success');
-}
-
-// ==================== PODCASTS ROPS ====================
-function showPodcastsROPs() {
-    const screen = document.getElementById('podcastsScreen');
-    
-    screen.innerHTML = `
-        <button class="back-btn" onclick="goHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        <h2 class="screen-title">Podcasts ROPs - Áudio Aulas</h2>
-        
-        <div class="menu-grid">
-            ${Object.entries(podcastsData).map(([key, macroArea]) => {
-                const audioCount = macroArea.audios.length;
-                return `
-                    <div class="menu-card" onclick="showPodcastMacroArea('${key}')">
-                        <div class="card-icon" style="background: ${macroArea.color}">
-                            <i class="${macroArea.icon}"></i>
-                        </div>
-                        <h3>${macroArea.title}</h3>
-                        <p>${audioCount} áudio${audioCount !== 1 ? 's' : ''} disponível${audioCount !== 1 ? 'is' : ''}</p>
-                    </div>
-                `;
-            }).join('')}
-        </div>
-    `;
-    
-    showScreen('podcasts');
-}
-
-function showPodcastMacroArea(macroKey) {
-    const macroArea = podcastsData[macroKey];
-    const screen = document.getElementById('podcastsScreen');
-    
-    if (!macroArea.audios || macroArea.audios.length === 0) {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showPodcastsROPs()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">${macroArea.title}</h2>
-            
-            <div class="documents-container">
-                <div class="no-audios-message">
-                    <i class="fas fa-microphone-slash"></i>
-                    <h3>Nenhuma áudio aula disponível ainda</h3>
-                    <p style="margin-top: 10px;">As áudio aulas desta macroárea serão adicionadas em breve.</p>
-                </div>
+// ==================== CHECKLIST RENDERING ====================
+function renderChecklistPage() {
+    return `<h1 class="page-title">Checklist de Cirurgia Segura</h1>
+        <div class="content-section">
+            <h3><i class="fas fa-sign-in-alt"></i> Sign In (Antes da Anestesia)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Identidade, Sítio, Procedimento confirmados</label>
             </div>
-        `;
-    } else {
-        screen.innerHTML = `
-            <button class="back-btn" onclick="showPodcastsROPs()">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h2 class="screen-title">${macroArea.title}</h2>
-            
-            <div class="documents-container">
-                <div style="margin-bottom: 30px; text-align: center;">
-                    <p style="color: var(--text-light);">
-                        <i class="fas fa-headphones"></i> ${macroArea.audios.length} áudio${macroArea.audios.length > 1 ? 's' : ''} disponível${macroArea.audios.length > 1 ? 'is' : ''}
-                    </p>
-                </div>
-                
-                ${macroArea.audios.map((audio, index) => `
-                    <div class="audio-player-container">
-                        <div class="audio-player-header">
-                            <div class="audio-player-icon" style="background: ${macroArea.color}">
-                                <i class="fas fa-play"></i>
-                            </div>
-                            <div class="audio-player-info">
-                                <div class="audio-player-title">${audio.title}</div>
-                                <div class="audio-player-description">${audio.descricao}</div>
-                            </div>
-                        </div>
-                        <div class="audio-player-controls">
-                            <audio controls preload="metadata">
-                                <source src="${audio.file}" type="audio/mp4">
-                                <source src="${audio.file}" type="audio/m4a">
-                                Seu navegador não suporta o elemento de áudio.
-                            </audio>
-                        </div>
-                    </div>
-                `).join('')}
-                
-                <div style="margin-top: 30px; padding: 20px; background: var(--bg-light); border-radius: 15px;">
-                    <h4 style="color: var(--text-dark); margin-bottom: 10px;">
-                        <i class="fas fa-info-circle"></i> Dicas de Uso
-                    </h4>
-                    <ul style="color: var(--text-light); padding-left: 20px;">
-                        <li>Use fones de ouvido para melhor experiência</li>
-                        <li>Você pode ajustar a velocidade de reprodução no player</li>
-                        <li>Os áudios ficam salvos para ouvir offline no navegador</li>
-                        <li>Recomendamos ouvir em um ambiente tranquilo</li>
-                    </ul>
-                </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Consentimento Informado assinado</label>
             </div>
-        `;
-    }
-    
-    showScreen('podcasts');
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Checagem de Equipamentos de Anestesia</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Alergias Conhecidas verificadas</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Via aérea difícil avaliada</label>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3><i class="fas fa-pause-circle"></i> Time Out (Antes da Incisão)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Apresentação da Equipe</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Confirmação Cirúrgica (paciente, procedimento, sítio)</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Profilaxia Antimicrobiana realizada</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Eventos Críticos Antecipados revisados</label>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3><i class="fas fa-sign-out-alt"></i> Sign Out (Antes da Saída)</h3>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Contagem de Instrumentos correta</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Identificação de Amostras realizada</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Plano de Cuidados Pós-Operatórios definido</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                <input type="checkbox" style="width: 20px; height: 20px; margin-right: 12px; accent-color: var(--cor-secundaria);">
+                <label>Preocupações da Equipe sobre Recuperação discutidas</label>
+            </div>
+        </div>`;
 }
 
-console.log('App initialized successfully!');
+// ==================== RESIDÊNCIA RENDERING ====================
+function renderResidenciaSheets() {
+    const sheetsUrl = "https://docs.google.com/spreadsheets/d/1RvxlGeQN6xZN6vPp9zhkWHbEbFiK6o3EGJm5eh9iR6s/edit?gid=833599381#gid=833599381";
+    
+    return `<h1 class="page-title">Escalas e Cronogramas</h1>
+            <div class="content-section">
+                <h3><i class="fas fa-calendar-alt"></i> Acesse a Planilha</h3>
+                <p style="margin-bottom: 20px;">
+                    Consulte as escalas de plantões, estágios e férias na planilha do Google Sheets.
+                </p>
+                <button class="btn-primary" onclick="window.open('${sheetsUrl}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Abrir Planilha
+                </button>
+            </div>
+            <div class="content-section">
+                <h3><i class="fas fa-info-circle"></i> Informações</h3>
+                <p style="font-size: 0.9rem; color: var(--cor-texto-claro);">
+                    A planilha contém informações sobre:
+                </p>
+                <ul style="margin-left: 20px; color: var(--cor-texto-claro); font-size: 0.9rem;">
+                    <li>Escalas de plantões</li>
+                    <li>Cronograma de estágios</li>
+                    <li>Calendário de férias</li>
+                    <li>Atividades programadas</li>
+                </ul>
+            </div>`;
+}
+
+console.log('✅ Aplicativo inicializado!');
 
