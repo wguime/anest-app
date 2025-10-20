@@ -390,6 +390,11 @@ const pages = {
         type: 'custom',
         render: renderChecklistPage
     },
+    incidentes: {
+        title: "Notificação de Incidentes",
+        type: 'custom',
+        render: renderNotificacaoIncidentePage
+    },
     residencia_sheets: {
         title: "Escalas e Cronogramas",
         type: 'custom',
@@ -473,6 +478,7 @@ function handlePageClick(e) {
     const listItem = target.closest('.list-item');
     const quizOption = target.closest('.quiz-option');
     const calcForm = target.closest('#calc-form');
+    const incidentForm = target.closest('#incident-form');
     
     if (listItem) {
         const targetPage = listItem.dataset.targetPage;
@@ -490,6 +496,11 @@ function handlePageClick(e) {
     if (target.classList.contains('submit-button') && calcForm) {
         e.preventDefault();
         handleCalculation(calcForm.dataset.calcId);
+    }
+    
+    if (target.type === 'submit' && incidentForm) {
+        e.preventDefault();
+        handleIncidentSubmit();
     }
     
     // ROPs specific handlers
@@ -820,6 +831,203 @@ function calcularDosesPediatricas() {
     resultsDiv.innerHTML = html;
     resultsDiv.style.display = 'block';
     showToast('Doses calculadas com sucesso!', 'success');
+}
+
+// ==================== NOTIFICAÇÃO DE INCIDENTES ====================
+async function handleIncidentSubmit() {
+    const form = document.getElementById('incident-form');
+    const resultDiv = document.getElementById('incident-result');
+    
+    // Coletar dados do formulário
+    const incidentData = {
+        date: document.getElementById('incident_date').value,
+        time: document.getElementById('incident_time').value || 'Não informado',
+        location: document.getElementById('incident_location').value,
+        type: document.getElementById('incident_type').value,
+        severity: document.getElementById('incident_severity').value,
+        patientId: document.getElementById('patient_identification').value || 'Não informado',
+        description: document.getElementById('incident_description').value,
+        immediateActions: document.getElementById('immediate_actions').value || 'Nenhuma ação imediata registrada',
+        contributingFactors: document.getElementById('contributing_factors').value || 'Não especificado',
+        anonymous: document.getElementById('incident_anonymous').checked,
+        submittedBy: document.getElementById('incident_anonymous').checked ? 'Anônimo' : (currentUser?.email || 'Não identificado'),
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'pendente', // pendente, em_analise, resolvido
+        reviewed: false
+    };
+    
+    // Validação básica
+    if (!incidentData.date || !incidentData.location || !incidentData.type || !incidentData.severity || !incidentData.description) {
+        showToast('Por favor, preencha todos os campos obrigatórios (*)', 'error');
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // Salvar no Firestore
+        const docRef = await db.collection('incidents').add(incidentData);
+        
+        hideLoading();
+        
+        // Exibir mensagem de sucesso
+        resultDiv.innerHTML = `
+            <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px; color: #155724;">
+                <h3 style="margin-top: 0;"><i class="fas fa-check-circle"></i> Notificação Enviada com Sucesso!</h3>
+                <p><strong>Protocolo:</strong> ${docRef.id.substring(0, 8).toUpperCase()}</p>
+                <p>Sua notificação foi registrada e será analisada pela equipe de qualidade e segurança.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Agradecemos sua contribuição para a melhoria contínua da segurança do paciente.</p>
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        
+        // Limpar formulário
+        form.reset();
+        
+        // Scroll para o resultado
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        showToast('Incidente registrado com sucesso!', 'success');
+        
+    } catch (error) {
+        hideLoading();
+        console.error('Erro ao salvar incidente:', error);
+        
+        resultDiv.innerHTML = `
+            <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; color: #721c24;">
+                <h3 style="margin-top: 0;"><i class="fas fa-exclamation-triangle"></i> Erro ao Enviar</h3>
+                <p>Ocorreu um erro ao registrar a notificação. Por favor, tente novamente.</p>
+                <p style="font-size: 0.85rem; color: #666;">Erro: ${error.message}</p>
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        
+        showToast('Erro ao registrar incidente', 'error');
+    }
+}
+
+function renderNotificacaoIncidentePage() {
+    return `
+        <h1 class="page-title">Notificação de Incidentes</h1>
+        <div class="content-section">
+            <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Utilize este formulário para notificar eventos adversos, quase-erros (near miss) ou situações de risco relacionadas à segurança do paciente.
+            </p>
+            
+            <form id="incident-form">
+                <div class="form-group">
+                    <label for="incident_date">Data do Incidente *</label>
+                    <input type="date" id="incident_date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="incident_time">Horário do Incidente</label>
+                    <input type="time" id="incident_time">
+                </div>
+                
+                <div class="form-group">
+                    <label for="incident_location">Local do Incidente *</label>
+                    <select id="incident_location" required>
+                        <option value="">Selecione...</option>
+                        <option value="centro_cirurgico">Centro Cirúrgico</option>
+                        <option value="sala_recuperacao">Sala de Recuperação (SRPA)</option>
+                        <option value="ambulatorio">Ambulatório</option>
+                        <option value="enfermaria">Enfermaria</option>
+                        <option value="uti">UTI</option>
+                        <option value="emergencia">Emergência</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="incident_type">Tipo de Incidente *</label>
+                    <select id="incident_type" required>
+                        <option value="">Selecione...</option>
+                        <option value="medicamento">Erro de Medicação</option>
+                        <option value="queda">Queda de Paciente</option>
+                        <option value="identificacao">Erro de Identificação</option>
+                        <option value="equipamento">Falha de Equipamento</option>
+                        <option value="via_aerea">Relacionado a Via Aérea</option>
+                        <option value="comunicacao">Falha de Comunicação</option>
+                        <option value="infeccao">Infecção Relacionada à Assistência</option>
+                        <option value="cirurgia_sitio_errado">Cirurgia em Local/Sítio Errado</option>
+                        <option value="lesao_pressao">Lesão por Pressão</option>
+                        <option value="queimadura">Queimadura</option>
+                        <option value="hemorragia">Hemorragia</option>
+                        <option value="broncoaspiracao">Broncoaspiração</option>
+                        <option value="reacao_adversa">Reação Adversa (Alergia)</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="incident_severity">Gravidade do Incidente *</label>
+                    <select id="incident_severity" required>
+                        <option value="">Selecione...</option>
+                        <option value="near_miss">Quase-erro (Near Miss) - Sem dano</option>
+                        <option value="leve">Leve - Dano mínimo, sem necessidade de intervenção</option>
+                        <option value="moderado">Moderado - Intervenção necessária, sem sequelas</option>
+                        <option value="grave">Grave - Dano significativo, com sequelas temporárias</option>
+                        <option value="critico">Crítico - Dano permanente ou óbito</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient_identification">Identificação do Paciente</label>
+                    <input type="text" id="patient_identification" placeholder="Ex: Iniciais ou número do prontuário (opcional)">
+                    <small style="color: #666; font-size: 0.8rem;">Para preservar a confidencialidade, use apenas iniciais ou número de prontuário</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="incident_description">Descrição Detalhada do Incidente *</label>
+                    <textarea id="incident_description" rows="6" required placeholder="Descreva o que aconteceu, quando, onde, quem estava envolvido e quais as circunstâncias..."></textarea>
+                    <small style="color: #666; font-size: 0.8rem;">Seja o mais específico possível. Inclua detalhes relevantes para a investigação.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="immediate_actions">Ações Imediatas Tomadas</label>
+                    <textarea id="immediate_actions" rows="4" placeholder="Descreva as ações imediatas que foram tomadas após o incidente..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contributing_factors">Fatores Contribuintes (opcional)</label>
+                    <textarea id="contributing_factors" rows="4" placeholder="Liste fatores que podem ter contribuído: comunicação, equipamento, processos, fadiga, etc."></textarea>
+                </div>
+                
+                <div class="form-group-bool">
+                    <input type="checkbox" id="incident_anonymous">
+                    <label for="incident_anonymous">Notificação Anônima</label>
+                </div>
+                
+                <p style="font-size: 0.85rem; color: #999; margin: 15px 0;">
+                    <i class="fas fa-lock"></i> Todas as notificações são confidenciais e serão utilizadas apenas para fins de melhoria da qualidade e segurança.
+                </p>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i> Enviar Notificação
+                </button>
+            </form>
+            
+            <div id="incident-result" style="display: none; margin-top: 20px;"></div>
+        </div>
+        
+        <style>
+            #incident-form textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--cor-borda);
+                border-radius: 8px;
+                font-family: inherit;
+                font-size: 0.95rem;
+                resize: vertical;
+                box-sizing: border-box;
+            }
+            #incident-form small {
+                display: block;
+                margin-top: 5px;
+            }
+        </style>
+    `;
 }
 
 // ==================== UTILITY FUNCTIONS ====================
