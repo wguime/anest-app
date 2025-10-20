@@ -226,14 +226,43 @@ async function loadUserProfile() {
                 profileComplete: false,
                 progress: {},
                 totalPoints: 0,
-                darkMode: false
+                darkMode: false,
+                role: 'user' // user, admin
             };
             await db.collection('users').doc(currentUser.uid).set(userProfile);
         }
+        
+        // Show admin button if user is admin
+        updateAdminButtonVisibility();
     } catch (error) {
         console.error('Error loading profile:', error);
     }
 }
+
+function isAdmin() {
+    return userProfile?.role === 'admin';
+}
+
+function updateAdminButtonVisibility() {
+    // This will be called after profile loads
+    if (isAdmin()) {
+        const adminBtn = document.getElementById('adminButton');
+        if (adminBtn) {
+            adminBtn.style.display = 'block';
+        }
+    }
+}
+
+function showAdminPanel() {
+    if (!isAdmin()) {
+        showToast('Acesso negado: Você não tem permissão de administrador', 'error');
+        return;
+    }
+    navigateTo('admin_panel');
+}
+
+// Make function available globally
+window.showAdminPanel = showAdminPanel;
 
 function showUserMenu() {
     const modal = document.getElementById('userMenuModal');
@@ -486,6 +515,28 @@ const pages = {
         title: "Escalas e Cronogramas",
         type: 'custom',
         render: renderResidenciaSheets
+    },
+    
+    // ADMIN PAGES
+    admin_panel: {
+        title: "Painel de Administração",
+        type: 'custom',
+        render: renderAdminPanel
+    },
+    admin_comunicados: {
+        title: "Gerenciar Comunicados",
+        type: 'custom',
+        render: renderAdminComunicados
+    },
+    admin_indicadores: {
+        title: "Gerenciar Indicadores",
+        type: 'custom',
+        render: renderAdminIndicadores
+    },
+    admin_documentos: {
+        title: "Gerenciar Documentos",
+        type: 'custom',
+        render: renderAdminDocumentos
     }
 };
 
@@ -1873,6 +1924,667 @@ window.showRanking = async function() {
         hideLoading();
         console.error('Error loading ranking:', error);
         showToast('Erro ao carregar ranking', 'error');
+    }
+};
+
+// ==================== ADMIN PANEL ====================
+function renderAdminPanel() {
+    if (!isAdmin()) {
+        return `<div class="content-section">
+                    <h3><i class="fas fa-lock"></i> Acesso Negado</h3>
+                    <p>Você não tem permissão para acessar esta página.</p>
+                </div>`;
+    }
+    
+    return `
+        <h1 class="page-title">Painel de Administração</h1>
+        
+        <div class="content-section" style="background: linear-gradient(135deg, var(--cor-perigo) 0%, var(--cor-aviso) 100%); color: white;">
+            <h2 style="margin: 0; color: white; border: none;">
+                <i class="fas fa-user-shield"></i> Área Restrita
+            </h2>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Gerencieconteúdo do aplicativo</p>
+        </div>
+        
+        <ul class="list-section">
+            <li class="list-item" data-target-page="admin_comunicados">
+                <span class="icon" style="background-color: var(--cor-perigo);"><i class="fas fa-bullhorn"></i></span>
+                <div class="text-content">
+                    <div class="title">Gerenciar Comunicados</div>
+                    <div class="subtitle">Criar, editar e excluir comunicados</div>
+                </div>
+                <i class="chevron fas fa-chevron-right"></i>
+            </li>
+            <li class="list-item" data-target-page="admin_indicadores">
+                <span class="icon" style="background-color: var(--cor-sucesso);"><i class="fas fa-chart-line"></i></span>
+                <div class="text-content">
+                    <div class="title">Gerenciar Indicadores</div>
+                    <div class="subtitle">Atualizar indicadores de qualidade</div>
+                </div>
+                <i class="chevron fas fa-chevron-right"></i>
+            </li>
+            <li class="list-item" data-target-page="admin_documentos">
+                <span class="icon" style="background-color: var(--cor-info);"><i class="fas fa-file-alt"></i></span>
+                <div class="text-content">
+                    <div class="title">Gerenciar Documentos</div>
+                    <div class="subtitle">Upload e organização de documentos</div>
+                </div>
+                <i class="chevron fas fa-chevron-right"></i>
+            </li>
+        </ul>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-users"></i> Gerenciar Usuários</h3>
+            <button class="submit-button" onclick="showUserManagement()">
+                <i class="fas fa-user-cog"></i> Ver Todos os Usuários
+            </button>
+        </div>
+    `;
+}
+
+function renderAdminComunicados() {
+    return `
+        <h1 class="page-title">Gerenciar Comunicados</h1>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-plus-circle"></i> Novo Comunicado</h3>
+            <form id="comunicado-form">
+                <div class="form-group">
+                    <label for="comunicado_title">Título *</label>
+                    <input type="text" id="comunicado_title" required placeholder="Ex: Reunião Geral - 20/10/2025">
+                </div>
+                
+                <div class="form-group">
+                    <label for="comunicado_content">Conteúdo *</label>
+                    <textarea id="comunicado_content" rows="6" required placeholder="Digite o conteúdo do comunicado..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comunicado_priority">Prioridade</label>
+                    <select id="comunicado_priority">
+                        <option value="baixa">Baixa</option>
+                        <option value="media" selected>Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="urgente">Urgente</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i> Publicar Comunicado
+                </button>
+            </form>
+        </div>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-list"></i> Comunicados Publicados</h3>
+            <div id="comunicados-list">
+                <p style="text-align: center; color: var(--cor-texto-claro);">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando...
+                </p>
+            </div>
+        </div>
+        
+        <style>
+            #comunicado-form textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--cor-borda);
+                border-radius: 8px;
+                font-family: inherit;
+                font-size: 0.95rem;
+                resize: vertical;
+                box-sizing: border-box;
+            }
+            
+            body.dark-mode #comunicado-form textarea {
+                background: #2a2a2a;
+                color: var(--cor-texto);
+            }
+            
+            .comunicado-item {
+                padding: 15px;
+                border: 2px solid var(--cor-borda);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                position: relative;
+            }
+            
+            .comunicado-item.alta {
+                border-left: 4px solid var(--cor-perigo);
+            }
+            
+            .comunicado-item.urgente {
+                border-left: 4px solid #dc3545;
+                background: rgba(220, 53, 69, 0.05);
+            }
+            
+            .comunicado-actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            
+            .comunicado-actions button {
+                flex: 1;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-edit {
+                background: var(--cor-info);
+                color: white;
+            }
+            
+            .btn-delete {
+                background: var(--cor-perigo);
+                color: white;
+            }
+        </style>
+    `;
+}
+
+function renderAdminIndicadores() {
+    return `
+        <h1 class="page-title">Gerenciar Indicadores</h1>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-chart-bar"></i> Atualizar Indicadores de Qualidade</h3>
+            <form id="indicador-form">
+                <div class="form-group">
+                    <label for="indicador_name">Nome do Indicador *</label>
+                    <select id="indicador_name" required>
+                        <option value="">Selecione...</option>
+                        <option value="higiene_maos">Adesão à Higiene das Mãos</option>
+                        <option value="incidentes">Taxa de Notificação de Incidentes</option>
+                        <option value="nvpo">Incidência de NVPO</option>
+                        <option value="dor">Controle da Dor Pós-operatória</option>
+                        <option value="satisfacao">Satisfação do Paciente</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="indicador_valor">Valor Atual (%)</label>
+                    <input type="number" id="indicador_valor" min="0" max="100" step="0.1" required placeholder="Ex: 95.5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="indicador_meta">Meta (%)</label>
+                    <input type="number" id="indicador_meta" min="0" max="100" step="0.1" required placeholder="Ex: 90">
+                </div>
+                
+                <div class="form-group">
+                    <label for="indicador_periodo">Período de Referência *</label>
+                    <input type="text" id="indicador_periodo" required placeholder="Ex: Outubro/2025">
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-save"></i> Salvar Indicador
+                </button>
+            </form>
+        </div>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-list-alt"></i> Indicadores Atuais</h3>
+            <div id="indicadores-list">
+                <p style="text-align: center; color: var(--cor-texto-claro);">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando...
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+function renderAdminDocumentos() {
+    return `
+        <h1 class="page-title">Gerenciar Documentos</h1>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-cloud-upload-alt"></i> Upload de Documento</h3>
+            <p style="color: var(--cor-texto-claro); margin-bottom: 15px;">
+                Faça upload de documentos PDF para a biblioteca do aplicativo.
+            </p>
+            
+            <form id="documento-form">
+                <div class="form-group">
+                    <label for="doc_title">Título do Documento *</label>
+                    <input type="text" id="doc_title" required placeholder="Ex: Protocolo de Higiene das Mãos">
+                </div>
+                
+                <div class="form-group">
+                    <label for="doc_category">Categoria *</label>
+                    <select id="doc_category" required>
+                        <option value="">Selecione...</option>
+                        <option value="protocolos">Protocolos</option>
+                        <option value="politicas">Políticas</option>
+                        <option value="formularios">Formulários</option>
+                        <option value="manuais">Manuais</option>
+                        <option value="relatorios">Relatórios</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="doc_file">Arquivo PDF *</label>
+                    <input type="file" id="doc_file" accept=".pdf" required>
+                    <small style="color: var(--cor-texto-claro); display: block; margin-top: 5px;">
+                        Formato: PDF | Tamanho máximo: 10 MB
+                    </small>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-upload"></i> Fazer Upload
+                </button>
+            </form>
+        </div>
+        
+        <div class="content-section">
+            <h3><i class="fas fa-folder-open"></i> Documentos Existentes</h3>
+            <div id="documentos-list">
+                <p style="text-align: center; color: var(--cor-texto-claro);">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando...
+                </p>
+            </div>
+        </div>
+        
+        <style>
+            #doc_file {
+                padding: 10px;
+                border: 2px dashed var(--cor-borda);
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            #doc_file:hover {
+                border-color: var(--cor-primaria);
+                background: rgba(67, 233, 123, 0.05);
+            }
+        </style>
+    `;
+}
+
+// Initialize admin forms after page render
+setTimeout(() => {
+    const comunicadoForm = document.getElementById('comunicado-form');
+    if (comunicadoForm) {
+        comunicadoForm.addEventListener('submit', handleComunicadoSubmit);
+        loadComunicados();
+    }
+    
+    const indicadorForm = document.getElementById('indicador-form');
+    if (indicadorForm) {
+        indicadorForm.addEventListener('submit', handleIndicadorSubmit);
+        loadIndicadores();
+    }
+    
+    const documentoForm = document.getElementById('documento-form');
+    if (documentoForm) {
+        documentoForm.addEventListener('submit', handleDocumentoSubmit);
+        loadDocumentos();
+    }
+}, 100);
+
+async function handleComunicadoSubmit(e) {
+    e.preventDefault();
+    
+    const comunicado = {
+        title: document.getElementById('comunicado_title').value,
+        content: document.getElementById('comunicado_content').value,
+        priority: document.getElementById('comunicado_priority').value,
+        author: `${userProfile.firstName} ${userProfile.lastName}`,
+        authorEmail: currentUser.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    try {
+        showLoading();
+        await db.collection('comunicados').add(comunicado);
+        hideLoading();
+        
+        showToast('Comunicado publicado com sucesso!', 'success');
+        document.getElementById('comunicado-form').reset();
+        loadComunicados();
+    } catch (error) {
+        hideLoading();
+        console.error('Error creating comunicado:', error);
+        showToast('Erro ao publicar comunicado', 'error');
+    }
+}
+
+async function loadComunicados() {
+    try {
+        const snapshot = await db.collection('comunicados').orderBy('createdAt', 'desc').limit(20).get();
+        const list = document.getElementById('comunicados-list');
+        
+        if (snapshot.empty) {
+            list.innerHTML = '<p style="text-align: center; color: var(--cor-texto-claro);">Nenhum comunicado publicado ainda.</p>';
+            return;
+        }
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString('pt-BR') : 'N/A';
+            
+            html += `
+                <div class="comunicado-item ${data.priority}">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <strong style="font-size: 1.05rem;">${data.title}</strong>
+                        <span style="background: var(--cor-aviso); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">
+                            ${data.priority}
+                        </span>
+                    </div>
+                    <p style="color: var(--cor-texto-claro); margin: 10px 0;">${data.content}</p>
+                    <div style="font-size: 0.85rem; color: var(--cor-texto-claro); margin-top: 10px;">
+                        <i class="fas fa-user"></i> ${data.author} | <i class="fas fa-calendar"></i> ${date}
+                    </div>
+                    <div class="comunicado-actions">
+                        <button class="btn-delete" onclick="deleteComunicado('${doc.id}')">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading comunicados:', error);
+    }
+}
+
+window.deleteComunicado = async function(id) {
+    if (!confirm('Tem certeza que deseja excluir este comunicado?')) {
+        return;
+    }
+    
+    try {
+        showLoading();
+        await db.collection('comunicados').doc(id).delete();
+        hideLoading();
+        showToast('Comunicado excluído com sucesso!', 'success');
+        loadComunicados();
+    } catch (error) {
+        hideLoading();
+        console.error('Error deleting comunicado:', error);
+        showToast('Erro ao excluir comunicado', 'error');
+    }
+};
+
+async function handleIndicadorSubmit(e) {
+    e.preventDefault();
+    
+    const indicador = {
+        name: document.getElementById('indicador_name').value,
+        value: parseFloat(document.getElementById('indicador_valor').value),
+        target: parseFloat(document.getElementById('indicador_meta').value),
+        period: document.getElementById('indicador_periodo').value,
+        updatedBy: `${userProfile.firstName} ${userProfile.lastName}`,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    try {
+        showLoading();
+        // Use name as document ID for easy updates
+        await db.collection('indicadores').doc(indicador.name).set(indicador);
+        hideLoading();
+        
+        showToast('Indicador atualizado com sucesso!', 'success');
+        document.getElementById('indicador-form').reset();
+        loadIndicadores();
+    } catch (error) {
+        hideLoading();
+        console.error('Error saving indicador:', error);
+        showToast('Erro ao salvar indicador', 'error');
+    }
+}
+
+async function loadIndicadores() {
+    try {
+        const snapshot = await db.collection('indicadores').get();
+        const list = document.getElementById('indicadores-list');
+        
+        if (snapshot.empty) {
+            list.innerHTML = '<p style="text-align: center; color: var(--cor-texto-claro);">Nenhum indicador cadastrado ainda.</p>';
+            return;
+        }
+        
+        const indicadoresMap = {
+            higiene_maos: 'Adesão à Higiene das Mãos',
+            incidentes: 'Taxa de Notificação de Incidentes',
+            nvpo: 'Incidência de NVPO',
+            dor: 'Controle da Dor Pós-operatória',
+            satisfacao: 'Satisfação do Paciente'
+        };
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const percentage = (data.value / data.target) * 100;
+            const isGood = data.value >= data.target;
+            
+            html += `
+                <div style="padding: 15px; border: 2px solid var(--cor-borda); border-radius: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong>${indicadoresMap[data.name] || data.name}</strong>
+                        <span style="font-size: 1.2rem; font-weight: 700; color: ${isGood ? 'var(--cor-sucesso)' : 'var(--cor-perigo)'};">
+                            ${data.value.toFixed(1)}%
+                        </span>
+                    </div>
+                    <div style="background: var(--cor-fundo); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
+                        <div style="background: ${isGood ? 'var(--cor-sucesso)' : 'var(--cor-aviso)'}; height: 100%; width: ${Math.min(percentage, 100)}%;"></div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--cor-texto-claro);">
+                        <i class="fas fa-bullseye"></i> Meta: ${data.target}% | 
+                        <i class="fas fa-calendar"></i> ${data.period}
+                    </div>
+                </div>
+            `;
+        });
+        
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading indicadores:', error);
+    }
+}
+
+async function handleDocumentoSubmit(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('doc_title').value;
+    const category = document.getElementById('doc_category').value;
+    const file = document.getElementById('doc_file').files[0];
+    
+    if (!file) {
+        showToast('Por favor, selecione um arquivo', 'error');
+        return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('Arquivo muito grande! Máximo: 10 MB', 'error');
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // Upload file to Firebase Storage
+        const storageRef = firebase.storage().ref();
+        const fileRef = storageRef.child(`documentos/${category}/${Date.now()}_${file.name}`);
+        await fileRef.put(file);
+        
+        // Get download URL
+        const downloadURL = await fileRef.getDownloadURL();
+        
+        // Save document metadata to Firestore
+        await db.collection('documentos').add({
+            title: title,
+            category: category,
+            fileName: file.name,
+            fileSize: file.size,
+            fileURL: downloadURL,
+            uploadedBy: `${userProfile.firstName} ${userProfile.lastName}`,
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        hideLoading();
+        showToast('Documento enviado com sucesso!', 'success');
+        document.getElementById('documento-form').reset();
+        loadDocumentos();
+    } catch (error) {
+        hideLoading();
+        console.error('Error uploading document:', error);
+        showToast('Erro ao fazer upload do documento', 'error');
+    }
+}
+
+async function loadDocumentos() {
+    try {
+        const snapshot = await db.collection('documentos').orderBy('uploadedAt', 'desc').limit(20).get();
+        const list = document.getElementById('documentos-list');
+        
+        if (snapshot.empty) {
+            list.innerHTML = '<p style="text-align: center; color: var(--cor-texto-claro);">Nenhum documento enviado ainda.</p>';
+            return;
+        }
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.uploadedAt ? data.uploadedAt.toDate().toLocaleDateString('pt-BR') : 'N/A';
+            const sizeKB = (data.fileSize / 1024).toFixed(0);
+            
+            html += `
+                <div style="padding: 15px; border: 2px solid var(--cor-borda); border-radius: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--cor-perigo);"></i>
+                        <div style="flex: 1;">
+                            <strong>${data.title}</strong>
+                            <div style="font-size: 0.85rem; color: var(--cor-texto-claro); margin-top: 3px;">
+                                ${data.category} | ${sizeKB} KB | ${date}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="submit-button" style="flex: 1; background: var(--cor-info);" onclick="window.open('${data.fileURL}', '_blank')">
+                            <i class="fas fa-download"></i> Baixar
+                        </button>
+                        <button class="submit-button" style="flex: 1; background: var(--cor-perigo);" onclick="deleteDocumento('${doc.id}', '${data.fileURL}')">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading documentos:', error);
+    }
+}
+
+window.deleteDocumento = async function(id, fileURL) {
+    if (!confirm('Tem certeza que deseja excluir este documento?')) {
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // Delete file from Storage
+        const fileRef = firebase.storage().refFromURL(fileURL);
+        await fileRef.delete();
+        
+        // Delete metadata from Firestore
+        await db.collection('documentos').doc(id).delete();
+        
+        hideLoading();
+        showToast('Documento excluído com sucesso!', 'success');
+        loadDocumentos();
+    } catch (error) {
+        hideLoading();
+        console.error('Error deleting document:', error);
+        showToast('Erro ao excluir documento', 'error');
+    }
+};
+
+window.showUserManagement = async function() {
+    try {
+        showLoading();
+        
+        const usersSnapshot = await db.collection('users').orderBy('createdAt', 'desc').limit(50).get();
+        const users = [];
+        usersSnapshot.forEach(doc => {
+            users.push({ id: doc.id, ...doc.data() });
+        });
+        
+        hideLoading();
+        
+        const pageContent = document.getElementById('page-content');
+        const headerTitle = document.getElementById('header-title');
+        headerTitle.textContent = 'Gerenciar Usuários';
+        
+        let html = `
+            <h1 class="page-title">Gerenciar Usuários</h1>
+            
+            <div class="content-section">
+                <p style="color: var(--cor-texto-claro); margin-bottom: 10px;">
+                    Total de usuários: <strong>${users.length}</strong>
+                </p>
+            </div>
+        `;
+        
+        users.forEach(user => {
+            const date = user.createdAt ? user.createdAt.toDate().toLocaleDateString('pt-BR') : 'N/A';
+            const isAdmin = user.role === 'admin';
+            
+            html += `
+                <div class="content-section" style="margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${user.firstName} ${user.lastName}</strong>
+                            <div style="font-size: 0.85rem; color: var(--cor-texto-claro); margin-top: 3px;">
+                                ${user.email}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--cor-texto-claro); margin-top: 3px;">
+                                Cadastro: ${date} | Pontos: ${user.totalPoints || 0}
+                            </div>
+                        </div>
+                        <div>
+                            <button class="submit-button" style="padding: 8px 12px; ${isAdmin ? 'background: var(--cor-perigo);' : 'background: var(--cor-sucesso);'}" 
+                                onclick="toggleUserAdmin('${user.id}', ${!isAdmin})">
+                                ${isAdmin ? '<i class="fas fa-user-minus"></i> Remover Admin' : '<i class="fas fa-user-shield"></i> Tornar Admin'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        pageContent.innerHTML = html;
+        pageContent.scrollTop = 0;
+    } catch (error) {
+        hideLoading();
+        console.error('Error loading users:', error);
+        showToast('Erro ao carregar usuários', 'error');
+    }
+};
+
+window.toggleUserAdmin = async function(userId, makeAdmin) {
+    try {
+        showLoading();
+        await db.collection('users').doc(userId).update({
+            role: makeAdmin ? 'admin' : 'user'
+        });
+        hideLoading();
+        showToast(`Usuário ${makeAdmin ? 'promovido a' : 'removido de'} administrador!`, 'success');
+        showUserManagement(); // Reload list
+    } catch (error) {
+        hideLoading();
+        console.error('Error toggling admin:', error);
+        showToast('Erro ao atualizar usuário', 'error');
     }
 };
 
