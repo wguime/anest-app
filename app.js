@@ -180,7 +180,26 @@ function setupEventListeners() {
 
     // Profile button
     document.getElementById('profileButton').addEventListener('click', () => {
-        showProfileMenu();
+        showUserMenu();
+    });
+
+    // User menu buttons
+    document.getElementById('closeUserMenu').addEventListener('click', () => {
+        closeUserMenu();
+    });
+    
+    document.getElementById('logoutButton').addEventListener('click', async () => {
+        try {
+            await auth.signOut();
+            showToast('Logout realizado com sucesso', 'success');
+        } catch (error) {
+            showToast('Erro ao fazer logout', 'error');
+        }
+    });
+    
+    // Dark mode toggle
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        toggleDarkMode();
     });
 
     // Page content click delegation
@@ -193,6 +212,12 @@ async function loadUserProfile() {
         const doc = await db.collection('users').doc(currentUser.uid).get();
         if (doc.exists) {
             userProfile = doc.data();
+            
+            // Apply dark mode preference
+            if (userProfile.darkMode) {
+                document.body.classList.add('dark-mode');
+                updateThemeToggleUI(true);
+            }
         } else {
             // Create initial profile
             userProfile = {
@@ -200,12 +225,72 @@ async function loadUserProfile() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 profileComplete: false,
                 progress: {},
-                totalPoints: 0
+                totalPoints: 0,
+                darkMode: false
             };
             await db.collection('users').doc(currentUser.uid).set(userProfile);
         }
     } catch (error) {
         console.error('Error loading profile:', error);
+    }
+}
+
+function showUserMenu() {
+    const modal = document.getElementById('userMenuModal');
+    const userFullName = document.getElementById('userFullName');
+    const userEmail = document.getElementById('userEmail');
+    
+    // Update user info
+    if (userProfile) {
+        userFullName.textContent = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Usuário';
+        userEmail.textContent = currentUser?.email || '';
+    }
+    
+    // Update theme toggle state
+    updateThemeToggleUI(document.body.classList.contains('dark-mode'));
+    
+    modal.style.display = 'flex';
+}
+
+function closeUserMenu() {
+    const modal = document.getElementById('userMenuModal');
+    modal.style.display = 'none';
+}
+
+async function toggleDarkMode() {
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    
+    // Update UI
+    updateThemeToggleUI(isDarkMode);
+    
+    // Save preference to Firestore
+    try {
+        if (currentUser) {
+            await db.collection('users').doc(currentUser.uid).update({
+                darkMode: isDarkMode
+            });
+            userProfile.darkMode = isDarkMode;
+            showToast(`Modo ${isDarkMode ? 'escuro' : 'claro'} ativado`, 'success');
+        }
+    } catch (error) {
+        console.error('Error saving theme preference:', error);
+        showToast('Erro ao salvar preferência de tema', 'error');
+    }
+}
+
+function updateThemeToggleUI(isDarkMode) {
+    const themeSwitch = document.getElementById('themeSwitch');
+    const themeLabel = document.querySelector('.theme-toggle-label i');
+    const themeLabelText = document.querySelector('.theme-toggle-label span');
+    
+    if (isDarkMode) {
+        themeSwitch.classList.add('active');
+        themeLabel.className = 'fas fa-sun';
+        themeLabelText.textContent = 'Modo Claro';
+    } else {
+        themeSwitch.classList.remove('active');
+        themeLabel.className = 'fas fa-moon';
+        themeLabelText.textContent = 'Modo Escuro';
     }
 }
 

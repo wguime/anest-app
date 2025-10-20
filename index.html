@@ -111,6 +111,32 @@
         </div>
     </div>
 
+    <!-- User Menu Modal -->
+    <div id="userMenuModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-circle"></i> Meu Perfil</h2>
+            <div style="padding: 15px 0;">
+                <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong id="userFullName">Nome do Usuário</strong></p>
+                <p style="color: var(--cor-texto-claro); font-size: 0.9rem;" id="userEmail">email@example.com</p>
+            </div>
+            
+            <div class="theme-toggle" id="themeToggle">
+                <div class="theme-toggle-label">
+                    <i class="fas fa-moon"></i>
+                    <span>Modo Escuro</span>
+                </div>
+                <div class="theme-toggle-switch" id="themeSwitch"></div>
+            </div>
+            
+            <button class="btn-primary" style="background: var(--cor-perigo); margin-top: 15px; width: 100%;" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+            <button class="btn-primary" style="background: var(--cor-texto-claro); margin-top: 10px; width: 100%;" id="closeUserMenu">
+                Fechar
+            </button>
+        </div>
+    </div>
+
     <!-- Main App Container -->
     <div id="appContainer" class="app-container" style="display: none;">
         <header id="appHeader">
