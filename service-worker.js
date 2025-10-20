@@ -1,7 +1,7 @@
 // ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
 // Versão Profissional
 
-const CACHE_VERSION = 'v7.0.0-admin-panel-complete';
+const CACHE_VERSION = 'v7.0.1-hotfix-references';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Essential files to cache
