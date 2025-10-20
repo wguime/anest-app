@@ -116,3 +116,4 @@ Depois você substitui pelos gerados!
 
 **Não precisa alterar código!** O `manifest.json` já está configurado.
 
+

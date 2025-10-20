@@ -476,3 +476,4 @@ console.log('✅ ROPs carregadas (versão COMPLETA):', Object.keys(ropsData));
 
 if __name__ == "__main__":
     create_complete_rops()
+

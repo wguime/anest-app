@@ -139,3 +139,4 @@ print("  • ROP 2.5 - Conciliação Ambulatorial")
 print("  • ROP 2.6 - Conciliação em Emergência")
 print("\n🎯 Total: 120 questões integradas!")
 
+

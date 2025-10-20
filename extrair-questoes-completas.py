@@ -109,3 +109,4 @@ console.log('✅ ROPs carregadas (versão completa):', Object.keys(ropsData));
 
 if __name__ == "__main__":
     extract_all_questions()
+

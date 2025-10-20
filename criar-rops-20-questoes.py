@@ -481,3 +481,4 @@ console.log('✅ ROPs carregadas (versão OTIMIZADA 20 questões):', Object.keys
 
 if __name__ == "__main__":
     create_rops_20_questions()
+

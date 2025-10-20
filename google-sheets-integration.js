@@ -393,3 +393,4 @@ function openGoogleSheet() {
 
 console.log('✅ Google Sheets Integration carregado');
 
+

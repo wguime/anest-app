@@ -303,3 +303,4 @@ console.log('✅ ROPs carregadas (FINAL DEFINITIVO - 32 ROPs):', Object.keys(rop
 
 if __name__ == "__main__":
     create_final_rops()
+

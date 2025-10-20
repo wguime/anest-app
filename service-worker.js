@@ -1,196 +1,153 @@
-// ==================== SERVICE WORKER - ANEST PWA (NOVO LAYOUT) ====================
-// Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v5.3.0-corrigido';
+// ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
+// Versão Profissional
+
+const CACHE_VERSION = 'v6.0.0-profissional';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
-// Arquivos essenciais para cache (funcionamento offline)
+// Essential files to cache
 const ESSENTIAL_FILES = [
-    './',
-    './index.html',
-    './novo-styles.css',
-    './novo-app.js',
-    './calculadoras-definitions.js',
-    './documents-data.js',
-    './firebase-config.js',
-    './rops-data-from-banco.js',
-    './logo-anest.png',
-    './manifest.json'
+    '/',
+    '/index.html',
+    '/styles.css',
+    '/app.js',
+    '/firebase-config.js',
+    '/permissions-system.js',
+    '/rops-data-from-banco.js',
+    '/calculadoras-definitions.js',
+    '/documents-data.js',
+    '/logo-anest.png',
+    '/manifest.json',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'
 ];
 
-// Arquivos que podem ser cacheados dinamicamente
-const DYNAMIC_CACHE = `anest-dynamic-${CACHE_VERSION}`;
-
-// URLs externas que NÃO devem ser cacheadas
-const EXTERNAL_URLS = [
-    'https://www.gstatic.com/firebasejs',
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
-    'https://cdnjs.cloudflare.com',
-    'https://cdn.jsdelivr.net'
-];
-
-// ==================== INSTALAÇÃO ====================
+// Install event - cache essential files
 self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Instalando versão:', CACHE_VERSION);
+    console.log(`[SW] Installing version ${CACHE_VERSION}...`);
     
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[Service Worker] Cacheando arquivos essenciais');
-                return cache.addAll(ESSENTIAL_FILES);
+                console.log('[SW] Caching essential files...');
+                return cache.addAll(ESSENTIAL_FILES.map(url => {
+                    // Add cache busting for local files
+                    if (!url.startsWith('http')) {
+                        return `${url}?v=${CACHE_VERSION}`;
+                    }
+                    return url;
+                }));
             })
             .then(() => {
-                console.log('[Service Worker] Instalação completa');
-                return self.skipWaiting(); // Ativa imediatamente
+                console.log('[SW] Installation complete!');
+                return self.skipWaiting();
             })
             .catch((error) => {
-                console.error('[Service Worker] Erro na instalação:', error);
+                console.error('[SW] Installation failed:', error);
             })
     );
 });
 
-// ==================== ATIVAÇÃO ====================
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] Ativando versão:', CACHE_VERSION);
+    console.log(`[SW] Activating version ${CACHE_VERSION}...`);
     
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
-                // Remove caches antigos
                 return Promise.all(
                     cacheNames.map((cacheName) => {
-                        if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
-                            console.log('[Service Worker] Removendo cache antigo:', cacheName);
+                        if (cacheName !== CACHE_NAME && cacheName.startsWith('anest-app-')) {
+                            console.log('[SW] Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
                         }
                     })
                 );
             })
             .then(() => {
-                console.log('[Service Worker] Ativação completa');
-                return self.clients.claim(); // Assume controle imediatamente
+                console.log('[SW] Activation complete!');
+                return self.clients.claim();
             })
     );
 });
 
-// ==================== FETCH (ESTRATÉGIA DE CACHE) ====================
+// Fetch event - serve from cache with network fallback
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
     
-    // Não cachear URLs externas específicas
-    if (EXTERNAL_URLS.some(externalUrl => request.url.startsWith(externalUrl))) {
-        event.respondWith(fetch(request));
+    // Skip cross-origin requests (except Firebase and FontAwesome CDN)
+    if (url.origin !== location.origin && 
+        !url.origin.includes('gstatic.com') && 
+        !url.origin.includes('cdnjs.cloudflare.com')) {
         return;
     }
     
-    // Não cachear chamadas Firebase/Firestore
-    if (request.url.includes('firebasestorage') || 
-        request.url.includes('firestore.googleapis.com') ||
-        request.url.includes('identitytoolkit.googleapis.com')) {
-        event.respondWith(fetch(request));
+    // Network-first strategy for Firebase API calls
+    if (url.origin.includes('firebaseio.com') || 
+        url.origin.includes('googleapis.com') ||
+        url.pathname.includes('firebase')) {
+        event.respondWith(
+            fetch(request)
+                .catch(() => {
+                    return new Response(JSON.stringify({ error: 'Offline' }), {
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                })
+        );
         return;
     }
     
-    // Estratégia: Network First para HTML, Cache First para assets
-    if (request.destination === 'document') {
-        event.respondWith(networkFirst(request));
-    } else {
-        event.respondWith(cacheFirst(request));
-    }
+    // Cache-first strategy for static resources
+    event.respondWith(
+        caches.match(request)
+            .then((cachedResponse) => {
+                if (cachedResponse) {
+                    // Return cached version and update in background
+                    fetch(request).then((networkResponse) => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            caches.open(CACHE_NAME).then((cache) => {
+                                cache.put(request, networkResponse);
+                            });
+                        }
+                    }).catch(() => {
+                        // Network failed, but we have cache
+                    });
+                    return cachedResponse;
+                }
+                
+                // Not in cache, fetch from network
+                return fetch(request)
+                    .then((networkResponse) => {
+                        // Cache successful responses
+                        if (networkResponse && networkResponse.status === 200) {
+                            const responseClone = networkResponse.clone();
+                            caches.open(CACHE_NAME).then((cache) => {
+                                cache.put(request, responseClone);
+                            });
+                        }
+                        return networkResponse;
+                    })
+                    .catch((error) => {
+                        console.error('[SW] Fetch failed:', error);
+                        
+                        // Return offline page if available
+                        if (request.mode === 'navigate') {
+                            return caches.match('/index.html');
+                        }
+                        
+                        return new Response('Offline', { status: 503 });
+                    });
+            })
+    );
 });
 
-// ==================== ESTRATÉGIA: CACHE FIRST ====================
-async function cacheFirst(request) {
-    try {
-        // Tenta buscar no cache primeiro
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            // Atualiza cache em background se for um arquivo essencial
-            if (ESSENTIAL_FILES.some(file => request.url.includes(file))) {
-                updateCache(request);
-            }
-            return cachedResponse;
-        }
-        
-        // Se não está no cache, busca na rede
-        const networkResponse = await fetch(request);
-        
-        // Cachear dinamicamente se for uma resposta válida
-        if (networkResponse && networkResponse.status === 200) {
-            const cache = await caches.open(DYNAMIC_CACHE);
-            cache.put(request, networkResponse.clone());
-        }
-        
-        return networkResponse;
-    } catch (error) {
-        console.error('[Service Worker] Erro no cache first:', error);
-        
-        // Retorna resposta de erro
-        return new Response('Offline - Não foi possível carregar o recurso', {
-            status: 503,
-            statusText: 'Service Unavailable',
-            headers: new Headers({
-                'Content-Type': 'text/plain'
-            })
-        });
-    }
-}
-
-// ==================== ESTRATÉGIA: NETWORK FIRST ====================
-async function networkFirst(request) {
-    try {
-        // Tenta buscar na rede primeiro
-        const networkResponse = await fetch(request);
-        
-        // Se conseguiu, atualiza o cache
-        if (networkResponse && networkResponse.status === 200) {
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(request, networkResponse.clone());
-        }
-        
-        return networkResponse;
-    } catch (error) {
-        console.log('[Service Worker] Rede falhou, buscando no cache:', error);
-        
-        // Se falhar, busca no cache
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        
-        return new Response('Offline', {
-            status: 503,
-            statusText: 'Service Unavailable'
-        });
-    }
-}
-
-// ==================== ATUALIZAÇÃO DE CACHE EM BACKGROUND ====================
-function updateCache(request) {
-    return fetch(request)
-        .then((response) => {
-            if (!response || response.status !== 200) {
-                return;
-            }
-            return caches.open(CACHE_NAME)
-                .then((cache) => {
-                    cache.put(request, response);
-                });
-        })
-        .catch(() => {
-            // Silenciosamente falhar
-        });
-}
-
-// ==================== MENSAGENS (COMUNICAÇÃO COM APP) ====================
+// Message event - handle commands from clients
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
-    }
-    
-    if (event.data && event.data.type === 'GET_VERSION') {
-        event.ports[0].postMessage({ version: CACHE_VERSION });
     }
     
     if (event.data && event.data.type === 'CLEAR_CACHE') {
@@ -199,10 +156,11 @@ self.addEventListener('message', (event) => {
                 return Promise.all(
                     cacheNames.map((cacheName) => caches.delete(cacheName))
                 );
+            }).then(() => {
+                event.ports[0].postMessage({ success: true });
             })
         );
     }
 });
 
-console.log('[Service Worker] Carregado - Versão:', CACHE_VERSION);
-
+console.log(`[SW] Service Worker ${CACHE_VERSION} loaded!`);

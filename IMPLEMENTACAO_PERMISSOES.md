@@ -398,3 +398,4 @@ Posso:
 **Quer que eu faça agora?** 
 (responda "sim" ou "agora" para começar)
 
+

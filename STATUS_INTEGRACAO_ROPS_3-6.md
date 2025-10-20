@@ -152,3 +152,4 @@ Todas questões seguem o padrão da ROP 3.1:
 
 **Status atual: 270/630 questões (43%) - Aguardando decisão**
 
+

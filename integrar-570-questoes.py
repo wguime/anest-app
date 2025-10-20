@@ -134,3 +134,4 @@ print(f"✅ INTEGRAÇÃO CONCLUÍDA!")
 print(f"🎯 Total: {total_integrated} questões integradas")
 print("=" * 70)
 
+

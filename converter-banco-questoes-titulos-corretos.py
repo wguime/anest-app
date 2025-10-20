@@ -230,3 +230,4 @@ console.log('✅ ROPs carregadas (Títulos Corretos):', Object.keys(ropsData));
 
 if __name__ == "__main__":
     convert_banco_questoes()
+

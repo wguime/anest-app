@@ -228,3 +228,4 @@ const ropsData = {
 };
 
 console.log('✅ ROPs carregadas (versão simplificada):', Object.keys(ropsData));
+

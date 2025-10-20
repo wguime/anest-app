@@ -246,3 +246,4 @@
 **Progresso:** 270/630 (43%) - Suficiente para início  
 **Próximo passo:** Decisão sobre expansão
 
+

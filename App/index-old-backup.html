@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANEST - Sistema de Gestão e Treinamento</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loader"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-heartbeat"></i>
+                <h1>ANEST</h1>
+                <p>Sistema de Gestão e Treinamento</p>
+            </div>
+            
+            <div class="login-tabs">
+                <button class="tab-btn active" onclick="showTab('login')">Login</button>
+                <button class="tab-btn" onclick="showTab('register')">Registrar</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                <a href="#" class="forgot-password" onclick="resetPassword()">Esqueceu a senha?</a>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome Completo</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="registerPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirmar Senha</label>
+                    <input type="password" id="registerPasswordConfirm" required minlength="6">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Criar Conta
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <button class="btn-google" onclick="loginWithGoogle()">
+                <i class="fab fa-google"></i> Continuar com Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>ANEST</span>
+                </div>
+                <div class="user-menu">
+                    <span id="userName" class="user-name"></span>
+                    <button class="btn-icon" onclick="showProfile()">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <button class="btn-icon" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Screen -->
+            <div id="homeScreen" class="screen active">
+                <h2 class="screen-title">Bem-vindo ao Sistema ANEST</h2>
+                
+                <div class="menu-grid">
+                    <!-- Residência Médica -->
+                    <div class="menu-card" onclick="showResidencia()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>Residência Médica</h3>
+                        <p>Aulas, artigos e escalas</p>
+                    </div>
+
+                    <!-- ROPs -->
+                    <div class="menu-card" onclick="showROPs()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>ROPs - Desafio</h3>
+                        <p>Quiz interativo e ranking</p>
+                    </div>
+
+                    <!-- Podcasts ROPs -->
+                    <div class="menu-card" onclick="showPodcastsROPs()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">
+                            <i class="fas fa-podcast"></i>
+                        </div>
+                        <h3>Podcasts ROPs</h3>
+                        <p>Áudio aulas por macroárea</p>
+                    </div>
+
+                    <!-- Protocolos -->
+                    <div class="menu-card" onclick="showProtocolos()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h3>Protocolos</h3>
+                        <p>Protocolos assistenciais</p>
+                    </div>
+
+                    <!-- Políticas -->
+                    <div class="menu-card" onclick="showPoliticas()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Políticas</h3>
+                        <p>Políticas institucionais</p>
+                    </div>
+
+                    <!-- Formulários -->
+                    <div class="menu-card" onclick="showFormularios()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>Formulários</h3>
+                        <p>Documentos e formulários</p>
+                    </div>
+
+                    <!-- Manuais -->
+                    <div class="menu-card" onclick="showManuais()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%)">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Manuais</h3>
+                        <p>Manuais técnicos</p>
+                    </div>
+
+                    <!-- Relatórios de Segurança -->
+                    <div class="menu-card" onclick="showRelatorios()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Relatórios</h3>
+                        <p>Segurança do paciente</p>
+                    </div>
+
+                    <!-- Mapeamento de Processos -->
+                    <div class="menu-card" onclick="showProcessos()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3>Processos</h3>
+                        <p>Mapeamento de processos</p>
+                    </div>
+
+                    <!-- Mapeamento de Riscos -->
+                    <div class="menu-card" onclick="showRiscos()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Riscos</h3>
+                        <p>Mapeamento de riscos</p>
+                    </div>
+
+                    <!-- Termos -->
+                    <div class="menu-card" onclick="showTermos()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h3>Termos</h3>
+                        <p>Termos e documentos</p>
+                    </div>
+
+                    <!-- Clima de Segurança -->
+                    <div class="menu-card" onclick="showClima()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)">
+                            <i class="fas fa-temperature-high"></i>
+                        </div>
+                        <h3>Clima</h3>
+                        <p>Clima de segurança</p>
+                    </div>
+
+                    <!-- Plano de Segurança -->
+                    <div class="menu-card" onclick="showPlanoSeguranca()">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>Plano</h3>
+                        <p>Segurança do paciente</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROPs Screen (will be populated dynamically) -->
+            <div id="ropsScreen" class="screen"></div>
+
+            <!-- Quiz Screen -->
+            <div id="quizScreen" class="screen"></div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="screen"></div>
+
+            <!-- Ranking Screen -->
+            <div id="rankingScreen" class="screen"></div>
+
+            <!-- Other Screens -->
+            <div id="podcastsScreen" class="screen"></div>
+            <div id="residenciaScreen" class="screen"></div>
+            <div id="protocolosScreen" class="screen"></div>
+            <div id="politicasScreen" class="screen"></div>
+            <div id="formulariosScreen" class="screen"></div>
+            <div id="manuaisScreen" class="screen"></div>
+            <div id="relatoriosScreen" class="screen"></div>
+            <div id="processosScreen" class="screen"></div>
+            <div id="riscosScreen" class="screen"></div>
+            <div id="termosScreen" class="screen"></div>
+            <div id="climaScreen" class="screen"></div>
+            <div id="planoSegurancaScreen" class="screen"></div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="rops-data.js"></script>
+    <script src="documents-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

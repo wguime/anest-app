@@ -396,3 +396,4 @@ const ropsData = {
 };
 
 console.log('✅ ROPs carregadas (versão otimizada):', Object.keys(ropsData));
+

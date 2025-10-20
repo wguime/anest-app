@@ -317,3 +317,4 @@ console.log('✅ ROPs carregadas (versão COMPLETA 32 ROPs):', Object.keys(ropsD
 
 if __name__ == "__main__":
     create_complete_32_rops()
+

@@ -280,3 +280,4 @@ O sistema está **100% funcional**. Basta:
 
 **Dúvidas?** Consulte este guia ou a documentação em `SISTEMA_COMPLETO_IMPLEMENTADO.md`
 
+
