@@ -1,7 +1,7 @@
 // ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
 // Versão Profissional
 
-const CACHE_VERSION = 'v6.4.0-navigation-4-buttons';
+const CACHE_VERSION = 'v6.5.0-google-sheets-integration';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Essential files to cache

@@ -1573,30 +1573,130 @@ function renderChecklistPage() {
 
 // ==================== RESIDÊNCIA RENDERING ====================
 function renderResidenciaSheets() {
-    const sheetsUrl = "https://docs.google.com/spreadsheets/d/1RvxlGeQN6xZN6vPp9zhkWHbEbFiK6o3EGJm5eh9iR6s/edit?gid=833599381#gid=833599381";
+    const spreadsheetId = "1RvxlGeQN6xZN6vPp9zhkWHbEbFiK6o3EGJm5eh9iR6s";
     
-    return `<h1 class="page-title">Escalas e Cronogramas</h1>
-            <div class="content-section">
-                <h3><i class="fas fa-calendar-alt"></i> Acesse a Planilha</h3>
-                <p style="margin-bottom: 20px;">
-                    Consulte as escalas de plantões, estágios e férias na planilha do Google Sheets.
-                </p>
-                <button class="btn-primary" onclick="window.open('${sheetsUrl}', '_blank')">
-                    <i class="fas fa-external-link-alt"></i> Abrir Planilha
+    // GIDs das abas (você pode ajustar conforme necessário)
+    const sheets = [
+        { id: 'plantoes', gid: '0', name: 'Plantões', icon: 'fa-moon', color: '#38f9d7' },
+        { id: 'estagios', gid: '833599381', name: 'Estágios', icon: 'fa-graduation-cap', color: '#43e97b' },
+        { id: 'ferias', gid: '2', name: 'Férias', icon: 'fa-umbrella-beach', color: '#ffa500' }
+    ];
+    
+    let html = `
+        <h1 class="page-title">Escalas e Cronogramas</h1>
+        
+        <div class="residencia-tabs">
+            ${sheets.map((sheet, index) => `
+                <button class="residencia-tab ${index === 0 ? 'active' : ''}" data-sheet="${sheet.id}" data-gid="${sheet.gid}">
+                    <i class="fas ${sheet.icon}"></i>
+                    <span>${sheet.name}</span>
                 </button>
+            `).join('')}
+        </div>
+        
+        <div class="content-section" style="padding: 0; overflow: hidden;">
+            <div id="sheets-iframe-container" style="position: relative; width: 100%; height: 600px;">
+                <iframe 
+                    id="sheets-iframe"
+                    src="https://docs.google.com/spreadsheets/d/${spreadsheetId}/preview?gid=0&widget=false&chrome=false"
+                    style="width: 100%; height: 100%; border: none; border-radius: 12px;"
+                    loading="lazy">
+                </iframe>
             </div>
-            <div class="content-section">
-                <h3><i class="fas fa-info-circle"></i> Informações</h3>
-                <p style="font-size: 0.9rem; color: var(--cor-texto-claro);">
-                    A planilha contém informações sobre:
-                </p>
-                <ul style="margin-left: 20px; color: var(--cor-texto-claro); font-size: 0.9rem;">
-                    <li>Escalas de plantões</li>
-                    <li>Cronograma de estágios</li>
-                    <li>Calendário de férias</li>
-                    <li>Atividades programadas</li>
-                </ul>
-            </div>`;
+        </div>
+        
+        <div class="content-section">
+            <button class="btn-primary" style="width: 100%;" onclick="window.open('https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit', '_blank')">
+                <i class="fas fa-external-link-alt"></i> Abrir Planilha Completa
+            </button>
+        </div>
+        
+        <style>
+            .residencia-tabs {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 15px;
+                padding: 0 15px;
+            }
+            
+            .residencia-tab {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 10px;
+                background: var(--cor-card);
+                border: 2px solid var(--cor-borda);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--cor-texto);
+            }
+            
+            .residencia-tab i {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+                color: var(--cor-primaria);
+            }
+            
+            .residencia-tab:hover {
+                border-color: var(--cor-primaria);
+                transform: translateY(-2px);
+            }
+            
+            .residencia-tab.active {
+                background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
+                border-color: var(--cor-primaria);
+                color: white;
+            }
+            
+            .residencia-tab.active i {
+                color: white;
+            }
+            
+            body.dark-mode .residencia-tab {
+                background: #2a2a2a;
+            }
+            
+            body.dark-mode .residencia-tab.active {
+                background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
+            }
+            
+            @media (max-width: 480px) {
+                #sheets-iframe-container {
+                    height: 500px;
+                }
+                .residencia-tab {
+                    padding: 12px 8px;
+                    font-size: 0.75rem;
+                }
+                .residencia-tab i {
+                    font-size: 1.2rem;
+                }
+            }
+        </style>
+    `;
+    
+    // Add event listener after rendering
+    setTimeout(() => {
+        document.querySelectorAll('.residencia-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.residencia-tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Update iframe
+                const gid = this.dataset.gid;
+                const iframe = document.getElementById('sheets-iframe');
+                iframe.src = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/preview?gid=${gid}&widget=false&chrome=false`;
+            });
+        });
+    }, 100);
+    
+    return html;
 }
 
 console.log('✅ Aplicativo inicializado!');
