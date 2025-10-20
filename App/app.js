@@ -389,8 +389,10 @@ const pages = {
         type: 'list',
         items: [
             { id: 'comunicados', icon: 'fa-bullhorn', color: 'var(--cor-perigo)', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias da diretoria' },
-            { id: 'podcasts', icon: 'fa-podcast', color: '#9b59b6', title: 'Podcasts Educativos', subtitle: 'Cultura de segurança e qualidade' },
-            { id: 'kpis', icon: 'fa-chart-line', color: 'var(--cor-sucesso)', title: 'Indicadores de Qualidade', subtitle: 'Acompanhe as métricas' }
+            { id: 'kpis', icon: 'fa-chart-line', color: 'var(--cor-sucesso)', title: 'Indicadores de Qualidade', subtitle: 'Acompanhe as métricas' },
+            { id: 'rops', icon: 'fa-award', color: '#ffa500', title: 'ROPs - Desafio', subtitle: 'Teste seus conhecimentos sobre as ROPs' },
+            { id: 'residencia', icon: 'fa-user-md', color: '#38f9d7', title: 'Residência Médica', subtitle: 'Escalas, materiais e cronogramas' },
+            { id: 'podcasts', icon: 'fa-podcast', color: '#9b59b6', title: 'Podcasts Educativos', subtitle: 'Cultura de segurança e qualidade' }
         ]
     },
     qualidade: {
