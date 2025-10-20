@@ -1139,7 +1139,7 @@ function getErrorMessage(error) {
 }
 
 // ==================== ROPS RENDERING ====================
-function renderROPsMainPage() {
+async function renderROPsMainPage() {
     if (!ropsData) {
         return `<div class="content-section">
                     <h3>Erro ao Carregar ROPs</h3>
@@ -1147,29 +1147,94 @@ function renderROPsMainPage() {
                 </div>`;
     }
 
-    let html = `<h1 class="page-title">ROPs - Desafio</h1>`;
+    // Calculate overall progress
+    let totalROPs = 0;
+    let completedROPs = 0;
+    const userProgress = userProfile?.progress || {};
+    
+    Object.keys(ropsData).forEach(macroKey => {
+        const macro = ropsData[macroKey];
+        Object.keys(macro).forEach(ropKey => {
+            totalROPs++;
+            if (userProgress[macroKey] && userProgress[macroKey][ropKey]) {
+                completedROPs++;
+            }
+        });
+    });
+    
+    const overallProgress = totalROPs > 0 ? Math.round((completedROPs / totalROPs) * 100) : 0;
+
+    let html = `
+        <h1 class="page-title">ROPs - Desafio</h1>
+        
+        <!-- Overall Progress Card -->
+        <div class="content-section" style="background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%); color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.5rem;"><i class="fas fa-trophy"></i> Seu Progresso</h2>
+                    <p style="margin: 5px 0 0 0; opacity: 0.9;">${completedROPs} de ${totalROPs} ROPs concluídas</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">${overallProgress}%</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Pontos: ${userProfile?.totalPoints || 0}</div>
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.3); height: 12px; border-radius: 6px; overflow: hidden;">
+                <div style="background: white; height: 100%; width: ${overallProgress}%; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+        
+        <!-- Ranking Button -->
+        <div class="content-section" style="padding: 0;">
+            <button class="list-item" onclick="showRanking()" style="width: 100%; border: none; background: var(--cor-card); cursor: pointer;">
+                <span class="icon" style="background-color: #ffa500;"><i class="fas fa-ranking-star"></i></span>
+                <div class="text-content">
+                    <div class="title">Ver Ranking</div>
+                    <div class="subtitle">Compare sua pontuação com outros usuários</div>
+                </div>
+                <i class="chevron fas fa-chevron-right"></i>
+            </button>
+        </div>
+    `;
     
     Object.keys(ropsData).forEach(macroKey => {
         const macro = ropsData[macroKey];
         const macroTitle = macroKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         
+        // Calculate macro progress
+        let macroTotal = 0;
+        let macroCompleted = 0;
+        Object.keys(macro).forEach(ropKey => {
+            macroTotal++;
+            if (userProgress[macroKey] && userProgress[macroKey][ropKey]) {
+                macroCompleted++;
+            }
+        });
+        const macroProgress = macroTotal > 0 ? Math.round((macroCompleted / macroTotal) * 100) : 0;
+        
         html += `<div class="content-section">
                     <h3 style="cursor: pointer;" class="rop-macro" data-macro="${macroKey}">
                         <i class="fas fa-folder"></i> ${macroTitle}
+                        <span style="float: right; font-size: 0.9rem; color: var(--cor-primaria);">${macroProgress}%</span>
                     </h3>
+                    <div style="background: var(--cor-fundo); height: 6px; border-radius: 3px; margin: 10px 0; overflow: hidden;">
+                        <div style="background: var(--cor-primaria); height: 100%; width: ${macroProgress}%; transition: width 0.5s ease;"></div>
+                    </div>
                     <div class="rop-list" id="rop-list-${macroKey}" style="display: none;">`;
         
         Object.keys(macro).forEach(ropKey => {
             const rop = macro[ropKey];
             const ropTitle = ropKey.replace(/_/g, ' ').toUpperCase();
             const questionCount = rop.questions ? rop.questions.length : 0;
+            const isCompleted = userProgress[macroKey] && userProgress[macroKey][ropKey];
+            const completedIcon = isCompleted ? '<i class="fas fa-check-circle" style="color: var(--cor-sucesso); margin-left: 10px;"></i>' : '';
             
             html += `<div class="list-item rop-item" data-macro="${macroKey}" data-rop="${ropKey}">
-                        <span class="icon" style="background-color: var(--cor-primaria);">
-                            <i class="fas fa-question-circle"></i>
+                        <span class="icon" style="background-color: ${isCompleted ? 'var(--cor-sucesso)' : 'var(--cor-primaria)'};">
+                            <i class="fas ${isCompleted ? 'fa-check' : 'fa-question-circle'}"></i>
                         </span>
                         <div class="text-content">
-                            <div class="title">${ropTitle}</div>
+                            <div class="title">${ropTitle} ${completedIcon}</div>
                             <div class="subtitle">${questionCount} questões</div>
                         </div>
                         <i class="chevron fas fa-chevron-right"></i>
@@ -1698,6 +1763,118 @@ function renderResidenciaSheets() {
     
     return html;
 }
+
+// ==================== RANKING SYSTEM ====================
+window.showRanking = async function() {
+    try {
+        showLoading();
+        
+        // Fetch top users
+        const usersSnapshot = await db.collection('users')
+            .orderBy('totalPoints', 'desc')
+            .limit(20)
+            .get();
+        
+        const users = [];
+        usersSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.firstName && data.lastName) {
+                users.push({
+                    id: doc.id,
+                    name: `${data.firstName} ${data.lastName}`,
+                    points: data.totalPoints || 0,
+                    email: data.email
+                });
+            }
+        });
+        
+        hideLoading();
+        
+        // Find current user position
+        const currentUserIndex = users.findIndex(u => u.id === currentUser.uid);
+        const currentUserPosition = currentUserIndex >= 0 ? currentUserIndex + 1 : null;
+        
+        // Render ranking page
+        const pageContent = document.getElementById('page-content');
+        const headerTitle = document.getElementById('header-title');
+        headerTitle.textContent = 'Ranking';
+        
+        let html = `
+            <h1 class="page-title">🏆 Ranking de Pontuação</h1>
+            
+            ${currentUserPosition ? `
+                <div class="content-section" style="background: linear-gradient(135deg, #ffa500 0%, #ff6b6b 100%); color: white;">
+                    <h3 style="margin: 0; color: white; border: none;">Sua Posição</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div style="font-size: 2.5rem; font-weight: 700;">#${currentUserPosition}</div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.2rem; font-weight: 600;">${userProfile?.totalPoints || 0} pontos</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">${userProfile.firstName} ${userProfile.lastName}</div>
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="content-section" style="padding: 0; overflow: hidden;">
+                <div style="padding: 20px; background: var(--cor-card); border-bottom: 2px solid var(--cor-borda);">
+                    <h3 style="margin: 0; color: var(--cor-primaria);"><i class="fas fa-medal"></i> Top 20 Usuários</h3>
+                    <p style="color: var(--cor-texto-claro); margin: 5px 0 0 0; font-size: 0.9rem;">Complete mais quizzes para subir no ranking!</p>
+                </div>
+                <div style="max-height: 500px; overflow-y: auto;">
+        `;
+        
+        users.forEach((user, index) => {
+            const position = index + 1;
+            let medalIcon = '';
+            let bgColor = 'transparent';
+            
+            if (position === 1) {
+                medalIcon = '<i class="fas fa-trophy" style="color: #FFD700; margin-right: 10px;"></i>';
+                bgColor = 'rgba(255, 215, 0, 0.1)';
+            } else if (position === 2) {
+                medalIcon = '<i class="fas fa-medal" style="color: #C0C0C0; margin-right: 10px;"></i>';
+                bgColor = 'rgba(192, 192, 192, 0.1)';
+            } else if (position === 3) {
+                medalIcon = '<i class="fas fa-award" style="color: #CD7F32; margin-right: 10px;"></i>';
+                bgColor = 'rgba(205, 127, 50, 0.1)';
+            }
+            
+            const isCurrentUser = user.id === currentUser.uid;
+            const userBgColor = isCurrentUser ? 'rgba(67, 233, 123, 0.1)' : bgColor;
+            const userBorder = isCurrentUser ? 'border-left: 4px solid var(--cor-primaria);' : '';
+            
+            html += `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--cor-borda); background: ${userBgColor}; ${userBorder}">
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <div style="width: 40px; font-size: 1.2rem; font-weight: 700; color: var(--cor-texto-claro);">
+                            ${medalIcon || `#${position}`}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.95rem;">${user.name}${isCurrentUser ? ' (Você)' : ''}</div>
+                            <div style="font-size: 0.8rem; color: var(--cor-texto-claro);">${user.points} pontos</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <i class="fas fa-star" style="color: #ffa500;"></i>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+        
+        pageContent.innerHTML = html;
+        pageContent.scrollTop = 0;
+        
+    } catch (error) {
+        hideLoading();
+        console.error('Error loading ranking:', error);
+        showToast('Erro ao carregar ranking', 'error');
+    }
+};
 
 console.log('✅ Aplicativo inicializado!');
 
