@@ -302,54 +302,13 @@ const podcastsData = {
         icon: "fas fa-comments",
         color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
         audios: [
-            {
-                title: "ROP 2.1 - Identificação do Cliente",
-                file: "./Podcasts/Comunicação/2.1 Comunicação - Idenfica�ão cliente.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre identificação segura do paciente"
-            },
-            {
-                title: "ROP 2.2 - Abreviações Perigosas",
-                file: "./Podcasts/Comunicação/2.2 Comunicação - Abreviações perigosas.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre lista de abreviações que não devem ser utilizadas"
-            },
-            {
-                title: "ROP 2.3 - Conciliação Medicamentosa Estratégica",
-                file: "./Podcasts/Comunicação/2.3 Comunicação - Conciliação medicamentosa Estratégica.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre conciliação medicamentosa como prioridade estratégica"
-            },
-            {
-                title: "ROP 2.4 - Conciliação em Internação",
-                file: "./Podcasts/Comunicação/2.4 Comunicação - Conciliação medicamentosa Internado.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre conciliação medicamentosa em serviços de assistência aguda"
-            },
-            {
-                title: "ROP 2.5 - Conciliação Ambulatorial",
-                file: "./Podcasts/Comunicação/2.5 Comunicação - Conciliação medicamentosa ambulatorial.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre conciliação medicamentosa em atendimento ambulatorial"
-            },
-            {
-                title: "ROP 2.6 - Conciliação na Emergência",
-                file: "./Podcasts/Comunicação/2.6 Comunicação - Conciliação medicamentosa Emergencia.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre conciliação medicamentosa no serviço de emergência"
-            },
-            {
-                title: "ROP 2.7 - Cirurgia Segura",
-                file: "./Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre lista de verificação para cirurgia segura"
-            },
-            {
-                title: "ROP 2.8 - Transição de Cuidado",
-                file: "./Podcasts/Comunicação/2.8 Comunicação - Transição Cuidado.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre transferência de informações nas transições (Handoff)"
-            }
+            // Preparado para futuros áudios
+            // {
+            //     title: "ROP 2.1 - Identificação do Cliente",
+            //     file: "../Podcasts/Comunicação/ROP 2.1...m4a",
+            //     duracao: null,
+            //     descricao: "Áudio aula sobre..."
+            // }
         ]
     },
     "uso-medicamentos": {
@@ -357,12 +316,7 @@ const podcastsData = {
         icon: "fas fa-pills",
         color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
         audios: [
-            {
-                title: "ROP 3.1 - Uso de Medicamentos",
-                file: "./Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre uso racional e seguro de medicamentos"
-            }
+            // Preparado para futuros áudios
         ]
     },
     "vida-profissional": {
@@ -370,12 +324,7 @@ const podcastsData = {
         icon: "fas fa-user-friends",
         color: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
         audios: [
-            {
-                title: "ROP 4.1 - Vida Profissional",
-                file: "./Podcasts/Vida Profissional/4.1 Vida Profissional.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre vida profissional e força de trabalho"
-            }
+            // Preparado para futuros áudios
         ]
     },
     "prevencao-infeccoes": {
@@ -383,12 +332,7 @@ const podcastsData = {
         icon: "fas fa-hand-sparkles",
         color: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
         audios: [
-            {
-                title: "ROP 5.1 - Prevenção de Infecções",
-                file: "./Podcasts/Prevenção de infecções/5.1 Prevenção de infecções.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre prevenção e controle de infecções"
-            }
+            // Preparado para futuros áudios
         ]
     },
     "avaliacao-riscos": {
@@ -396,12 +340,7 @@ const podcastsData = {
         icon: "fas fa-exclamation-circle",
         color: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
         audios: [
-            {
-                title: "ROP 6.1 - Avaliação de Riscos",
-                file: "./Podcasts/Avaliação de Riscos/6.1 Avaliação de Riscos.m4a",
-                duracao: null,
-                descricao: "Áudio aula sobre avaliação e gerenciamento de riscos"
-            }
+            // Preparado para futuros áudios
         ]
     }
 };

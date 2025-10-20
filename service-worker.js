@@ -1,15 +1,16 @@
 // ==================== SERVICE WORKER - ANEST PWA (NOVO LAYOUT) ====================
 // Versão do cache - ALTERE AQUI para forçar atualização
-const CACHE_VERSION = 'v5.2.0-podcasts';
+const CACHE_VERSION = 'v5.3.0-corrigido';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache (funcionamento offline)
 const ESSENTIAL_FILES = [
     './',
     './index.html',
-    './styles.css',
-    './app.js',
+    './novo-styles.css',
+    './novo-app.js',
     './calculadoras-definitions.js',
+    './documents-data.js',
     './firebase-config.js',
     './rops-data-from-banco.js',
     './logo-anest.png',
