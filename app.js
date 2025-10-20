@@ -382,22 +382,13 @@ function renderPage(pageId) {
 // ==================== PAINEL PRINCIPAL (GRID DE ÍCONES) ====================
 function renderPainelPrincipal() {
     const items = [
-        { id: 'comunicados', icon: 'fa-bullhorn', color: '#dc3545', title: 'Últimos Comunicados', subtitle: 'Avisos importantes', permission: null },
-        { id: 'kpis', icon: 'fa-chart-line', color: '#40916c', title: 'Indicadores de Qualidade', subtitle: 'Métricas e resultados', permission: null },
-        { id: 'podcasts', icon: 'fa-podcast', color: '#52b788', title: 'Podcasts Educativos', subtitle: '16 episódios', permission: 'podcasts' },
-        { id: 'documentos', icon: 'fa-file-pdf', color: '#2d6a4f', title: 'Documentos', subtitle: '27 arquivos', permission: null },
-        { id: 'questoes-rops', icon: 'fa-question-circle', color: '#1a4d2e', title: 'Quiz de Questões', subtitle: '640 questões ROPs', permission: null },
-        { id: 'calculadoras', icon: 'fa-calculator', color: '#74c69d', title: 'Calculadoras', subtitle: '13 ferramentas', permission: null },
-        { id: 'checklist', icon: 'fa-check-double', color: '#52b788', title: 'Checklist Cirurgia', subtitle: 'OMS', permission: null },
-        { id: 'notificacoes', icon: 'fa-exclamation-triangle', color: '#ffc107', title: 'Notificar Incidente', subtitle: 'Gestão de eventos', permission: 'notificacoes' }
+        { id: 'comunicados', icon: 'fa-bullhorn', color: '#1a4d2e', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias importantes' },
+        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos adversos' },
+        { id: 'rops-main', icon: 'fa-award', color: '#40916c', title: 'ROPs', subtitle: '6 macroáreas - Questões e Podcasts' },
+        { id: 'residencia', icon: 'fa-user-md', color: '#52b788', title: 'Residência Médica', subtitle: 'Cronograma e materiais' }
     ];
     
-    const filteredItems = items.filter(item => {
-        if (!item.permission) return true;
-        return hasPermission(userProfile, item.permission);
-    });
-    
-    const grid = filteredItems.map(item => `
+    const grid = items.map(item => `
         <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
             <div class="icon-card-icon" style="background: ${item.color}">
                 <i class="fas ${item.icon}"></i>
@@ -418,14 +409,14 @@ function renderPainelPrincipal() {
 // ==================== QUALIDADE ====================
 function renderQualidadePage() {
     const items = [
-        { id: 'incidentes', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Gestão de Incidentes', subtitle: 'Notificar eventos adversos' },
-        { id: 'auditorias', icon: 'fa-clipboard-check', color: '#52b788', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
-        { id: 'relatorios', icon: 'fa-file-alt', color: '#1a4d2e', title: 'Relatórios de Segurança', subtitle: 'Consulte relatórios trimestrais' },
-        { id: 'capacitacao', icon: 'fa-graduation-cap', color: '#40916c', title: 'Capacitação e Treinamento', subtitle: 'Materiais de estudo' }
+        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos adversos' },
+        { id: 'auditorias-conformidade', icon: 'fa-clipboard-check', color: '#52b788', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
+        { id: 'capacitacao-treinamento', icon: 'fa-graduation-cap', color: '#40916c', title: 'Capacitação e Treinamento', subtitle: 'Materiais e recursos' },
+        { id: 'indicadores-qualidade', icon: 'fa-chart-line', color: '#1a4d2e', title: 'Indicadores de Qualidade', subtitle: 'Métricas e resultados' }
     ];
     
     const grid = items.map(item => `
-        <div class="icon-card" onclick="showToast('Funcionalidade em desenvolvimento', 'warning')">
+        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
             <div class="icon-card-icon" style="background: ${item.color}">
                 <i class="fas ${item.icon}"></i>
             </div>
@@ -445,13 +436,12 @@ function renderQualidadePage() {
 // ==================== PROTOCOLOS ====================
 function renderProtocolosPage() {
     const items = [
-        { id: 'biblioteca', icon: 'fa-search', color: '#1a4d2e', title: 'Biblioteca de Documentos', subtitle: 'Pesquise POPs e políticas' },
-        { id: 'seg-medicamentos', icon: 'fa-pills', color: '#dc3545', title: 'Segurança de Medicamentos', subtitle: 'Medicações alto risco' },
-        { id: 'controle-infeccao', icon: 'fa-virus-slash', color: '#ffc107', title: 'Controle de Infecção', subtitle: 'Higiene e reprocessamento' }
+        { id: 'biblioteca-documentos', icon: 'fa-search', color: '#1a4d2e', title: 'Biblioteca de Documentos', subtitle: 'Pesquise todos os POPs e políticas' },
+        { id: 'seguranca-medicamentos', icon: 'fa-pills', color: '#dc3545', title: 'Segurança de Medicamentos', subtitle: 'MAVs, eletrólitos, heparina e mais' }
     ];
     
     const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('documentos')">
+        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
             <div class="icon-card-icon" style="background: ${item.color}">
                 <i class="fas ${item.icon}"></i>
             </div>
@@ -471,10 +461,10 @@ function renderProtocolosPage() {
 // ==================== FERRAMENTAS ====================
 function renderFerramentasPage() {
     const items = [
-        { id: 'calculadoras', icon: 'fa-calculator', color: '#1a4d2e', title: 'Calculadoras Anestésicas', subtitle: '13 calculadoras clínicas' },
-        { id: 'checklist', icon: 'fa-check-double', color: '#40916c', title: 'Checklist de Cirurgia Segura', subtitle: 'Ferramenta OMS' },
-        { id: 'conciliacao', icon: 'fa-exchange-alt', color: '#52b788', title: 'Conciliação Medicamentosa', subtitle: 'Segurança nas transições' },
-        { id: 'avaliacao-riscos', icon: 'fa-user-shield', color: '#74c69d', title: 'Avaliação de Riscos', subtitle: 'Quedas, TEV, úlceras' }
+        { id: 'calculadoras-anestesicas', icon: 'fa-calculator', color: '#1a4d2e', title: 'Calculadoras Anestésicas', subtitle: 'Qmentum e Anestesiologia Geral' },
+        { id: 'checklist', icon: 'fa-check-double', color: '#40916c', title: 'Checklist de Cirurgia Segura', subtitle: 'Protocolo OMS' },
+        { id: 'conciliacao-medicamentosa', icon: 'fa-exchange-alt', color: '#52b788', title: 'Conciliação Medicamentosa', subtitle: 'Admissão, Transferência e Alta' },
+        { id: 'avaliacao-riscos', icon: 'fa-user-shield', color: '#74c69d', title: 'Avaliação de Riscos', subtitle: 'Quedas, Úlceras e TEV' }
     ];
     
     const grid = items.map(item => `
@@ -495,31 +485,63 @@ function renderFerramentasPage() {
     `;
 }
 
-// ==================== ROPs (DIVIDIDO: QUESTÕES + PODCASTS) ====================
-function renderROPsPage() {
-    const items = [
-        { id: 'questoes-rops', icon: 'fa-question-circle', color: '#1a4d2e', title: 'Quiz de Questões', subtitle: '640 questões - 32 ROPs' },
-        { id: 'podcasts', icon: 'fa-podcast', color: '#52b788', title: 'Podcasts Educativos', subtitle: '16 episódios sobre ROPs' },
-        { id: 'ranking', icon: 'fa-trophy', color: '#ffc107', title: 'Ranking de Sócios', subtitle: 'Veja sua posição' },
-        { id: 'historico', icon: 'fa-history', color: '#6c757d', title: 'Meu Histórico', subtitle: 'Desempenho anterior' }
+// ==================== ROPs (ESTRUTURA HIERÁRQUICA) ====================
+// ROPs Main → mostra 6 macroáreas
+function renderROPsMainPage() {
+    const macroAreas = [
+        { id: 'cultura-seguranca', icon: 'fa-shield-heart', color: '#9b59b6', title: 'Cultura de Segurança', subtitle: '4 ROPs' },
+        { id: 'comunicacao', icon: 'fa-comments', color: '#3498db', title: 'Comunicação', subtitle: '8 ROPs' },
+        { id: 'uso-medicamentos', icon: 'fa-pills', color: '#e74c3c', title: 'Uso de Medicamentos', subtitle: '5 ROPs' },
+        { id: 'vida-profissional', icon: 'fa-briefcase', color: '#f39c12', title: 'Vida Profissional', subtitle: '5 ROPs' },
+        { id: 'prevencao-infeccoes', icon: 'fa-virus-slash', color: '#1abc9c', title: 'Prevenção de Infecções', subtitle: '4 ROPs' },
+        { id: 'avaliacao-riscos', icon: 'fa-exclamation-triangle', color: '#e67e22', title: 'Avaliação de Riscos', subtitle: '6 ROPs' }
     ];
     
-    const grid = items.map(item => `
-        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
-            <div class="icon-card-icon" style="background: ${item.color}">
-                <i class="fas ${item.icon}"></i>
+    const grid = macroAreas.map(area => `
+        <div class="icon-card" onclick="renderROPsMacroArea('${area.id}', '${area.title}', '${area.color}')">
+            <div class="icon-card-icon" style="background: ${area.color}">
+                <i class="fas ${area.icon}"></i>
             </div>
-            <div class="icon-card-title">${item.title}</div>
-            <div class="icon-card-subtitle">${item.subtitle}</div>
+            <div class="icon-card-title">${area.title}</div>
+            <div class="icon-card-subtitle">${area.subtitle}</div>
         </div>
     `).join('');
     
     return `
-        <h1 class="page-title">ROPs Desafio</h1>
+        <h1 class="page-title">ROPs Qmentum</h1>
+        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma macroárea</p>
         <div class="icon-grid">
             ${grid}
         </div>
     `;
+}
+
+// Macroárea → mostra Questões + Podcasts
+function renderROPsMacroArea(macroId, macroTitle, macroColor) {
+    const html = `
+        <h1 class="page-title">${macroTitle}</h1>
+        <p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Escolha entre questões ou podcasts</p>
+        <div class="icon-grid">
+            <div class="icon-card" onclick="navigateToROPsQuestoes('${macroId}', '${macroTitle}')">
+                <div class="icon-card-icon" style="background: ${macroColor}">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="icon-card-title">Questões</div>
+                <div class="icon-card-subtitle">Quiz de múltipla escolha</div>
+            </div>
+            <div class="icon-card" onclick="navigateToROPsPodcasts('${macroId}', '${macroTitle}')">
+                <div class="icon-card-icon" style="background: ${macroColor}">
+                    <i class="fas fa-podcast"></i>
+                </div>
+                <div class="icon-card-title">Podcasts</div>
+                <div class="icon-card-subtitle">Conteúdo educativo</div>
+            </div>
+        </div>
+    `;
+    
+    const pageContent = document.getElementById('page-content');
+    pageContent.innerHTML = html;
+    pageContent.scrollTop = 0;
 }
 
 // ==================== RESIDÊNCIA ====================
@@ -554,24 +576,64 @@ function navigateToSubPage(pageId) {
     
     let content = '';
     switch(pageId) {
-        case 'podcasts':
-            content = renderPodcastsPage();
+        // Painel Principal
+        case 'comunicados':
+            content = renderComunicadosPage();
             break;
-        case 'documentos':
-            content = renderDocumentosPage();
+        case 'notificar-incidente':
+            content = renderNotificarIncidentePage();
             break;
-        case 'questoes-rops':
-            content = renderQuestoesROPsPage();
+        case 'rops-main':
+            content = renderROPsMainPage();
             break;
-        case 'calculadoras':
-            content = renderCalculadorasPage();
+        case 'residencia':
+            content = renderResidenciaPage();
+            break;
+            
+        // Qualidade e Segurança
+        case 'auditorias-conformidade':
+            content = renderAuditoriasConformidadePage();
+            break;
+        case 'capacitacao-treinamento':
+            content = renderCapacitacaoTreinamentoPage();
+            break;
+        case 'indicadores-qualidade':
+            content = renderIndicadoresQualidadePage();
+            break;
+            
+        // Protocolos e POPs
+        case 'biblioteca-documentos':
+            content = renderBibliotecaDocumentosPage();
+            break;
+        case 'seguranca-medicamentos':
+            content = renderSegurancaMedicamentosPage();
+            break;
+            
+        // Ferramentas Clínicas
+        case 'calculadoras-anestesicas':
+            content = renderCalculadorasAnestesicasPage();
             break;
         case 'checklist':
             content = renderChecklistPage();
             break;
+        case 'conciliacao-medicamentosa':
+            content = renderConciliacaoMedicamentosaPage();
+            break;
+        case 'avaliacao-riscos':
+            content = renderAvaliacaoRiscosPage();
+            break;
+            
+        // Outros
         case 'cronograma':
             content = renderCronogramaCalendario();
             break;
+        case 'podcasts':
+            content = renderPodcastsPage();
+            break;
+        case 'calculadoras':
+            content = renderCalculadorasPage();
+            break;
+            
         default:
             content = '<div class="page-title">Em Desenvolvimento</div>';
     }
@@ -701,50 +763,110 @@ function renderDocumentosPage() {
         return '<div class="page-title">Erro ao carregar documentos</div>';
     }
     
-    let html = '<h1 class="page-title">📚 Documentos</h1>';
-    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">27 documentos disponíveis</p>';
+    const categoryColors = {
+        'Protocolos': '#1a4d2e',
+        'Políticas': '#40916c',
+        'Política': '#40916c',
+        'Relatórios': '#52b788',
+        'Manuais': '#74c69d',
+        'Processos': '#2d6a4f',
+        'Formulários': '#17a2b8',
+        'Gestão de Riscos': '#dc3545',
+        'Riscos': '#dc3545',
+        'Termos': '#6c757d',
+        'Plano de Segurança': '#e67e22',
+        'Plano': '#e67e22'
+    };
     
-    // Group documents by category
+    const categoryIcons = {
+        'Protocolos': 'fa-file-medical',
+        'Políticas': 'fa-gavel',
+        'Política': 'fa-gavel',
+        'Relatórios': 'fa-chart-bar',
+        'Manuais': 'fa-book',
+        'Processos': 'fa-project-diagram',
+        'Formulários': 'fa-file-alt',
+        'Gestão de Riscos': 'fa-exclamation-triangle',
+        'Riscos': 'fa-exclamation-triangle',
+        'Termos': 'fa-file-signature',
+        'Plano de Segurança': 'fa-shield-alt',
+        'Plano': 'fa-shield-alt'
+    };
+    
+    let html = '<h1 class="page-title">📚 Documentos</h1>';
+    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma categoria</p>';
+    html += '<div class="icon-grid">';
+    
+    // Show categories as icons
     for (const [category, docs] of Object.entries(documentsData)) {
-        const categoryColors = {
-            'Protocolos': '#1a4d2e',
-            'Política': '#40916c',
-            'Relatórios': '#52b788',
-            'Manuais': '#74c69d',
-            'Processos': '#2d6a4f',
-            'Gestão de Riscos': '#dc3545',
-            'Termos': '#6c757d',
-            'Clima Organizacional': '#ffc107',
-            'Plano': '#17a2b8'
-        };
-        
         const color = categoryColors[category] || '#1a4d2e';
+        const icon = categoryIcons[category] || 'fa-folder';
         
         html += `
-            <div class="content-section">
-                <h2 class="section-title" style="color: ${color}">
-                    <i class="fas fa-folder-open"></i> ${category} (${docs.length})
-                </h2>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${docs.map(doc => `
-                        <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='openDocument("${doc.file}")'>
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 50px; height: 50px; border-radius: 10px; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                                    <i class="fas fa-file-pdf"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <div class="icon-card-title" style="text-align: left;">${doc.title}</div>
-                                </div>
-                                <i class="fas fa-external-link-alt" style="color: var(--cor-texto-secundario);"></i>
-                            </div>
-                        </div>
-                    `).join('')}
+            <div class="icon-card" onclick='showCategoryDocuments("${category}")'>
+                <div class="icon-card-icon" style="background: ${color}">
+                    <i class="fas ${icon}"></i>
                 </div>
+                <div class="icon-card-title">${category}</div>
+                <div class="icon-card-subtitle">${docs.length} documento${docs.length > 1 ? 's' : ''}</div>
             </div>
         `;
     }
     
+    html += '</div>';
     return html;
+}
+
+function showCategoryDocuments(category) {
+    const docs = documentsData[category];
+    if (!docs) {
+        showToast('Categoria não encontrada', 'error');
+        return;
+    }
+    
+    const categoryColors = {
+        'Protocolos': '#1a4d2e',
+        'Políticas': '#40916c',
+        'Política': '#40916c',
+        'Relatórios': '#52b788',
+        'Manuais': '#74c69d',
+        'Processos': '#2d6a4f',
+        'Formulários': '#17a2b8',
+        'Gestão de Riscos': '#dc3545',
+        'Riscos': '#dc3545',
+        'Termos': '#6c757d',
+        'Plano de Segurança': '#e67e22',
+        'Plano': '#e67e22'
+    };
+    
+    const color = categoryColors[category] || '#1a4d2e';
+    
+    let html = `<h1 class="page-title">${category}</h1>`;
+    html += `<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">${docs.length} documento${docs.length > 1 ? 's' : ''} disponível${docs.length > 1 ? 'eis' : ''}</p>`;
+    html += '<div class="content-section">';
+    html += '<div style="display: flex; flex-direction: column; gap: 10px;">';
+    
+    docs.forEach(doc => {
+        html += `
+            <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='openDocument("${doc.file}")'>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 50px; height: 50px; border-radius: 10px; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="icon-card-title" style="text-align: left;">${doc.title}</div>
+                    </div>
+                    <i class="fas fa-external-link-alt" style="color: var(--cor-texto-secundario);"></i>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div></div>';
+    
+    const pageContent = document.getElementById('page-content');
+    pageContent.innerHTML = html;
+    pageContent.scrollTop = 0;
 }
 
 function openDocument(file) {
@@ -1541,6 +1663,382 @@ function showEditUserModal(userId, userData) {
             showToast('Erro ao atualizar: ' + error.message, 'error');
         }
     });
+}
+
+// ==================== NOVAS PÁGINAS - ESTRUTURA ATUALIZADA ====================
+
+// PAINEL PRINCIPAL
+function renderComunicadosPage() {
+    return `
+        <h1 class="page-title">📢 Últimos Comunicados</h1>
+        <div class="content-section">
+            <p>Aqui serão exibidos os comunicados oficiais da diretoria.</p>
+            <p style="color: var(--cor-texto-secundario); margin-top: 15px;">
+                Esta funcionalidade será integrada com um sistema de notícias em breve.
+            </p>
+        </div>
+    `;
+}
+
+function renderNotificarIncidentePage() {
+    return `
+        <h1 class="page-title">⚠️ Notificação de Incidentes</h1>
+        <div class="content-section">
+            <form id="incident-form">
+                <div class="form-group">
+                    <label for="incident-type">Tipo de Incidente *</label>
+                    <select id="incident-type" required>
+                        <option value="">Selecione...</option>
+                        <option>Evento Adverso</option>
+                        <option>Quase Erro (Near Miss)</option>
+                        <option>Evento Sem Dano</option>
+                        <option>Incidente com Dano</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="incident-date">Data e Hora *</label>
+                    <input type="datetime-local" id="incident-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="incident-location">Local *</label>
+                    <input type="text" id="incident-location" placeholder="Ex: Centro Cirúrgico, Sala 3" required>
+                </div>
+                <div class="form-group">
+                    <label for="incident-description">Descrição Detalhada *</label>
+                    <textarea id="incident-description" rows="6" placeholder="Descreva o ocorrido de forma objetiva e completa..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="incident-actions">Ações Imediatas Tomadas</label>
+                    <textarea id="incident-actions" rows="3" placeholder="Descreva as ações tomadas imediatamente após o incidente..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" onclick="submitIncident(event)">
+                    <i class="fas fa-paper-plane"></i> Enviar Notificação
+                </button>
+            </form>
+        </div>
+    `;
+}
+
+function submitIncident(e) {
+    e.preventDefault();
+    const type = document.getElementById('incident-type').value;
+    const date = document.getElementById('incident-date').value;
+    const location = document.getElementById('incident-location').value;
+    const description = document.getElementById('incident-description').value;
+    const actions = document.getElementById('incident-actions').value;
+    
+    if (!type || !date || !location || !description) {
+        showToast('Por favor, preencha todos os campos obrigatórios', 'error');
+        return;
+    }
+    
+    // Aqui você pode adicionar a lógica para salvar no Firebase
+    showToast('Notificação enviada com sucesso! A equipe de qualidade foi notificada.', 'success');
+    
+    // Limpar formulário
+    document.getElementById('incident-form').reset();
+}
+
+// QUALIDADE E SEGURANÇA
+function renderAuditoriasConformidadePage() {
+    const items = [
+        { id: 'auditoria-higiene-maos', icon: 'fa-hands-wash', color: '#1abc9c', title: 'Higiene das Mãos', subtitle: 'Observação direta' },
+        { id: 'auditoria-medicamentos', icon: 'fa-pills', color: '#e74c3c', title: 'Uso de Medicamentos', subtitle: 'Armazenamento e preparo' },
+        { id: 'auditoria-abreviacoes', icon: 'fa-file-medical', color: '#f39c12', title: 'Abreviações Perigosas', subtitle: 'Auditoria de prontuários' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="showToast('Auditoria em desenvolvimento', 'info')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Auditorias e Conformidade</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+function renderCapacitacaoTreinamentoPage() {
+    const items = [
+        { id: 'notificar-incidente', icon: 'fa-exclamation-triangle', color: '#dc3545', title: 'Notificação de Incidentes', subtitle: 'Reportar eventos' },
+        { id: 'auditorias-conformidade', icon: 'fa-clipboard-check', color: '#52b788', title: 'Auditorias e Conformidade', subtitle: 'Processos de verificação' },
+        { id: 'materiais-treinamento', icon: 'fa-book-open', color: '#1a4d2e', title: 'Materiais de Treinamento', subtitle: 'Recursos educativos' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="navigateToSubPage('${item.id}')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Capacitação e Treinamento</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+function renderIndicadoresQualidadePage() {
+    return `
+        <h1 class="page-title">📊 Indicadores de Qualidade</h1>
+        <div class="content-section">
+            <h3 class="section-title">Indicadores Principais</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: linear-gradient(135deg, #1a4d2e, #2d6a4f); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">95%</div>
+                    <div>Adesão Higiene das Mãos</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #40916c, #52b788); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">12</div>
+                    <div>Notificações Este Mês</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #52b788, #74c69d); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">4.8</div>
+                    <div>Satisfação do Paciente</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// PROTOCOLOS E POPs
+function renderBibliotecaDocumentosPage() {
+    return renderDocumentosPage(); // Usa a função de documentos existente
+}
+
+function renderSegurancaMedicamentosPage() {
+    const items = [
+        { id: 'mavs', icon: 'fa-exclamation-circle', color: '#dc3545', title: 'Medicamentos de Alta Vigilância', subtitle: 'MAVs' },
+        { id: 'eletrolitos', icon: 'fa-vial', color: '#e74c3c', title: 'Eletrólitos Concentrados', subtitle: 'Segurança no preparo' },
+        { id: 'heparina', icon: 'fa-syringe', color: '#c0392b', title: 'Segurança no Uso da Heparina', subtitle: 'Protocolos específicos' },
+        { id: 'narcoticos', icon: 'fa-lock', color: '#8e44ad', title: 'Segurança dos Narcóticos', subtitle: 'Controle e armazenamento' },
+        { id: 'abreviacoes', icon: 'fa-ban', color: '#f39c12', title: 'Lista de Abreviações Perigosas', subtitle: 'Evitar erros' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="showToast('Protocolo em desenvolvimento', 'info')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Segurança de Medicamentos</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+// FERRAMENTAS CLÍNICAS
+function renderCalculadorasAnestesicasPage() {
+    const items = [
+        { id: 'calc-qmentum', icon: 'fa-award', color: '#1a4d2e', title: 'Calculadoras Qmentum', subtitle: 'Específicas para acreditação' },
+        { id: 'calc-geral', icon: 'fa-calculator', color: '#40916c', title: 'Calculadoras Anestesiologia Geral', subtitle: 'Ferramentas clínicas gerais' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="navigateToSubPage('calculadoras')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Calculadoras Anestésicas</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+function renderConciliacaoMedicamentosaPage() {
+    const items = [
+        { id: 'conc-admissao', icon: 'fa-file-import', color: '#1a4d2e', title: 'Protocolo de Admissão', subtitle: 'Entrada do paciente' },
+        { id: 'conc-transferencia', icon: 'fa-right-left', color: '#40916c', title: 'Protocolo de Transferência', subtitle: 'Transição de cuidados' },
+        { id: 'conc-alta', icon: 'fa-file-export', color: '#52b788', title: 'Protocolo de Alta', subtitle: 'Saída do paciente' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="showToast('Protocolo em desenvolvimento', 'info')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Conciliação Medicamentosa</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+function renderAvaliacaoRiscosPage() {
+    const items = [
+        { id: 'risco-quedas', icon: 'fa-user-injured', color: '#e74c3c', title: 'Risco de Quedas', subtitle: 'Escala de Morse + Protocolo' },
+        { id: 'risco-ulceras', icon: 'fa-bed', color: '#f39c12', title: 'Úlceras de Pressão', subtitle: 'Escala de Braden + Protocolo' },
+        { id: 'risco-tev', icon: 'fa-heart-pulse', color: '#c0392b', title: 'Risco de TEV', subtitle: 'Caprini/Padua + Protocolo' }
+    ];
+    
+    const grid = items.map(item => `
+        <div class="icon-card" onclick="navigateToRiskAssessment('${item.id}')">
+            <div class="icon-card-icon" style="background: ${item.color}">
+                <i class="fas ${item.icon}"></i>
+            </div>
+            <div class="icon-card-title">${item.title}</div>
+            <div class="icon-card-subtitle">${item.subtitle}</div>
+        </div>
+    `).join('');
+    
+    return `
+        <h1 class="page-title">Avaliação de Riscos</h1>
+        <div class="icon-grid">${grid}</div>
+    `;
+}
+
+function navigateToRiskAssessment(riskId) {
+    // Direciona para as calculadoras específicas
+    if (riskId === 'risco-quedas') {
+        openCalculator('morse');
+    } else if (riskId === 'risco-ulceras') {
+        openCalculator('braden');
+    } else if (riskId === 'risco-tev') {
+        // Mostra opções Caprini ou Padua
+        const html = `
+            <h1 class="page-title">Risco de TEV</h1>
+            <div class="icon-grid">
+                <div class="icon-card" onclick="openCalculator('caprini')">
+                    <div class="icon-card-icon" style="background: #c0392b">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="icon-card-title">Caprini</div>
+                    <div class="icon-card-subtitle">Pacientes cirúrgicos</div>
+                </div>
+                <div class="icon-card" onclick="openCalculator('padua')">
+                    <div class="icon-card-icon" style="background: #c0392b">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="icon-card-title">Padua</div>
+                    <div class="icon-card-subtitle">Pacientes clínicos</div>
+                </div>
+            </div>
+        `;
+        document.getElementById('page-content').innerHTML = html;
+    }
+}
+
+// ROPs - Navegação para Questões e Podcasts
+function navigateToROPsQuestoes(macroId, macroTitle) {
+    // Renderiza a lista de ROPs da macroárea selecionada
+    const areaData = ropsData[macroId];
+    if (!areaData) {
+        showToast('ROPs não encontradas para esta macroárea', 'error');
+        return;
+    }
+    
+    let html = `<h1 class="page-title">${macroTitle} - Questões</h1>`;
+    html += '<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">Selecione uma ROP para iniciar o quiz</p>';
+    html += '<div class="icon-grid">';
+    
+    for (const [ropKey, ropData] of Object.entries(areaData)) {
+        const questionCount = ropData.questions?.length || 0;
+        
+        html += `
+            <div class="icon-card" onclick='startQuiz("${macroId}", "${ropKey}")'>
+                <div class="icon-card-icon" style="background: #1a4d2e">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="icon-card-title">${ropData.title || ropKey}</div>
+                <div class="icon-card-subtitle">${questionCount} questões</div>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    
+    const pageContent = document.getElementById('page-content');
+    pageContent.innerHTML = html;
+    pageContent.scrollTop = 0;
+}
+
+function navigateToROPsPodcasts(macroId, macroTitle) {
+    // Filtra os podcasts da macroárea específica
+    const macroAreaMap = {
+        'cultura-seguranca': 'Cultura de Segurança',
+        'comunicacao': 'Comunicação',
+        'uso-medicamentos': 'Uso de Medicamentos',
+        'vida-profissional': 'Vida Profissional',
+        'prevencao-infeccoes': 'Prevenção de Infecções',
+        'avaliacao-riscos': 'Avaliação de Riscos'
+    };
+    
+    const categoryName = macroAreaMap[macroId];
+    
+    // Renderiza a lista de podcasts filtrados
+    const allPodcasts = [
+        // Cultura de Segurança (4)
+        { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
+        { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de incidentes.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
+        { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais.m4a", category: "Cultura de Segurança", color: "#9b59b6" },
+        { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação dos incidentes (Disclosure).m4a", category: "Cultura de Segurança", color: "#9b59b6" },
+        
+        // Comunicação (8)
+        { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenfica\u00e7\u00e3o cliente.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abrevia\u00e7\u00f5es perigosas.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Concilia\u00e7\u00e3o medicamentosa Estrat\u00e9gica.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Concilia\u00e7\u00e3o medicamentosa Internado.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Concilia\u00e7\u00e3o medicamentosa ambulatorial.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Concilia\u00e7\u00e3o medicamentosa Emergencia.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a", category: "Comunicação", color: "#3498db" },
+        { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transi\u00e7\u00e3o Cuidado.m4a", category: "Comunicação", color: "#3498db" },
+        
+        // Demais categorias
+        { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a", category: "Uso de Medicamentos", color: "#e74c3c" },
+        { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a", category: "Vida Profissional", color: "#f39c12" },
+        { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Preven\u00e7\u00e3o de infec\u00e7\u00f5es/5.1 Preven\u00e7\u00e3o de infec\u00e7\u00f5es.m4a", category: "Prevenção de Infecções", color: "#1abc9c" },
+        { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avalia\u00e7\u00e3o de Riscos/6.1 Avalia\u00e7\u00e3o de Riscos.m4a", category: "Avaliação de Riscos", color: "#e67e22" }
+    ];
+    
+    const filteredPodcasts = allPodcasts.filter(p => p.category === categoryName);
+    const color = filteredPodcasts[0]?.color || '#1a4d2e';
+    
+    let html = `<h1 class="page-title">${macroTitle} - Podcasts</h1>`;
+    html += `<p class="text-center mb-2" style="color: var(--cor-texto-secundario)">${filteredPodcasts.length} episódios disponíveis</p>`;
+    html += '<div class="content-section">';
+    html += '<div style="display: flex; flex-direction: column; gap: 10px;">';
+    
+    filteredPodcasts.forEach(p => {
+        html += `
+            <div class="icon-card" style="padding: 15px; cursor: pointer;" onclick='playPodcast("${p.file}", "${p.title}")'>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="icon-card-title" style="text-align: left; margin-bottom: 5px;">${p.title}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div></div>';
+    
+    const pageContent = document.getElementById('page-content');
+    pageContent.innerHTML = html;
+    pageContent.scrollTop = 0;
 }
 
 console.log('✅ ANEST-App Profissional carregado!');

@@ -472,7 +472,7 @@ input, select, textarea {
 /* ==================== BOTTOM NAVIGATION ==================== */
 .bottom-nav {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     background: var(--cor-branco);
     border-top: 1px solid var(--cor-cinza-medio);
     padding: 8px 0;
