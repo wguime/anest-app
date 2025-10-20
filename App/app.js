@@ -912,29 +912,70 @@ window.openDocument = function(filePath) {
 
 // ==================== PODCASTS RENDERING ====================
 function renderPodcastsPage() {
-    const podcasts = [
-        { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a" },
-        { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de Incidentes sobre a Segurança dos Pacientes.m4a" },
-        { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais sobre a Segurança dos Pacientes.m4a" },
-        { title: "ROP 1.4 – Divulgação de Incidentes (Disclosure)", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação de Incidentes (Disclosure).m4a" }
-    ];
+    const podcastsByCategory = {
+        "Cultura de Segurança": [
+            { title: "ROP 1.1 – Responsabilização pela Qualidade", file: "Podcasts/Cultura de Segurança/ROP 1.1 Cultura de Segurança – Responsabilização pela Qualidade.m4a" },
+            { title: "ROP 1.2 – Gestão de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.2 Cultura de Segurança – Gestão de Incidentes sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.3 – Relatórios Trimestrais", file: "Podcasts/Cultura de Segurança/ROP 1.3 Cultura de Segurança – Relatórios Trimestrais sobre a Segurança dos Pacientes.m4a" },
+            { title: "ROP 1.4 – Divulgação de Incidentes", file: "Podcasts/Cultura de Segurança/ROP 1.4 Cultura de Segurança – Divulgação de Incidentes (Disclosure).m4a" }
+        ],
+        "Comunicação": [
+            { title: "ROP 2.1 – Identificação do Cliente", file: "Podcasts/Comunicação/2.1 Comunicação - Idenficação cliente.m4a" },
+            { title: "ROP 2.2 – Abreviações Perigosas", file: "Podcasts/Comunicação/2.2 Comunicação - Abreviações perigosas.m4a" },
+            { title: "ROP 2.3 – Conciliação Medicamentosa Estratégica", file: "Podcasts/Comunicação/2.3 Comunicação - Conciliação medicamentosa Estratégica.m4a" },
+            { title: "ROP 2.4 – Conciliação Medicamentosa (Internação)", file: "Podcasts/Comunicação/2.4 Comunicação - Conciliação medicamentosa Internado.m4a" },
+            { title: "ROP 2.5 – Conciliação Medicamentosa (Ambulatorial)", file: "Podcasts/Comunicação/2.5 Comunicação - Conciliação medicamentosa ambulatorial.m4a" },
+            { title: "ROP 2.6 – Conciliação Medicamentosa (Emergência)", file: "Podcasts/Comunicação/2.6 Comunicação - Conciliação medicamentosa Emergencia.m4a" },
+            { title: "ROP 2.7 – Cirurgia Segura", file: "Podcasts/Comunicação/2.7 Comunicação - Cirurgia segura.m4a" },
+            { title: "ROP 2.8 – Transição de Cuidado", file: "Podcasts/Comunicação/2.8 Comunicação - Transição Cuidado.m4a" }
+        ],
+        "Uso de Medicamentos": [
+            { title: "ROP 3.1 – Uso de Medicamentos", file: "Podcasts/Uso de Medicamentos/3.1 Uso de Medicamentos.m4a" }
+        ],
+        "Vida Profissional": [
+            { title: "ROP 4.1 – Vida Profissional", file: "Podcasts/Vida Profissional/4.1 Vida Profissional.m4a" }
+        ],
+        "Prevenção de Infecções": [
+            { title: "ROP 5.1 – Prevenção de Infecções", file: "Podcasts/Prevenção de infecções/5.1 Prevenção de infecções.m4a" }
+        ],
+        "Avaliação de Riscos": [
+            { title: "ROP 6.1 – Avaliação de Riscos", file: "Podcasts/Avaliação de Riscos/6.1 Avaliação de Riscos.m4a" }
+        ]
+    };
     
     let html = `<h1 class="page-title">Podcasts Educativos</h1>
-                <div class="content-section">
-                    <h3><i class="fas fa-podcast"></i> Cultura de Segurança</h3>`;
+                <p style="padding: 0 5px 15px; color: var(--cor-texto-claro); font-size: 0.9rem;">
+                    16 podcasts sobre as ROPs Qmentum
+                </p>`;
     
-    podcasts.forEach((podcast, index) => {
-        html += `<div class="list-item" onclick="playPodcast('${podcast.file}', '${podcast.title}')">
-                    <span class="icon" style="background-color: #9b59b6;">
-                        <i class="fas fa-play-circle"></i>
-                    </span>
-                    <div class="text-content">
-                        <div class="title">${podcast.title}</div>
-                    </div>
-                </div>`;
+    Object.keys(podcastsByCategory).forEach(category => {
+        const podcasts = podcastsByCategory[category];
+        const categoryColor = {
+            "Cultura de Segurança": "#9b59b6",
+            "Comunicação": "#3498db",
+            "Uso de Medicamentos": "#e74c3c",
+            "Vida Profissional": "#f39c12",
+            "Prevenção de Infecções": "#1abc9c",
+            "Avaliação de Riscos": "#e67e22"
+        }[category] || "#9b59b6";
+        
+        html += `<div class="content-section">
+                    <h3><i class="fas fa-podcast"></i> ${category}</h3>`;
+        
+        podcasts.forEach(podcast => {
+            html += `<div class="list-item" onclick="playPodcast('${podcast.file}', '${podcast.title}')">
+                        <span class="icon" style="background-color: ${categoryColor};">
+                            <i class="fas fa-play-circle"></i>
+                        </span>
+                        <div class="text-content">
+                            <div class="title">${podcast.title}</div>
+                        </div>
+                    </div>`;
+        });
+        
+        html += `</div>`;
     });
     
-    html += `</div>`;
     return html;
 }
 
