@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Anest-App Qmentum - MINIMAL</title>
+    <title>Anest-App Qmentum</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo-anest.png">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
@@ -47,6 +56,8 @@
                 <button type="button" id="googleSignInButton" class="btn-google">
                     <i class="fab fa-google"></i> Entrar com Google
                 </button>
+                
+                <a href="#" class="forgot-password" id="forgotPasswordLink">Esqueceu a senha?</a>
             </form>
         </div>
     </div>
@@ -81,20 +92,16 @@
         </nav>
     </div>
     
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <!-- Firebase Config -->
     <script src="firebase-config.js"></script>
     
     <!-- Main App -->
     <script>
-        console.log('✅ Iniciando aplicação MINIMAL...');
+        console.log('✅ Iniciando aplicação...');
         
         // Global State
         let currentUser = null;
-        let authInitialized = false;
+        let userProfile = null;
         
         // Funções de UI
         function showLoading() {
@@ -174,29 +181,23 @@
         
         // Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('✅ DOM carregado - MINIMAL');
+            console.log('✅ DOM carregado');
             
-            // Aguardar Firebase carregar
-            setTimeout(() => {
-                if (typeof auth !== 'undefined' && !authInitialized) {
-                    console.log('✅ Firebase auth disponível');
-                    authInitialized = true;
-                    
-                    // Auth State - APENAS UMA VEZ
-                    auth.onAuthStateChanged((user) => {
-                        console.log('Auth state changed:', user ? user.email : 'No user');
-                        if (user) {
-                            currentUser = user;
-                            showMainApp();
-                        } else {
-                            showLoginScreen();
-                        }
-                    });
-                } else {
-                    console.log('❌ Auth não disponível, mostrando login');
-                    showLoginScreen();
-                }
-            }, 1000);
+            // Auth State - APENAS UMA VEZ
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged((user) => {
+                    console.log('Auth state changed:', user ? user.email : 'No user');
+                    if (user) {
+                        currentUser = user;
+                        showMainApp();
+                    } else {
+                        showLoginScreen();
+                    }
+                });
+            } else {
+                console.log('❌ Auth não disponível, mostrando login');
+                showLoginScreen();
+            }
             
             // Login Form
             document.getElementById('loginForm').addEventListener('submit', async (e) => {

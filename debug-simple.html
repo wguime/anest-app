@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Simples - Anest-App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        .log {
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .error { color: #ff0000; }
+        .success { color: #00ff00; }
+        .info { color: #00aaff; }
+        h1 { color: #00ff00; text-align: center; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #00aa00; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Simples - Anest-App</h1>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <button onclick="testFirebase()">🔥 Testar Firebase</button>
+        <button onclick="testScripts()">📜 Testar Scripts</button>
+        <button onclick="clearLogs()">🗑️ Limpar</button>
+        <button onclick="location.reload()">🔄 Recarregar</button>
+    </div>
+
+    <div class="log" id="logContainer"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <script>
+        const logContainer = document.getElementById('logContainer');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(line);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLogs() {
+            logContainer.innerHTML = '';
+            log('Logs limpos', 'info');
+        }
+
+        // Capturar erros SEM override do console
+        window.addEventListener('error', (e) => {
+            log(`❌ ERROR: ${e.message} | File: ${e.filename} | Line: ${e.lineno}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            log(`❌ PROMISE REJECTION: ${e.reason}`, 'error');
+        });
+
+        log('🚀 Debug Simples Iniciado', 'success');
+        log('Versão: v9.1.1', 'info');
+
+        // Testar Firebase
+        async function testFirebase() {
+            log('🔥 Testando Firebase...', 'info');
+            
+            try {
+                // 1. Verificar SDK
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase SDK não carregado');
+                }
+                log('✅ Firebase SDK carregado', 'success');
+
+                // 2. Carregar config
+                const response = await fetch('firebase-config.js');
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar firebase-config.js: ${response.status}`);
+                }
+                
+                const configCode = await response.text();
+                log('✅ firebase-config.js baixado', 'success');
+                
+                // Executar código
+                eval(configCode);
+                log('✅ firebase-config.js executado', 'success');
+
+                // 3. Verificar auth
+                if (typeof auth === 'undefined') {
+                    throw new Error('auth não foi definido');
+                }
+                log('✅ auth disponível', 'success');
+
+                // 4. Testar autenticação
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        log(`✅ Usuário logado: ${user.email}`, 'success');
+                    } else {
+                        log('ℹ️ Nenhum usuário logado', 'info');
+                    }
+                });
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar Scripts
+        async function testScripts() {
+            log('📜 Testando scripts...', 'info');
+            
+            const scripts = [
+                'firebase-config.js',
+                'styles.css',
+                'index.html'
+            ];
+            
+            for (const script of scripts) {
+                try {
+                    const response = await fetch(script);
+                    if (response.ok) {
+                        const size = response.headers.get('content-length');
+                        const sizeKB = size ? (parseInt(size) / 1024).toFixed(1) : '?';
+                        log(`✅ ${script} (${sizeKB}KB)`, 'success');
+                    } else {
+                        log(`❌ ${script} - Status ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ ${script} - ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Auto-test
+        window.addEventListener('load', () => {
+            log('📄 Página carregada', 'success');
+            setTimeout(() => {
+                log('🔄 Iniciando testes...', 'info');
+                testFirebase();
+                setTimeout(() => testScripts(), 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
