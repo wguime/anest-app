@@ -427,67 +427,302 @@ function hideLoading() {
 
 // ==================== PAGE DATABASE ====================
 const pages = {
-    // NÍVEL 1: PRINCIPAL
     painel: {
         title: "Anest-App",
         type: 'custom',
-        render: renderPaginaInicial
+        render: renderPainel
     },
-    biblioteca_documentos: {
-        title: "Documentos",
+    comunicados_lista: {
+        title: "Últimos Comunicados",
         type: 'custom',
-        render: renderBibliotecaDocumentos
+        render: renderComunicadosLista
     },
-    residencia_menu: {
+    minhas_pendencias: {
+        title: "Minhas Pendências",
+        type: 'custom',
+        render: renderMinhasPendencias
+    },
+    kpis_menu: {
+        title: "Indicadores de Qualidade",
+        type: 'custom',
+        render: renderKPIsMenu
+    },
+    rops_desafio: {
+        title: "ROPs Desafio",
+        type: 'custom',
+        render: renderROPsDesafio
+    },
+    residencia_medica: {
         title: "Residência Médica",
         type: 'custom',
-        render: renderResidenciaMenu
+        render: renderResidenciaMedica
     },
-    rops_macro: {
-        title: "ROPs - Desafio de Conhecimento",
+    kpi_higiene_maos: {
+        title: "Adesão à Higiene das Mãos",
         type: 'custom',
-        render: renderROPsMacro
+        render: renderKPIGenerico
     },
-    notificacoes: {
-        title: "Notificações",
+    kpi_notificacao_incidentes: {
+        title: "Taxa de Notificação de Incidentes",
         type: 'custom',
-        render: renderNotificacoes
+        render: renderKPIGenerico
+    },
+    kpi_nvpo: {
+        title: "Incidência de NVPO",
+        type: 'custom',
+        render: renderKPIGenerico
+    },
+    kpi_controle_dor: {
+        title: "Controle da Dor Pós-operatória",
+        type: 'custom',
+        render: renderKPIGenerico
+    },
+    kpi_satisfacao: {
+        title: "Satisfação do Paciente",
+        type: 'custom',
+        render: renderKPIGenerico
     },
     qualidade: {
         title: "Qualidade e Segurança",
-        type: 'list',
-        items: [
-            { id: 'incidentes', icon: 'fa-exclamation-triangle', color: 'var(--cor-perigo)', title: 'Gestão de Incidentes', subtitle: 'Notificar eventos adversos' },
-            { id: 'auditorias', icon: 'fa-clipboard-check', color: 'var(--cor-info)', title: 'Auditorias e Conformidade', subtitle: 'Verificações de processos' },
-            { id: 'relatorios', icon: 'fa-file-alt', color: 'var(--cor-texto-claro)', title: 'Relatórios de Segurança', subtitle: 'Consulte os relatórios trimestrais' },
-            { id: 'capacitacao', icon: 'fa-graduation-cap', color: 'var(--cor-secundaria)', title: 'Capacitação e Treinamento', subtitle: 'Acesse os materiais de estudo' }
-        ]
+        type: 'custom',
+        render: renderQualidade
+    },
+    gestao_incidentes: {
+        title: "Gestão de Incidentes",
+        type: 'custom',
+        render: renderGestaoIncidentes
+    },
+    auditorias_menu: {
+        title: "Auditorias e Conformidade",
+        type: 'custom',
+        render: renderAuditoriasMenu
+    },
+    relatorios_menu: {
+        title: "Relatórios de Segurança",
+        type: 'custom',
+        render: renderRelatoriosMenu
+    },
+    auditoria_higiene_maos: {
+        title: "Auditoria - Higiene das Mãos",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    auditoria_medicamentos: {
+        title: "Auditoria - Medicamentos",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    auditoria_abreviaturas: {
+        title: "Auditoria - Abreviaturas",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    relatorio_trimestral: {
+        title: "Relatório Trimestral",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    relatorio_incidentes: {
+        title: "Consolidado de Incidentes",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    relatorio_auditorias: {
+        title: "Relatório de Auditorias",
+        type: 'custom',
+        render: renderDocumentoGenerico
     },
     protocolos: {
-        title: "Protocolos e Documentos",
-        type: 'list',
-        items: [
-            { id: 'documentos', icon: 'fa-folder-open', color: 'var(--cor-primaria)', title: 'Biblioteca de Documentos', subtitle: 'Todos os POPs, políticas e protocolos' },
-            { id: 'protocolos_anest', icon: 'fa-file-medical', color: '#e74c3c', title: 'Protocolos de Anestesia', subtitle: 'Protocolos específicos do serviço' },
-            { id: 'segMedicamentos', icon: 'fa-pills', color: 'var(--cor-perigo)', title: 'Segurança de Medicamentos', subtitle: 'Medicações de alto risco' }
-        ]
+        title: "Protocolos",
+        type: 'custom',
+        render: renderProtocolos
+    },
+    biblioteca_documentos: {
+        title: "Biblioteca de Documentos",
+        type: 'custom',
+        render: renderBibliotecaDocumentos
+    },
+    seguranca_medicamentos: {
+        title: "Segurança de Medicamentos",
+        type: 'custom',
+        render: renderSegurancaMedicamentos
+    },
+    controle_infeccao: {
+        title: "Controle de Infecção",
+        type: 'custom',
+        render: renderControleInfeccao
+    },
+    docs_protocolos: {
+        title: "Protocolos",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_politicas: {
+        title: "Políticas",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_formularios: {
+        title: "Formulários",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_manuais: {
+        title: "Manuais",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_relatorios: {
+        title: "Relatórios",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_processos: {
+        title: "Processos",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_riscos: {
+        title: "Riscos",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    docs_termos: {
+        title: "Termos",
+        type: 'custom',
+        render: renderDocumentos
+    },
+    meds_alta_vigilancia: {
+        title: "MAVs",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    meds_eletrolitos: {
+        title: "Eletrólitos Concentrados",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    meds_heparina: {
+        title: "Heparina",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    meds_narcoticos: {
+        title: "Narcóticos",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    meds_abreviaturas: {
+        title: "Abreviaturas Perigosas",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    protocolo_higiene_maos: {
+        title: "Protocolo de Higiene das Mãos",
+        type: 'custom',
+        render: renderDocumentoGenerico
     },
     ferramentas: {
-        title: "Ferramentas Clínicas",
-        type: 'list',
-        items: [
-            { id: 'calculadoras', icon: 'fa-calculator', color: '#6f42c1', title: 'Calculadoras Anestésicas', subtitle: 'Calculadoras clínicas completas' },
-            { id: 'checklist', icon: 'fa-check-double', color: 'var(--cor-sucesso)', title: 'Checklist de Cirurgia Segura', subtitle: 'Ferramenta interativa da OMS' },
-            { id: 'avaliacaoRiscos', icon: 'fa-user-shield', color: 'var(--cor-secundaria)', title: 'Avaliação de Riscos', subtitle: 'Escalas de risco' }
-        ]
-    },
-    rops: {
-        title: "ROPs - Desafio",
+        title: "Ferramentas",
         type: 'custom',
-        render: renderROPsMainPage
+        render: renderFerramentas
     },
-    residencia: {
-        title: "Residência Médica",
+    checklist_cirurgia: {
+        title: "Checklist de Cirurgia Segura",
+        type: 'custom',
+        render: renderChecklistCirurgia
+    },
+    conciliacao_menu: {
+        title: "Conciliação Medicamentosa",
+        type: 'custom',
+        render: renderConciliacaoMenu
+    },
+    avaliacao_riscos: {
+        title: "Avaliação de Riscos",
+        type: 'custom',
+        render: renderAvaliacaoRiscos
+    },
+    calculadoras_menu: {
+        title: "Calculadoras Anestésicas",
+        type: 'custom',
+        render: renderCalculadorasMenu
+    },
+    conciliacao_admissao: {
+        title: "Conciliação - Admissão",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    conciliacao_transferencia: {
+        title: "Conciliação - Transferência",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    conciliacao_alta: {
+        title: "Conciliação - Alta",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    risco_quedas_menu: {
+        title: "Risco de Quedas",
+        type: 'custom',
+        render: renderRiscoQuedasMenu
+    },
+    risco_ulceras_menu: {
+        title: "Úlceras de Pressão",
+        type: 'custom',
+        render: renderRiscoUlcerasMenu
+    },
+    risco_tev_menu: {
+        title: "Risco de TEV",
+        type: 'custom',
+        render: renderRiscoTEVMenu
+    },
+    protocolo_quedas: {
+        title: "Protocolo de Prevenção de Quedas",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    protocolo_ulceras: {
+        title: "Protocolo de Prevenção de Úlceras",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    protocolo_tev: {
+        title: "Protocolo de Profilaxia de TEV",
+        type: 'custom',
+        render: renderDocumentoGenerico
+    },
+    calc_anestesiologia: {
+        title: "Calculadoras - Anestesiologia",
+        type: 'custom',
+        render: renderCalcAnestesiologia
+    },
+    calc_dose_drogas: {
+        title: "Calculadoras - Dose de Drogas",
+        type: 'custom',
+        render: renderCalcDoseDrogas
+    },
+    calc_pediatria: {
+        title: "Calculadoras - Pediatria",
+        type: 'custom',
+        render: renderCalcPediatria
+    },
+    calc_indices: {
+        title: "Calculadoras - Índices",
+        type: 'custom',
+        render: renderCalcIndices
+    },
+    calc_regional: {
+        title: "Calculadoras - Anestesia Regional",
+        type: 'custom',
+        render: renderCalcRegional
+    },
+    calc_fluidos: {
+        title: "Calculadoras - Fluidos",
+        type: 'custom',
+        render: renderCalcFluidos
+    },
+};
         type: 'list',
         items: [
             { id: 'residencia_sheets', icon: 'fa-calendar-alt', color: 'var(--cor-info)', title: 'Escalas e Cronogramas', subtitle: 'Plantões, estágios e férias' },
