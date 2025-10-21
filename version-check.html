@@ -59,15 +59,17 @@
             });
             
             for (const cacheName of cacheNames) {
+                const isLatest = cacheName.includes('v8') || cacheName.includes('v7.1');
                 checks.push({
                     name: '└─ Cache',
                     value: cacheName,
-                    status: cacheName.includes('v7') ? 'success' : 'error'
+                    status: isLatest ? 'success' : 'error'
                 });
             }
             
             // 3. Verificar arquivos principais
             const files = [
+                'anest-app-complete.js',
                 'app.js',
                 'styles.css',
                 'rops-data-from-banco.js',
