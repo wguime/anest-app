@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Check - Anest App</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .warning { color: #ff0; }
+        pre { background: #000; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Anest App - Verificação de Versão</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        async function checkVersion() {
+            const checks = [];
+            
+            // 1. Verificar Service Worker
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                checks.push({
+                    name: 'Service Workers Registrados',
+                    value: registrations.length,
+                    status: registrations.length > 0 ? 'success' : 'error'
+                });
+                
+                for (const reg of registrations) {
+                    checks.push({
+                        name: '└─ SW Scope',
+                        value: reg.scope,
+                        status: 'success'
+                    });
+                    checks.push({
+                        name: '└─ SW State',
+                        value: reg.active ? reg.active.state : 'N/A',
+                        status: 'success'
+                    });
+                }
+            }
+            
+            // 2. Verificar Cache
+            const cacheNames = await caches.keys();
+            checks.push({
+                name: 'Caches Disponíveis',
+                value: cacheNames.length,
+                status: cacheNames.length > 0 ? 'success' : 'warning'
+            });
+            
+            for (const cacheName of cacheNames) {
+                checks.push({
+                    name: '└─ Cache',
+                    value: cacheName,
+                    status: cacheName.includes('v7') ? 'success' : 'error'
+                });
+            }
+            
+            // 3. Verificar arquivos principais
+            const files = [
+                'app.js',
+                'styles.css',
+                'rops-data-from-banco.js',
+                'firebase-config.js'
+            ];
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { cache: 'no-cache' });
+                    const size = response.headers.get('content-length');
+                    checks.push({
+                        name: `Arquivo: ${file}`,
+                        value: size ? `${(size/1024).toFixed(1)} KB` : 'OK',
+                        status: response.ok ? 'success' : 'error'
+                    });
+                } catch (error) {
+                    checks.push({
+                        name: `Arquivo: ${file}`,
+                        value: 'ERRO: ' + error.message,
+                        status: 'error'
+                    });
+                }
+            }
+            
+            // 4. Verificar se funções existem
+            const functions = [
+                'renderAdminPanel',
+                'showAdminPanel',
+                'isAdmin',
+                'toggleDarkMode'
+            ];
+            
+            setTimeout(() => {
+                for (const func of functions) {
+                    const exists = typeof window[func] === 'function';
+                    checks.push({
+                        name: `Função: ${func}`,
+                        value: exists ? 'EXISTS' : 'NOT FOUND',
+                        status: exists ? 'success' : 'error'
+                    });
+                }
+                
+                renderResults(checks);
+            }, 2000);
+        }
+        
+        function renderResults(checks) {
+            let html = '<h2>Resultados da Verificação:</h2>';
+            
+            for (const check of checks) {
+                const icon = check.status === 'success' ? '✅' : 
+                            check.status === 'error' ? '❌' : '⚠️';
+                html += `<div class="${check.status}">
+                    ${icon} <strong>${check.name}:</strong> ${check.value}
+                </div>`;
+            }
+            
+            html += '<hr><h2>Ações Recomendadas:</h2>';
+            html += '<ol>';
+            
+            const hasOldCache = checks.some(c => c.value && c.value.toString().includes('v6'));
+            const hasMissingFunctions = checks.some(c => c.name.includes('Função') && c.status === 'error');
+            
+            if (hasOldCache) {
+                html += '<li class="error">❌ CACHE ANTIGO DETECTADO - Limpe o cache do navegador</li>';
+            }
+            
+            if (hasMissingFunctions) {
+                html += '<li class="error">❌ FUNÇÕES FALTANDO - app.js não foi carregado corretamente</li>';
+                html += '<li class="warning">⚠️ Faça hard refresh: Ctrl+Shift+R (Windows) ou Cmd+Shift+R (Mac)</li>';
+            }
+            
+            html += '<li>🔄 Desinstale completamente o PWA</li>';
+            html += '<li>🧹 Limpe todo o cache (Ctrl+Shift+Delete)</li>';
+            html += '<li>⏱️ Aguarde 5 minutos após o deploy</li>';
+            html += '<li>🔄 Recarregue a página várias vezes com Ctrl+Shift+R</li>';
+            html += '<li>📱 Reinstale o PWA</li>';
+            html += '</ol>';
+            
+            html += '<hr><button onclick="clearAllCaches()" style="padding: 10px 20px; font-size: 16px; background: #f00; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ LIMPAR TODOS OS CACHES AGORA</button>';
+            
+            results.innerHTML = html;
+        }
+        
+        async function clearAllCaches() {
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+                await caches.delete(cacheName);
+                console.log('Deleted cache:', cacheName);
+            }
+            
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+                await registration.unregister();
+                console.log('Unregistered SW:', registration.scope);
+            }
+            
+            alert('✅ Todos os caches foram limpos!\n\nAgora:\n1. Feche esta aba\n2. Feche TODAS as abas do aplicativo\n3. Aguarde 10 segundos\n4. Abra o aplicativo novamente');
+        }
+        
+        checkVersion();
+    </script>
+</body>
+</html>
+
