@@ -1,7 +1,7 @@
 // ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
 // Versão Profissional
 
-const CACHE_VERSION = 'v8.0.0-complete-rebuild';
+const CACHE_VERSION = 'v8.0.1-timestamp-deploy';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Essential files to cache
@@ -9,7 +9,7 @@ const ESSENTIAL_FILES = [
     '/',
     '/index.html',
     '/styles.css',
-    '/anest-app-complete.js',
+    '/anest-app-20251021145915.js',
     '/firebase-config.js',
     '/rops-data-from-banco.js',
     '/doses-pediatricas-data.js',
