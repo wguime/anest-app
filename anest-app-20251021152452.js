@@ -415,14 +415,8 @@ const pages = {
     // NÍVEL 1: PRINCIPAL
     painel: {
         title: "Painel Principal",
-        type: 'list',
-        items: [
-            { id: 'comunicados', icon: 'fa-bullhorn', color: 'var(--cor-perigo)', title: 'Últimos Comunicados', subtitle: 'Avisos e notícias da diretoria' },
-            { id: 'kpis', icon: 'fa-chart-line', color: 'var(--cor-sucesso)', title: 'Indicadores de Qualidade', subtitle: 'Acompanhe as métricas' },
-            { id: 'rops', icon: 'fa-award', color: '#ffa500', title: 'ROPs - Desafio', subtitle: 'Teste seus conhecimentos sobre as ROPs' },
-            { id: 'residencia', icon: 'fa-user-md', color: '#38f9d7', title: 'Residência Médica', subtitle: 'Escalas, materiais e cronogramas' },
-            { id: 'podcasts', icon: 'fa-podcast', color: '#9b59b6', title: 'Podcasts Educativos', subtitle: 'Cultura de segurança e qualidade' }
-        ]
+        type: 'custom',
+        render: renderPainelPrincipal
     },
     qualidade: {
         title: "Qualidade e Segurança",
@@ -537,6 +531,18 @@ const pages = {
         title: "Gerenciar Documentos",
         type: 'custom',
         render: renderAdminDocumentos
+    },
+    
+    // PÁGINAS PÚBLICAS
+    comunicados_lista: {
+        title: "Todos os Comunicados",
+        type: 'custom',
+        render: renderComunicadosLista
+    },
+    kpis_detalhes: {
+        title: "Indicadores de Qualidade",
+        type: 'custom',
+        render: renderIndicadoresDetalhes
     }
 };
 
@@ -589,6 +595,17 @@ function renderPage(pageId, addToStack = true) {
             }
             
             pageContent.innerHTML = contentHTML;
+            
+            // Carregar conteúdo dinâmico após renderização
+            setTimeout(() => {
+                if (pageId === 'painel' && typeof loadPainelDashboard === 'function') {
+                    loadPainelDashboard();
+                } else if (pageId === 'comunicados_lista' && typeof loadComunicadosLista === 'function') {
+                    loadComunicadosLista();
+                } else if (pageId === 'kpis_detalhes' && typeof loadIndicadoresDetalhes === 'function') {
+                    loadIndicadoresDetalhes();
+                }
+            }, 100);
         }
         
         pageContent.scrollTop = 0;
@@ -3003,10 +3020,187 @@ function showPodcastsArea(areaId) {
     document.getElementById('back-button').style.display = 'block';
 }
 
+// Página de Lista Completa de Comunicados
+function renderComunicadosLista() {
+    return `
+        <h1 class="page-title">Todos os Comunicados</h1>
+        <div id="comunicados-lista-completa">
+            <p style="color: var(--cor-texto-claro); font-style: italic; text-align: center;">
+                <i class="fas fa-spinner fa-spin"></i> Carregando comunicados...
+            </p>
+        </div>
+    `;
+}
+
+// Carrega lista completa de comunicados após renderização
+async function loadComunicadosLista() {
+    const container = document.getElementById('comunicados-lista-completa');
+    if (!container) return;
+    
+    try {
+        const snapshot = await db.collection('comunicados')
+            .orderBy('dataPublicacao', 'desc')
+            .get();
+        
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="content-section">
+                    <p style="color: var(--cor-texto-claro); text-align: center;">
+                        <i class="fas fa-info-circle"></i> Nenhum comunicado publicado
+                    </p>
+                    ${isAdmin() ? '<button class="submit-button" onclick="navigateTo(\'admin_comunicados\')"><i class="fas fa-plus"></i> Criar Comunicado</button>' : ''}
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.dataPublicacao?.toDate().toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            }) || 'Data não disponível';
+            
+            const corPrioridade = {
+                'baixa': '#6c757d',
+                'media': '#ffc107',
+                'alta': '#fd7e14',
+                'urgente': '#dc3545'
+            };
+            
+            const nomePrioridade = {
+                'baixa': 'Baixa',
+                'media': 'Média',
+                'alta': 'Alta',
+                'urgente': 'Urgente'
+            };
+            
+            const prioridade = data.prioridade || 'baixa';
+            
+            html += `
+                <div class="content-section" style="margin-bottom: 15px; border-left: 4px solid ${corPrioridade[prioridade]};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <h3 style="margin: 0;">${data.titulo}</h3>
+                        <span style="padding: 4px 12px; background: ${corPrioridade[prioridade]}; color: white; border-radius: 12px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; margin-left: 10px;">
+                            ${nomePrioridade[prioridade]}
+                        </span>
+                    </div>
+                    <p style="color: var(--cor-texto-claro); font-size: 0.85rem; margin-bottom: 10px;">
+                        <i class="fas fa-calendar"></i> ${date}
+                        ${data.autor ? ` | <i class="fas fa-user"></i> ${data.autor}` : ''}
+                    </p>
+                    <p style="line-height: 1.6; white-space: pre-wrap;">${data.conteudo}</p>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('[COMUNICADOS] Erro ao carregar:', error);
+        container.innerHTML = `
+            <div class="content-section">
+                <p style="color: var(--cor-perigo); text-align: center;">
+                    <i class="fas fa-exclamation-triangle"></i> Erro ao carregar comunicados
+                </p>
+            </div>
+        `;
+    }
+}
+
+// Página de Detalhes dos Indicadores
+function renderIndicadoresDetalhes() {
+    return `
+        <h1 class="page-title">Indicadores de Qualidade</h1>
+        <div id="indicadores-detalhes-completo">
+            <p style="color: var(--cor-texto-claro); font-style: italic; text-align: center;">
+                <i class="fas fa-spinner fa-spin"></i> Carregando indicadores...
+            </p>
+        </div>
+    `;
+}
+
+// Carrega detalhes completos dos indicadores
+async function loadIndicadoresDetalhes() {
+    const container = document.getElementById('indicadores-detalhes-completo');
+    if (!container) return;
+    
+    try {
+        const snapshot = await db.collection('indicadores').get();
+        
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="content-section">
+                    <p style="color: var(--cor-texto-claro); text-align: center;">
+                        <i class="fas fa-info-circle"></i> Nenhum indicador configurado
+                    </p>
+                    ${isAdmin() ? '<button class="submit-button" onclick="navigateTo(\'admin_indicadores\')"><i class="fas fa-cog"></i> Configurar Indicadores</button>' : ''}
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const progresso = (data.valorAtual / data.meta) * 100;
+            const cor = progresso >= 90 ? 'var(--cor-sucesso)' : progresso >= 70 ? 'var(--cor-aviso)' : 'var(--cor-perigo)';
+            const status = progresso >= 90 ? '✓ Meta Atingida' : progresso >= 70 ? '⚠ Atenção' : '✗ Abaixo da Meta';
+            
+            html += `
+                <div class="content-section" style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <h3 style="margin: 0;">${data.nome}</h3>
+                        <span style="padding: 4px 12px; background: ${cor}; color: white; border-radius: 12px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; margin-left: 10px;">
+                            ${status}
+                        </span>
+                    </div>
+                    <p style="color: var(--cor-texto-claro); font-size: 0.85rem; margin-bottom: 15px;">
+                        <i class="fas fa-calendar"></i> Período: ${data.periodo || 'Não especificado'}
+                    </p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 0.9rem;"><strong>Valor Atual:</strong> ${data.valorAtual}%</span>
+                        <span style="font-size: 0.9rem;"><strong>Meta:</strong> ${data.meta}%</span>
+                        <span style="font-size: 0.9rem;"><strong>Progresso:</strong> ${Math.round(progresso)}%</span>
+                    </div>
+                    <div style="width: 100%; height: 20px; background: var(--cor-borda); border-radius: 10px; overflow: hidden; position: relative;">
+                        <div style="width: ${Math.min(progresso, 100)}%; height: 100%; background: ${cor}; transition: width 0.5s ease;"></div>
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--cor-texto);">
+                            ${data.valorAtual}% / ${data.meta}%
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        if (isAdmin()) {
+            html += `
+                <button class="submit-button" onclick="navigateTo('admin_indicadores')" style="margin-top: 10px;">
+                    <i class="fas fa-edit"></i> Editar Indicadores
+                </button>
+            `;
+        }
+        
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('[INDICADORES] Erro ao carregar:', error);
+        container.innerHTML = `
+            <div class="content-section">
+                <p style="color: var(--cor-perigo); text-align: center;">
+                    <i class="fas fa-exclamation-triangle"></i> Erro ao carregar indicadores
+                </p>
+            </div>
+        `;
+    }
+}
+
 // Exportar funções globais
 window.renderPainelPrincipal = renderPainelPrincipal;
 window.loadPainelDashboard = loadPainelDashboard;
 window.showPodcastsArea = showPodcastsArea;
+window.renderComunicadosLista = renderComunicadosLista;
+window.renderIndicadoresDetalhes = renderIndicadoresDetalhes;
 window.PODCASTS_POR_AREA = PODCASTS_POR_AREA;
 window.ROPS_POR_AREA = ROPS_POR_AREA;
 
