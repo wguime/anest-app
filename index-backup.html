@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Anest-App Qmentum</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#43e97b">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=1761080567">
+</head>
+<body>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-overlay">
+        <div class="loading-content">
+            <img src="logo-anest.png" alt="ANEST" class="loading-logo">
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen auth-screen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <img src="logo-anest.png" alt="ANEST Logo" class="auth-logo">
+                <p class="auth-subtitle">Sistema de Gestão Qmentum</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-tab="login">Login</button>
+                <button class="auth-tab-btn" data-tab="register">Registrar</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                
+                <div class="auth-divider">
+                    <span>ou</span>
+                </div>
+                
+                <button type="button" id="googleSignInButton" class="btn-google">
+                    <i class="fab fa-google"></i> Entrar com Google
+                </button>
+                
+                <a href="#" class="forgot-password" id="forgotPasswordLink">Esqueceu a senha?</a>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome</label>
+                    <input type="text" id="registerFirstName" required placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome</label>
+                    <input type="text" id="registerLastName" required placeholder="Sobrenome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirmar Senha</label>
+                    <input type="password" id="registerPasswordConfirm" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Registrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Completion Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>Complete seu Perfil</h2>
+            <p>Para continuar, precisamos de algumas informações:</p>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome *</label>
+                    <input type="text" id="profileFirstName" required placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Sobrenome *</label>
+                    <input type="text" id="profileLastName" required placeholder="Sobrenome">
+                </div>
+                <button type="submit" class="btn-primary">Salvar e Continuar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Menu Modal -->
+    <div id="userMenuModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-circle"></i> Meu Perfil</h2>
+            <div style="padding: 15px 0;">
+                <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong id="userFullName">Nome do Usuário</strong></p>
+                <p style="color: var(--cor-texto-claro); font-size: 0.9rem;" id="userEmail">email@example.com</p>
+            </div>
+            
+            <div class="theme-toggle" id="themeToggle">
+                <div class="theme-toggle-label">
+                    <i class="fas fa-moon"></i>
+                    <span>Modo Escuro</span>
+                </div>
+                <div class="theme-toggle-switch" id="themeSwitch"></div>
+            </div>
+            
+            <button class="btn-primary" style="background: var(--cor-perigo); margin-top: 15px; width: 100%;" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+            <button class="btn-primary" style="background: var(--cor-texto-claro); margin-top: 10px; width: 100%;" id="closeUserMenu">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <header id="appHeader">
+            <button id="back-button"><i class="fas fa-chevron-left"></i></button>
+            <img src="logo-anest.png" alt="ANEST" class="header-logo">
+            <span id="header-title">Painel Principal</span>
+            <button id="adminButton" class="header-btn" onclick="showAdminPanel()" style="display: none; margin-right: 5px;">
+                <i class="fas fa-user-shield"></i>
+            </button>
+            <button id="profileButton" class="header-btn"><i class="fas fa-user-circle"></i></button>
+        </header>
+        
+        <main id="page-content"></main>
+        
+        <nav class="bottom-nav">
+            <button class="nav-button active" data-page="painel">
+                <i class="fas fa-home"></i><span>Painel</span>
+            </button>
+            <button class="nav-button" data-page="qualidade">
+                <i class="fas fa-shield-alt"></i><span>Qualidade</span>
+            </button>
+            <button class="nav-button" data-page="protocolos">
+                <i class="fas fa-book-medical"></i><span>Protocolos</span>
+            </button>
+            <button class="nav-button" data-page="ferramentas">
+                <i class="fas fa-toolbox"></i><span>Ferramentas</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase Config & Data Files -->
+    <script src="firebase-config.js"></script>
+    <script src="rops-data-from-banco.js"></script>
+    <script src="doses-pediatricas-data.js"></script>
+    <script src="calculadoras-definitions.js"></script>
+    <script src="documents-data.js"></script>
+    
+    <!-- Main Application (v8.3.0 - Sitemap Completo) -->
+    <script src="app-sitemap-complete.js?v=1761080567"></script>
+    <script src="anest-app-20251021173039.js?v=1761080567"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registrado!'))
+                    .catch(err => console.error('Erro ao registrar Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>
+
