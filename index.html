@@ -136,44 +136,44 @@
                 <div class="greeting">Olá, ${userName}</div>
                 
                 <div class="home-grid">
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="alert('Últimos Comunicados - Em desenvolvimento')">
                         <div class="grid-card-icon" style="background: linear-gradient(135deg, #f77062 0%, #fe5196 100%);">
                             <i class="fas fa-bullhorn"></i>
                         </div>
-                        <div class="grid-card-title">Últimos Comunicados</div>
-                        <div class="grid-card-subtitle">Notícias e atualizações</div>
+                        <div class="grid-card-title" style="color: white !important; font-weight: 600 !important;">Últimos Comunicados</div>
+                        <div class="grid-card-subtitle" style="color: rgba(255,255,255,0.8) !important;">Notícias e atualizações</div>
                     </div>
                     
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="alert('Minhas Pendências - Em desenvolvimento')">
                         <div class="grid-card-icon" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);">
                             <i class="fas fa-tasks"></i>
                         </div>
-                        <div class="grid-card-title">Minhas Pendências</div>
-                        <div class="grid-card-subtitle">Leituras e treinamentos</div>
+                        <div class="grid-card-title" style="color: white !important; font-weight: 600 !important;">Minhas Pendências</div>
+                        <div class="grid-card-subtitle" style="color: rgba(255,255,255,0.8) !important;">Leituras e treinamentos</div>
                     </div>
                     
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="alert('Indicadores de Qualidade - Em desenvolvimento')">
                         <div class="grid-card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="grid-card-title">Indicadores de Qualidade</div>
-                        <div class="grid-card-subtitle">Métricas de desempenho</div>
+                        <div class="grid-card-title" style="color: white !important; font-weight: 600 !important;">Indicadores de Qualidade</div>
+                        <div class="grid-card-subtitle" style="color: rgba(255,255,255,0.8) !important;">Métricas de desempenho</div>
                     </div>
                     
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="alert('ROPs Desafio - Em desenvolvimento')">
                         <div class="grid-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <i class="fas fa-trophy"></i>
                         </div>
-                        <div class="grid-card-title">ROPs Desafio</div>
-                        <div class="grid-card-subtitle">Gamificação e ranking</div>
+                        <div class="grid-card-title" style="color: white !important; font-weight: 600 !important;">ROPs Desafio</div>
+                        <div class="grid-card-subtitle" style="color: rgba(255,255,255,0.8) !important;">Gamificação e ranking</div>
                     </div>
                     
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="alert('Residência Médica - Em desenvolvimento')">
                         <div class="grid-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                             <i class="fas fa-user-graduate"></i>
                         </div>
-                        <div class="grid-card-title">Residência Médica</div>
-                        <div class="grid-card-subtitle">Calendário e atividades</div>
+                        <div class="grid-card-title" style="color: white !important; font-weight: 600 !important;">Residência Médica</div>
+                        <div class="grid-card-subtitle" style="color: rgba(255,255,255,0.8) !important;">Calendário e atividades</div>
                     </div>
                 </div>
             `;
@@ -183,16 +183,21 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('✅ DOM carregado');
             
-            // Auth State
-            auth.onAuthStateChanged((user) => {
-                console.log('Auth state changed:', user ? user.email : 'No user');
-                if (user) {
-                    currentUser = user;
-                    showMainApp();
-                } else {
-                    showLoginScreen();
-                }
-            });
+            // Auth State - APENAS UMA VEZ
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged((user) => {
+                    console.log('Auth state changed:', user ? user.email : 'No user');
+                    if (user) {
+                        currentUser = user;
+                        showMainApp();
+                    } else {
+                        showLoginScreen();
+                    }
+                });
+            } else {
+                console.log('❌ Auth não disponível, mostrando login');
+                showLoginScreen();
+            }
             
             // Login Form
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
