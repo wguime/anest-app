@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Versão - Anest-App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a3d2e 0%, #0f2419 100%);
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+        }
+        h1 {
+            color: #43e97b;
+            text-align: center;
+        }
+        .version-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .version-info h2 {
+            color: #4facfe;
+            margin-top: 0;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .status-icon {
+            font-size: 1.5rem;
+        }
+        .success { color: #43e97b; }
+        .error { color: #f77062; }
+        .warning { color: #fbc2eb; }
+        button {
+            background: #43e97b;
+            color: #0f2419;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #38f9d7;
+        }
+        .file-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+        .timestamp {
+            color: #fbc2eb;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificação de Versão</h1>
+        <p class="timestamp">Última atualização: 21/10/2024 - 17:30 BRT</p>
+        
+        <div class="version-info">
+            <h2>📦 Versão Atual</h2>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                <strong>v9.0.0-force-update</strong>
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                Cache Version: v9.0.0-force-update
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                Timestamp: 1761080567
+            </div>
+        </div>
+
+        <div class="version-info">
+            <h2>📁 Arquivos Principais</h2>
+            <div class="file-list">
+                ✓ index.html (com query string v=1761080567)<br>
+                ✓ styles.css?v=1761080567<br>
+                ✓ app-sitemap-complete.js?v=1761080567<br>
+                ✓ anest-app-20251021173039.js?v=1761080567<br>
+                ✓ service-worker.js (v9.0.0)
+            </div>
+        </div>
+
+        <div class="version-info">
+            <h2>🎯 O que deve estar funcionando</h2>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                Logo pulsando na tela de loading
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                Botão "Entrar com Google" no login
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                5 cards no Painel Principal
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                4 botões na barra inferior
+            </div>
+            <div class="status">
+                <span class="status-icon success">✅</span>
+                59 páginas navegáveis
+            </div>
+        </div>
+
+        <div class="version-info">
+            <h2>🛠️ Ações de Diagnóstico</h2>
+            <button onclick="clearAllCaches()">🗑️ Limpar TODOS os Caches</button>
+            <button onclick="unregisterServiceWorker()">🔄 Desregistrar Service Worker</button>
+            <button onclick="window.location.href='/?v=' + Date.now()">🚀 Recarregar App com Cache Bust</button>
+            <button onclick="showCacheInfo()">📊 Mostrar Info de Cache</button>
+        </div>
+
+        <div id="cache-info" class="version-info" style="display: none;">
+            <h2>📊 Informações de Cache</h2>
+            <div id="cache-details" class="file-list"></div>
+        </div>
+    </div>
+
+    <script>
+        async function clearAllCaches() {
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                alert('✅ Todos os caches foram limpos!\n\nRecarregue a página agora.');
+            } catch (error) {
+                alert('❌ Erro ao limpar caches: ' + error.message);
+            }
+        }
+
+        async function unregisterServiceWorker() {
+            try {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(reg => reg.unregister()));
+                alert('✅ Service Worker desregistrado!\n\nRecarregue a página agora.');
+            } catch (error) {
+                alert('❌ Erro ao desregistrar: ' + error.message);
+            }
+        }
+
+        async function showCacheInfo() {
+            const div = document.getElementById('cache-info');
+            const details = document.getElementById('cache-details');
+            div.style.display = 'block';
+            
+            try {
+                const cacheNames = await caches.keys();
+                let info = `Caches encontrados: ${cacheNames.length}<br><br>`;
+                
+                for (const name of cacheNames) {
+                    const cache = await caches.open(name);
+                    const keys = await cache.keys();
+                    info += `<strong>${name}</strong>: ${keys.length} arquivos<br>`;
+                }
+                
+                details.innerHTML = info || 'Nenhum cache encontrado.';
+            } catch (error) {
+                details.innerHTML = 'Erro: ' + error.message;
+            }
+        }
+
+        // Auto-check na carga
+        window.addEventListener('load', () => {
+            console.log('🔍 Versão verificada: v9.0.0-force-update');
+            console.log('⏰ Timestamp: 1761080567');
+        });
+    </script>
+</body>
+</html>
+

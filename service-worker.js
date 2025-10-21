@@ -1,7 +1,7 @@
 // ==================== SERVICE WORKER - ANEST-APP QMENTUM ====================
 // Versão Profissional
 
-const CACHE_VERSION = 'v8.3.0-sitemap-completo';
+const CACHE_VERSION = 'v9.0.0-force-update';
 const CACHE_NAME = `anest-app-${CACHE_VERSION}`;
 
 // Essential files to cache
