@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Anest-App</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        .log {
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .error { color: #ff0000; }
+        .warning { color: #ffaa00; }
+        .success { color: #00ff00; }
+        .info { color: #00aaff; }
+        h1 { color: #00ff00; text-align: center; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #00aa00; }
+    </style>
+</head>
+<body>
+    <h1>🔍 DEBUG MODE - Anest-App</h1>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <button onclick="clearLogs()">🗑️ Limpar Logs</button>
+        <button onclick="testFirebase()">🔥 Testar Firebase</button>
+        <button onclick="testScripts()">📜 Testar Scripts</button>
+        <button onclick="location.reload()">🔄 Recarregar</button>
+    </div>
+
+    <div class="log" id="logContainer"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <script>
+        const logContainer = document.getElementById('logContainer');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(line);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLogs() {
+            logContainer.innerHTML = '';
+            log('Logs limpos', 'info');
+        }
+
+        // Capturar TODOS os erros
+        window.addEventListener('error', (e) => {
+            log(`❌ ERROR: ${e.message} | File: ${e.filename} | Line: ${e.lineno}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            log(`❌ PROMISE REJECTION: ${e.reason}`, 'error');
+        });
+
+        // Override console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function(...args) {
+            log(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            log('ERROR: ' + args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            log('WARNING: ' + args.join(' '), 'warning');
+            originalWarn.apply(console, args);
+        };
+
+        log('🚀 Debug Mode Iniciado', 'success');
+        log('Versão: v9.0.0-force-update', 'info');
+
+        // Testar Firebase
+        async function testFirebase() {
+            log('🔥 Testando Firebase...', 'info');
+            
+            try {
+                // Carregar config
+                const response = await fetch('firebase-config.js');
+                const configText = await response.text();
+                log('✅ firebase-config.js carregado', 'success');
+                
+                // Executar config
+                eval(configText);
+                
+                if (typeof firebaseConfig !== 'undefined') {
+                    log('✅ firebaseConfig encontrado', 'success');
+                    log(`   Project ID: ${firebaseConfig.projectId}`, 'info');
+                } else {
+                    log('❌ firebaseConfig não definido', 'error');
+                }
+                
+                if (typeof firebase !== 'undefined') {
+                    log('✅ Firebase SDK carregado', 'success');
+                    
+                    // Inicializar
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                        log('✅ Firebase inicializado', 'success');
+                    }
+                    
+                    // Testar Auth
+                    const auth = firebase.auth();
+                    log('✅ Firebase Auth disponível', 'success');
+                    
+                    // Verificar usuário
+                    auth.onAuthStateChanged((user) => {
+                        if (user) {
+                            log(`✅ Usuário logado: ${user.email}`, 'success');
+                        } else {
+                            log('ℹ️ Nenhum usuário logado', 'info');
+                        }
+                    });
+                    
+                } else {
+                    log('❌ Firebase SDK não carregado', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro ao testar Firebase: ${error.message}`, 'error');
+                log(`   Stack: ${error.stack}`, 'error');
+            }
+        }
+
+        // Testar Scripts
+        async function testScripts() {
+            log('📜 Testando Scripts...', 'info');
+            
+            const scripts = [
+                'firebase-config.js',
+                'rops-data-from-banco.js',
+                'doses-pediatricas-data.js',
+                'calculadoras-definitions.js',
+                'documents-data.js',
+                'app-sitemap-complete.js?v=1761080567',
+                'anest-app-20251021173039.js?v=1761080567'
+            ];
+            
+            for (const script of scripts) {
+                try {
+                    const response = await fetch(script);
+                    if (response.ok) {
+                        const size = response.headers.get('content-length');
+                        log(`✅ ${script} | Tamanho: ${size ? (size/1024).toFixed(1) + 'KB' : 'unknown'}`, 'success');
+                    } else {
+                        log(`❌ ${script} | Status: ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ ${script} | Erro: ${error.message}`, 'error');
+                }
+            }
+            
+            // Verificar funções globais
+            log('\n🔍 Verificando funções globais...', 'info');
+            
+            const expectedFunctions = [
+                'renderPainel',
+                'renderQualidade',
+                'renderProtocolos',
+                'renderFerramentas',
+                'navigateTo',
+                'showCalculadora'
+            ];
+            
+            for (const func of expectedFunctions) {
+                if (typeof window[func] === 'function') {
+                    log(`✅ ${func}() disponível`, 'success');
+                } else {
+                    log(`❌ ${func}() NÃO ENCONTRADA`, 'error');
+                }
+            }
+        }
+
+        // Auto-test ao carregar
+        window.addEventListener('load', () => {
+            log('📄 Página carregada', 'success');
+            setTimeout(() => {
+                log('\n🔄 Iniciando testes automáticos...\n', 'info');
+                testFirebase();
+                setTimeout(() => testScripts(), 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
